@@ -271,31 +271,57 @@ class BassGuitarVisualizer {
 		this.pxPerSecond = this.pxPerTick * this.endOfTrackTicks / this.endOfTrackSeconds;
 		// console.log("Pixels per note tick: " + this.pxPerTick);
 
+		// Set the base style.
 		App.Cache.eBassGuitarVisualizerNoteBars.forEach((inElemX) => {
 			inElemX.style.width = this.widthOfNoteBar + 'px';
 		});
-
-		// Clear the html for the notes bar, we will regenerate the data.
-		const barIndexToUse = 0;
-		App.Cache.eBassGuitarVisualizerNoteBars[barIndexToUse].innerHTML = "";
-		let newNotesHTML = '';
 		App.Cache.eBassGuitarNotesWrap.style.left = '0px';
 
+		// Clear the html for the notes bar, we will regenerate the data.
+		App.Cache.eBassGuitarVisualizerNoteBars.forEach((inElemX) => {
+			inElemX.innerHTML = "";
+		});
+		// For every bar we collect html.
+		let notesHTML = {};
+		App.Cache.eBassGuitarVisualizerNoteBars.forEach((inElemX) => {
+			notesHTML[inElemX.dataset.midiOffset] = [];
+		});
+		
 		for (let i = 0; i < App.AudioProcessor.midi.tracks[0].notes.length; i++) {
 			const note = App.AudioProcessor.midi.tracks[0].notes[i];
-			// const midiFrequency = Math.pow(2, (note.midi - 69) / 12) * 440;
-			// console.log("Note frequency: " + midiFrequency);
-
 			const endNoteTick = note.ticks + note.durationTicks;
 			const notePosition = note.ticks * this.pxPerTick;
 			const noteWidth = (endNoteTick - note.ticks) * this.pxPerTick;
 			
-			const noteHTML = '<div class="bass-guitar-note" style="left: ' + notePosition + 'px; width: ' + noteWidth + 'px;"><span>' + note.midi + '</span></div>';
-			newNotesHTML += noteHTML;
+			// Figure out which bar is best to display the note on.
+			const midiNumber = note.midi;
+			let smallestDistance = 128;
+			// The string tuned to be the closest to the desired note.
+			let optimalKey = -1;
+
+			for (const [key, value] of Object.entries(notesHTML)) {
+				if (midiNumber < key) {
+					// We can't play lower than a 0 on the string.
+					continue;
+				}
+				const difference = midiNumber - key;
+				if (difference < smallestDistance) {
+					optimalKey = key;
+					smallestDistance = difference;
+				}
+			}
+			if (!notesHTML[optimalKey]) {
+				console.log("Error! Did not get an optimal offset for midi note on the note bar.");
+				return;
+			}
+
+			notesHTML[optimalKey] += '<div class="bass-guitar-note" style="left: ' + notePosition + 'px; width: ' + noteWidth + 'px;"><span>' + note.midi + '</span></div>';
 		}
 
-		// Write the note bar html
-		App.Cache.eBassGuitarVisualizerNoteBars[barIndexToUse].insertAdjacentHTML('afterbegin', newNotesHTML);
+		// Write the note bars html.
+		App.Cache.eBassGuitarVisualizerNoteBars.forEach((inElemX) => {
+			inElemX.insertAdjacentHTML('afterbegin', notesHTML[inElemX.dataset.midiOffset])
+		});
 
 		// Start 'playing' visuals.
 		this.refreshInterval = setInterval(() => { this.refresh() }, 1 / App.fps * 1000);
