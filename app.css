@@ -274,7 +274,6 @@ input[type=checkbox] {
 	bottom: 0;
 	left: 0;
 	right: 0;
-	overflow: hidden;
 	display: flex;
 	flex-direction: column;
 }
@@ -283,6 +282,8 @@ input[type=checkbox] {
 	display: flex;
 	flex: 1;
 	align-items: center;
+	/* Still choppy */
+	transition: transform 0.2s cubic-bezier(0,1.11,1,1);
 }
 
 .bass-guitar-note {
@@ -300,7 +301,7 @@ input[type=checkbox] {
 
 .bass-guitar-note > span {
 	flex: 1;
-	font-size: 15px;
+	font-size: 18px;
 }
 
 

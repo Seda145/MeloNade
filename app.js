@@ -298,7 +298,7 @@ class BassGuitarVisualizer {
 		App.Cache.eBassGuitarVisualizerNoteBars[barIndexToUse].insertAdjacentHTML('afterbegin', newNotesHTML);
 
 		// Start 'playing' visuals.
-		this.refreshInterval = setInterval(() => { this.refresh() }, 1 / App.fps);
+		this.refreshInterval = setInterval(() => { this.refresh() }, 1 / App.fps * 1000);
 	}
 	
 	stop() {
@@ -311,7 +311,11 @@ class BassGuitarVisualizer {
 		// Move the absolute position of all notes from start to end, based on current play time of the audio.
 		const currentAudioTime = App.Cache.ePlayerDeveloperPageAudio.currentTime;
 		const noteBarPosition = currentAudioTime * this.pxPerSecond;
-		App.Cache.eBassGuitarNotesWrap.style.left = -noteBarPosition + 'px';
+		// TODO this is choppy movement?
+		// App.Cache.eBassGuitarNotesWrap.style.left = -noteBarPosition + 'px';
+		App.Cache.eBassGuitarVisualizerNoteBars.forEach((inElemX) => {
+			inElemX.style.transform = 'translatex(' + -noteBarPosition + 'px)';
+		});
 	}
 
 	// Assuming Standard E on bass guitar: E1 A1 D2 G2
@@ -364,7 +368,7 @@ class Navigation {
 
 class MyApp {
 	constructor() {
-		this.fps = 60;
+		this.fps = 120;
 	}
 
 	startModule() {
