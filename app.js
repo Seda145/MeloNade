@@ -13,6 +13,7 @@
 // https://surikov.github.io/webaudiofont/examples/midiplayer.html#
 // https://github.com/WebAudio/web-midi-api/issues/232
 // https://stackoverflow.com/questions/41753349/convert-midi-file-to-list-of-notes-with-length-and-starting-time?rq=3
+// https://forum.metasystem.io/forum/metagrid-pro/beta/issues/2981-c-2-c-1-midi-notes-lower-keyboard-range-question
 
 
 class UIUtils {
@@ -162,6 +163,7 @@ class Cache {
 	constructor() {
 		// Elements - Navigation
 		this.eTabs = document.getElementById("tabs");
+		this.eAllTabs = document.querySelectorAll("#tabs .tab");
 		// Elements - DeveloperPage
 		this.eDeveloperPage = document.getElementById("developer-page");
 		this.eDeveloperPageForm = document.getElementById("developer-page-form");
@@ -173,6 +175,8 @@ class Cache {
 		this.eProcessingContent = document.getElementById('processing-content');
 		// Elements - BassGuitarVisualizer
 		this.eBassGuitarVisualizer = document.getElementById('bass-guitar-visualizer');
+		this.eBassGuitarNotesWrap = document.getElementById('bass-guitar-notes-wrap');
+		this.eBassGuitarVisualizerNoteBars = document.querySelectorAll('#bass-guitar-notes-wrap .bass-guitar-note-bar');
 
 		// Setup
 
@@ -183,6 +187,7 @@ class Cache {
 		const bIsValid = (
 			// Elements - Navigation
 			this.eTabs
+			&& this.eAllTabs
 			// Elements - DeveloperPage
 			&& this.eDeveloperPage
 			&& this.eDeveloperPageForm 
@@ -194,6 +199,8 @@ class Cache {
 			&& this.eProcessingContent 
 			// Elements - BassGuitarVisualizer
 			&& this.eBassGuitarVisualizer 
+			&& this.eBassGuitarNotesWrap 
+			&& this.eBassGuitarVisualizerNoteBars.length == 4
 		);
 
 		if (!bIsValid) {
@@ -224,6 +231,13 @@ class CreationForm {
 
 class BassGuitarVisualizer {
 	constructor() {
+		this.widthMultiplier = 100;
+		this.widthOfNoteBar = 0;
+		this.pxPerTick = 0;
+		this.pxPerSecond = 0;
+		this.endOfTrackTicks = 0;
+		this.endOfTrackSeconds = 0;
+
 		App.Cache.ePlayerDeveloperPageAudio.addEventListener(
 			"restart-audio",
 			(e) => {
@@ -246,12 +260,45 @@ class BassGuitarVisualizer {
 	restart() {
 		console.log("restarting visualizer.");
 		
-		// regenerate all notes on the visualizer, then start the refresh interval.
+		// regenerate all notes on the visualizer.
 
-		////
+		this.endOfTrackTicks = App.AudioProcessor.midi.tracks[0].endOfTrackTicks;
+		this.endOfTrackSeconds = App.AudioProcessor.midi.header.ticksToSeconds(this.endOfTrackTicks);
+		// Calculate the visual width of the note bar by the length of the audio. Tick rate varies per midi, so seconds are calculated.
+		this.widthOfNoteBar = this.endOfTrackSeconds * this.widthMultiplier;
+		// console.log("width of note bar: " + this.widthOfNoteBar);
+		this.pxPerTick = this.widthOfNoteBar / this.endOfTrackTicks;
+		this.pxPerSecond = this.pxPerTick * this.endOfTrackTicks / this.endOfTrackSeconds;
+		// console.log("Pixels per note tick: " + this.pxPerTick);
 
-		// 60 FPS interval
-		this.refreshInterval = setInterval(() => { this.refresh() }, 0.0166666666666667 );
+		App.Cache.eBassGuitarVisualizerNoteBars.forEach((inElemX) => {
+			inElemX.style.width = this.widthOfNoteBar + 'px';
+		});
+
+		// Clear the html for the notes bar, we will regenerate the data.
+		const barIndexToUse = 0;
+		App.Cache.eBassGuitarVisualizerNoteBars[barIndexToUse].innerHTML = "";
+		let newNotesHTML = '';
+		App.Cache.eBassGuitarNotesWrap.style.left = '0px';
+
+		for (let i = 0; i < App.AudioProcessor.midi.tracks[0].notes.length; i++) {
+			const note = App.AudioProcessor.midi.tracks[0].notes[i];
+			// const midiFrequency = Math.pow(2, (note.midi - 69) / 12) * 440;
+			// console.log("Note frequency: " + midiFrequency);
+
+			const endNoteTick = note.ticks + note.durationTicks;
+			const notePosition = note.ticks * this.pxPerTick;
+			const noteWidth = (endNoteTick - note.ticks) * this.pxPerTick;
+			
+			const noteHTML = '<div class="bass-guitar-note" style="left: ' + notePosition + 'px; width: ' + noteWidth + 'px;"><span>' + note.midi + '</span></div>';
+			newNotesHTML += noteHTML;
+		}
+
+		// Write the note bar html
+		App.Cache.eBassGuitarVisualizerNoteBars[barIndexToUse].insertAdjacentHTML('afterbegin', newNotesHTML);
+
+		// Start 'playing' visuals.
+		this.refreshInterval = setInterval(() => { this.refresh() }, 1 / App.fps);
 	}
 	
 	stop() {
@@ -261,8 +308,10 @@ class BassGuitarVisualizer {
 
 	refresh() {
 		console.log("refreshing visualizer.");
-
 		// Move the absolute position of all notes from start to end, based on current play time of the audio.
+		const currentAudioTime = App.Cache.ePlayerDeveloperPageAudio.currentTime;
+		const noteBarPosition = currentAudioTime * this.pxPerSecond;
+		App.Cache.eBassGuitarNotesWrap.style.left = -noteBarPosition + 'px';
 	}
 
 	// Assuming Standard E on bass guitar: E1 A1 D2 G2
@@ -273,7 +322,7 @@ class BassGuitarVisualizer {
 class Navigation {
 	constructor() {
 		// Listen to when a tab is clicked. On click, navigate to its content id.
-		App.Cache.eTabs.querySelectorAll(".tab").forEach((inElemX) => {
+		App.Cache.eAllTabs.forEach((inElemX) => {
 			inElemX.addEventListener(
 				"click",
 				(e) => {
@@ -314,6 +363,10 @@ class Navigation {
 
 
 class MyApp {
+	constructor() {
+		this.fps = 60;
+	}
+
 	startModule() {
 		// Cache
 		this.Cache = new Cache();

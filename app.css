@@ -213,7 +213,7 @@ input[type=checkbox] {
 	flex-direction: row;
 }
 
-.bass-guitar-tuning-wrap {
+#bass-guitar-tuning-wrap {
 	display: flex;
 	flex-direction: column;
 }
@@ -233,14 +233,14 @@ input[type=checkbox] {
 	border-right: medium solid #666;
 }
 
-.bass-guitar-note-visualizer {
+#bass-guitar-note-visualizer {
 	position: relative;
 	overflow: hidden;
 	display: flex;
 	flex: 1;
 }
 
-.bass-guitar-strings-wrap {
+#bass-guitar-strings-wrap {
 	display: flex;
 	flex: 1;
 	flex-direction: column;
@@ -268,7 +268,7 @@ input[type=checkbox] {
 	position: relative;
 }
 
-.bass-guitar-notes-wrap {
+#bass-guitar-notes-wrap {
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -292,7 +292,17 @@ input[type=checkbox] {
 	border-radius: 10px;
 	border: medium solid rgb(0, 119, 230);
 	background-color: #153342;
+	display: flex;
+	align-items: center;
+	text-align: center;
+	overflow: hidden;
 }
+
+.bass-guitar-note > span {
+	flex: 1;
+	font-size: 15px;
+}
+
 
 /* States */
 
