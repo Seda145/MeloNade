@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>App</title>
+		<link rel="stylesheet" href="./layout.css">
+		<link rel="stylesheet" href="./app.css">
+	</head>
+
+	<body>
+	
+		<header></header>
+
+		<main class="main-wrap container">
+
+			<div id="developer-page" class="main-wrap hide">
+				<form id="developer-page-form">
+					<div class="row">
+						<div class="col-12">
+							<fieldset class="fieldstyle">
+								<legend>Audio Input</legend>
+
+								<label for="input-developer-page-audio">Audio input</label>
+								<input id="input-developer-page-audio" type="file" accept="audio/*"/>
+								<audio id="player-developer-page-audio" controls muted></audio>
+
+								<label for="input-developer-page-midi">Midi input</label>
+								<input id="input-developer-page-midi" type="file" accept="audio/midi"/>
+
+								<hr>
+
+								<input class="block" type="submit" value="Play">
+								<br>
+								<button id="input-developer-page-stop-audio" class="block" type="button">Stop</button>
+							</fieldset>
+						</div>
+					</div>
+
+				</form>
+			</div>
+
+			<div id="processing-content" class="main-wrap hide">
+
+			</div>
+
+			<div id="bass-guitar-visualizer" class="main-wrap">
+				<div class="bass-guitar-tuning-wrap">
+					<div class="bass-guitar-string-tuning">
+						<span class="bass-guitar-tuning-letter">G</span>
+					</div>
+					<div class="bass-guitar-string-tuning">
+						<span class="bass-guitar-tuning-letter">D</span>
+					</div>
+					<div class="bass-guitar-string-tuning">
+						<span class="bass-guitar-tuning-letter">A</span>
+					</div>
+					<div class="bass-guitar-string-tuning">
+						<span class="bass-guitar-tuning-letter">E</span>
+					</div>
+				</div>
+
+				<div class="bass-guitar-note-visualizer">
+					<div class="bass-guitar-strings-wrap">
+						<div class="bass-guitar-string-bar">
+							<div class="bass-guitar-string-half"></div>
+							<div class="bass-guitar-string-center">
+								<div class="bass-guitar-string-line"></div>
+							</div>
+							<div class="bass-guitar-string-half"></div>
+						</div>
+						<div class="bass-guitar-string-bar">
+							<div class="bass-guitar-string-half"></div>
+							<div class="bass-guitar-string-center">
+								<div class="bass-guitar-string-line"></div>
+							</div>
+							<div class="bass-guitar-string-half"></div>
+						</div>
+						<div class="bass-guitar-string-bar">
+							<div class="bass-guitar-string-half"></div>
+							<div class="bass-guitar-string-center">
+								<div class="bass-guitar-string-line"></div>
+							</div>
+							<div class="bass-guitar-string-half"></div>
+						</div>
+						<div class="bass-guitar-string-bar">
+							<div class="bass-guitar-string-half"></div>
+							<div class="bass-guitar-string-center">
+								<div class="bass-guitar-string-line"></div>
+							</div>
+							<div class="bass-guitar-string-half"></div>
+						</div>																			
+					</div>
+
+					<div class="bass-guitar-notes-wrap">
+						<div class="bass-guitar-string-bar">
+							<div class="bass-guitar-note-bar">
+								<div class="bass-guitar-note"></div>
+							</div>
+						</div>
+						<div class="bass-guitar-string-bar"></div>
+						<div class="bass-guitar-string-bar"></div>
+						<div class="bass-guitar-string-bar"></div>
+					</div>
+				</div>
+			</div>
+
+			<div id="bottom-bar">
+				<div id="tabs" class="main-wrap">
+					<span class="tab" data-contentid="0">Input</span>
+					<span class="tab" data-contentid="1">Processing</span>
+				</div>
+			</div>
+						
+		</main>
+		
+		<footer></footer>
+
+		<!-- Libs https://github.com/Tonejs/Midi/tree/master -->
+		<script src="./libs/ToneJS-Midi/Midi.js"></script> 
+		<!-- App -->
+		<script src="./app.js"></script> 
+	 
+	</body>
+
+</html> 

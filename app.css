@@ -1,0 +1,302 @@
+/**[[ Copyright Roy Wierer (Seda145) ]]**/
+
+/* Default widgets */
+
+body {
+	font-family: "Gill Sans", sans-serif;
+	background-color: #110909;
+	/* background-color: #2f0d0d; */
+	/* background-color: #293642; */
+}
+
+main {
+	margin-bottom: 175px;
+}
+
+button,
+input[type=submit],
+input[type=radio],
+input[type=checkbox],
+label,
+legend,
+.tab {
+	user-select: none;
+}
+
+legend {
+	font-weight: bold;
+}
+
+legend, label, p, span, h1, h2, h3, h4, h5, h6 {
+	color: white;
+}
+
+label {
+	display: block;
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+
+label:hover,
+button:hover,
+input[type=checkbox]:hover,
+input[type=radio]:hover,
+input[type=submit]:hover,
+input[type=file] {
+	cursor: pointer;
+}
+
+label:hover {
+	color: #06bff7;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+  font-size: 18px;
+  padding: 10px;
+}
+
+input[type=text],
+input[type=number] {
+	display: block;
+}
+
+textarea, 
+button, 
+pre,
+input[type=submit], 
+input[type=text], 
+input[type=number],
+input[type=file] {
+	background-color: #384757;
+	border: none;
+	color: white;
+	font-size: 14px;
+	padding: 4px;
+	border-radius: 4px;
+}
+
+button,
+input[type=submit],
+input[type=file]
+label {
+	transition: opacity 0.15s;
+}
+
+button:hover,
+input[type=submit]:hover,
+input[type=file]:hover,
+label:hover {
+	opacity: 0.8;
+}
+
+button, 
+input[type=submit],
+input[type=file] {
+	min-height: 40px;
+	font-weight: bold;
+}
+
+textarea {
+	resize: none;
+	min-height: 300px;
+}
+
+hr {
+	border: none;
+	border-bottom: medium dotted white;
+	margin-bottom: 25px;
+	padding-bottom: 25px;
+}
+
+/* Tab system */
+
+#bottom-bar {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #040504;
+	border-top: thin solid gray;
+	filter: drop-shadow(0px -4px 4px #226f8d);
+	display: flex;
+	flex-direction: column;
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+#tabs {
+	display: flex;
+	width: 100%;
+	justify-content: flex-end;
+}
+
+.tab {
+	display: inline-block;
+	padding: 5px 10px;
+	background-color: #384757;
+	color: white;
+	font-size: 14px;
+	border-radius: 4px;
+	margin: 10px 7px;
+	margin-left: 0;
+	flex: 1;
+	min-height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.tab:first-child {
+	margin-left: 0;
+}
+.tab:last-child {
+	margin-right: 0;
+}
+.tab:hover {
+	cursor: pointer;
+	opacity: 0.8;
+	transition: opacity 0.2s;
+}
+.tab.active {
+	background-color: #226f8d;
+}
+
+/* Re-used in app */
+
+.fieldstyle {
+	background-color: #181e18;
+	border: thin solid #226f8d;
+	padding: 15px;
+	border-radius: 4px;
+	color: white;
+	margin: 0;
+	margin-bottom: 50px;
+}
+
+.fieldstyle legend {
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.fieldstyle input[type=radio],
+.fieldstyle input[type=checkbox] {
+	margin: 0;
+}
+
+.form-response {
+	/* min-height: 250px; */
+	max-height: 450px;
+	background-color: #181e18;
+	border: thin solid #226f8d;
+	border-left: thin solid #3de851;
+	overflow: auto;
+}
+
+input[type=radio],
+input[type=checkbox] {
+	width: 20px;
+	height: 20px;
+}
+
+/* Developer page */
+
+/* Bass Guitar Visualizer */
+
+#bass-guitar-visualizer {
+	height: 350px;
+	background-color: black;
+	border: thin solid #226f8d;
+  	border-radius: 4px;
+	display: flex;
+	flex-direction: row;
+}
+
+.bass-guitar-tuning-wrap {
+	display: flex;
+	flex-direction: column;
+}
+
+.bass-guitar-string-tuning {
+	width: 50px;
+	text-align: center;
+	flex: 1;
+	display: flex;
+}
+
+.bass-guitar-tuning-letter {
+	font-size: 15px;
+	flex: 1;
+	color: white;
+	align-self: center;
+	border-right: medium solid #666;
+}
+
+.bass-guitar-note-visualizer {
+	position: relative;
+	overflow: hidden;
+	display: flex;
+	flex: 1;
+}
+
+.bass-guitar-strings-wrap {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+}
+
+.bass-guitar-string-bar {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+
+.bass-guitar-string-half {
+	flex: 1;
+}
+
+.bass-guitar-string-center {
+	display: flex;
+	align-items: center;
+}
+
+.bass-guitar-string-line {
+	height: 3px;
+	flex: 1;
+	background-image: linear-gradient(0.25turn, #fafafa, #666);
+	position: relative;
+}
+
+.bass-guitar-notes-wrap {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.bass-guitar-note-bar {
+	display: flex;
+	flex: 1;
+	align-items: center;
+}
+
+.bass-guitar-note {
+	position: absolute;
+	height: 32px;
+	width: 55px;
+	border-radius: 10px;
+	border: medium solid rgb(0, 119, 230);
+	background-color: #153342;
+}
+
+/* States */
+
+.hide {
+	display: none !important;
+}
+
