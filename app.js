@@ -29,6 +29,87 @@ class UIUtils {
 			inElem.classList.add("hide");
 		}
 	}
+
+	static midiNumberToNoteLetter(inNumber) {
+		const notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+		const numberModulo = inNumber % 12;
+		const note = notes[numberModulo];
+		return note;
+	}
+
+	static midiNumberToFretNumber(inStringNumberOffset, inNumber) {
+		// Note that this does not clamp the value to a positive number or to a max amount of frets.
+		return inNumber - inStringNumberOffset;
+	}
+}
+
+
+class Cache {
+	constructor() {
+		// Elements - Navigation
+		this.eTabs = document.getElementById("tabs");
+		this.eAllTabs = document.querySelectorAll("#tabs .tab");
+		// Elements - DeveloperPage
+		this.eDeveloperPage = document.getElementById("developer-page");
+		this.eDeveloperPageForm = document.getElementById("developer-page-form");
+		this.eInputDeveloperPageAudio = document.getElementById('input-developer-page-audio');
+		this.ePlayerDeveloperPageAudio = document.getElementById('player-developer-page-audio');
+		this.eInputDeveloperPageMidi = document.getElementById('input-developer-page-midi');
+		this.eInputDeveloperPageStopAudio = document.getElementById('input-developer-page-stop-audio');
+		// Elements - DeveloperPage - SelectInstrument
+		this.eInputSelectInstrument = document.getElementById('input-select-instrument');
+		// Elements - DeveloperPage - ConfigInstruments
+		this.eConfigInstrumentPanels = document.querySelectorAll('#developer-page-form .config-instrument-panel');
+		// Elements - DeveloperPage - ConfigBassGuitar
+		this.eInputConfigBassGuitar = document.getElementById('config-bass-guitar');
+		this.eInputSelectBassGuitarTuning = document.getElementById('input-select-bass-guitar-tuning');
+		this.eInputBassGuitarOrderStringsThickAtBottom = document.getElementById('input-bass-guitar-order-strings-thick-at-bottom');
+		// Elements - ProcessingContent
+		this.eProcessingContent = document.getElementById('processing-content');
+		// Elements - BassGuitarVisualizer
+		this.eBassGuitarVisualizer = document.getElementById('bass-guitar-visualizer');
+		this.eBassGuitarTuningWrap = document.getElementById('bass-guitar-tuning-wrap');
+		this.eBassGuitarStringsWrap = document.getElementById('bass-guitar-strings-wrap');
+		this.eBassGuitarNotesWrap = document.getElementById('bass-guitar-notes-wrap');
+
+		// Setup
+
+		this.debugValidity();
+	}
+
+	debugValidity() {
+		const bIsValid = (
+			// Elements - Navigation
+			this.eTabs
+			&& this.eAllTabs
+			// Elements - DeveloperPage
+			&& this.eDeveloperPage
+			&& this.eDeveloperPageForm 
+			&& this.eInputDeveloperPageAudio 
+			&& this.ePlayerDeveloperPageAudio 
+			&& this.eInputDeveloperPageMidi 
+			&& this.eInputDeveloperPageStopAudio 
+			// Elements - DeveloperPage - SelectInstrument
+			&& this.eInputSelectInstrument
+			// Elements - DeveloperPage - ConfigInstruments
+			&& this.eConfigInstrumentPanels.length == this.eInputSelectInstrument.options.length
+			// Elements - DeveloperPage - ConfigBassGuitar
+			&& this.eInputConfigBassGuitar
+			&& this.eInputSelectBassGuitarTuning
+			&& this.eInputBassGuitarOrderStringsThickAtBottom
+			// Elements - ProcessingContent
+			&& this.eProcessingContent 
+			// Elements - BassGuitarVisualizer
+			&& this.eBassGuitarVisualizer 
+			&& this.eBassGuitarTuningWrap 
+			&& this.eBassGuitarStringsWrap 
+			&& this.eBassGuitarNotesWrap 
+		);
+
+		if (!bIsValid) {
+			console.log("Elements are invalid!");
+		}
+	}
 }
 
 
@@ -36,6 +117,7 @@ class AudioProcessor {
 	constructor() {
 		this.isPlaying = false;
 		this.audioContext = new AudioContext();
+		this.intervalResolution = 50;
 
 		App.Cache.eInputDeveloperPageStopAudio.addEventListener(
 			"click",
@@ -87,9 +169,13 @@ class AudioProcessor {
 		this.isPlaying = true;
 
 		App.Cache.ePlayerDeveloperPageAudio.play();
-		this.DebugMIDIWithAudioSyncInterval = setInterval(() => { this.DebugMIDIWithAudioSync() }, 50 );
+		// Play the midi sound, for debugging.
+		this.DebugMIDIWithAudioSyncInterval = setInterval(() => { this.DebugMIDIWithAudioSync() }, this.intervalResolution);
+		// Listen for a match between midi and audio frequency.
+		// Used so we can play along with midi on an instrument and register if we play a note / play the right note.
+		this.ListenToAudioMatchInterval = setInterval(() => { this.ListenToAudioMatch() }, this.intervalResolution);
 
-		let restartAudioEvent = new Event('restart-audio', { bubbles: false });
+		const restartAudioEvent = new Event('restart-audio', { bubbles: false });
 		App.Cache.ePlayerDeveloperPageAudio.dispatchEvent(restartAudioEvent);
 	}
 
@@ -101,9 +187,10 @@ class AudioProcessor {
 		App.Cache.ePlayerDeveloperPageAudio.currentTime = 0;
 		App.Cache.ePlayerDeveloperPageAudio.pause();
 		clearInterval(this.DebugMIDIWithAudioSyncInterval);
+		clearInterval(this.ListenToAudioMatchInterval);
 		this.isPlaying = false;
 
-		let stopAudioEvent = new Event('stop-audio', { bubbles: false });
+		const stopAudioEvent = new Event('stop-audio', { bubbles: false });
 		App.Cache.ePlayerDeveloperPageAudio.dispatchEvent(stopAudioEvent);
 	}
 
@@ -156,56 +243,9 @@ class AudioProcessor {
 			this.oscillator.stop(this.audioContext.currentTime + this.midi.header.ticksToSeconds(note.durationTicks));
 		}
 	}
-}
 
+	ListenToAudioMatch() {
 
-class Cache {
-	constructor() {
-		// Elements - Navigation
-		this.eTabs = document.getElementById("tabs");
-		this.eAllTabs = document.querySelectorAll("#tabs .tab");
-		// Elements - DeveloperPage
-		this.eDeveloperPage = document.getElementById("developer-page");
-		this.eDeveloperPageForm = document.getElementById("developer-page-form");
-		this.eInputDeveloperPageAudio = document.getElementById('input-developer-page-audio');
-		this.ePlayerDeveloperPageAudio = document.getElementById('player-developer-page-audio');
-		this.eInputDeveloperPageMidi = document.getElementById('input-developer-page-midi');
-		this.eInputDeveloperPageStopAudio = document.getElementById('input-developer-page-stop-audio');
-		// Elements - ProcessingContent
-		this.eProcessingContent = document.getElementById('processing-content');
-		// Elements - BassGuitarVisualizer
-		this.eBassGuitarVisualizer = document.getElementById('bass-guitar-visualizer');
-		this.eBassGuitarNotesWrap = document.getElementById('bass-guitar-notes-wrap');
-		this.eBassGuitarVisualizerNoteBars = document.querySelectorAll('#bass-guitar-notes-wrap .bass-guitar-note-bar');
-
-		// Setup
-
-		this.debugValidity();
-	}
-
-	debugValidity() {
-		const bIsValid = (
-			// Elements - Navigation
-			this.eTabs
-			&& this.eAllTabs
-			// Elements - DeveloperPage
-			&& this.eDeveloperPage
-			&& this.eDeveloperPageForm 
-			&& this.eInputDeveloperPageAudio 
-			&& this.ePlayerDeveloperPageAudio 
-			&& this.eInputDeveloperPageMidi 
-			&& this.eInputDeveloperPageStopAudio 
-			// Elements - ProcessingContent
-			&& this.eProcessingContent 
-			// Elements - BassGuitarVisualizer
-			&& this.eBassGuitarVisualizer 
-			&& this.eBassGuitarNotesWrap 
-			&& this.eBassGuitarVisualizerNoteBars.length == 4
-		);
-
-		if (!bIsValid) {
-			console.log("Elements are invalid!");
-		}
 	}
 }
 
@@ -219,24 +259,48 @@ class CreationForm {
 				e.preventDefault();
 
 				// const formData = new FormData(e.target);
-				
-				
-
 			},
 			false
 		);
+
+		App.Cache.eInputSelectInstrument.addEventListener(
+			"change",
+			(e) => {
+				e.preventDefault();
+				this.updateConfigInstrumentPanels();
+			},
+			false
+		);
+
+		this.updateConfigInstrumentPanels();
+	}
+
+	updateConfigInstrumentPanels() {
+		const choice = App.Cache.eInputSelectInstrument.value;
+		console.log("eInputSelectInstrument value: " + choice);
+
+		App.Cache.eConfigInstrumentPanels.forEach((inElemX) => {
+			UIUtils.updateVisibility(inElemX, false);
+		});
+
+		if (choice == "bass-guitar") {
+			UIUtils.updateVisibility(App.Cache.eInputConfigBassGuitar, true);
+		}
 	}
 }
 
 
 class BassGuitarVisualizer {
 	constructor() {
+		/* State */
 		this.widthMultiplier = 100;
 		this.widthOfNoteBar = 0;
 		this.pxPerTick = 0;
 		this.pxPerSecond = 0;
 		this.endOfTrackTicks = 0;
 		this.endOfTrackSeconds = 0;
+		/* Elements */
+		this.eBassGuitarVisualizerNoteBars = [];
 
 		App.Cache.ePlayerDeveloperPageAudio.addEventListener(
 			"restart-audio",
@@ -271,19 +335,42 @@ class BassGuitarVisualizer {
 		this.pxPerSecond = this.pxPerTick * this.endOfTrackTicks / this.endOfTrackSeconds;
 		// console.log("Pixels per note tick: " + this.pxPerTick);
 
-		// Set the base style.
-		App.Cache.eBassGuitarVisualizerNoteBars.forEach((inElemX) => {
-			inElemX.style.width = this.widthOfNoteBar + 'px';
-		});
-		App.Cache.eBassGuitarNotesWrap.style.left = '0px';
+		// Clear html that will be regenerated.
+		App.Cache.eBassGuitarTuningWrap.innerHTML = "";
+		App.Cache.eBassGuitarStringsWrap.innerHTML = "";
+		App.Cache.eBassGuitarNotesWrap.innerHTML = "";
 
-		// Clear the html for the notes bar, we will regenerate the data.
-		App.Cache.eBassGuitarVisualizerNoteBars.forEach((inElemX) => {
-			inElemX.innerHTML = "";
-		});
-		// For every bar we collect html.
+		// Some data from the configuration such as tuning has to be collected and written to elements.
+		let tuningLetterHTMLArr = [];
+		let stringsHTMLArr = [];
+		let noteTrackHTMLArr = [];
+		const stringMidiOffsets = App.Cache.eInputSelectBassGuitarTuning.value.split(",");
+		for (let x = 0; x < stringMidiOffsets.length; x++) {
+			const stringNumberX = x + 1;
+			const stringOffsetX = stringMidiOffsets[x];
+
+			tuningLetterHTMLArr.push('<span class="bass-guitar-tuning-letter" data-string-number="' + stringNumberX + '">' + UIUtils.midiNumberToNoteLetter(stringOffsetX) + '</span>');
+			stringsHTMLArr.push('<div class="bass-guitar-string-line" data-string-number="' + stringNumberX + '"></div>');
+			noteTrackHTMLArr.push('<div class="bass-guitar-note-bar" data-midi-offset="' + stringOffsetX + '" data-string-number="' + stringNumberX  + '"></div>');
+		}
+		if (App.Cache.eInputBassGuitarOrderStringsThickAtBottom.checked) {
+			tuningLetterHTMLArr.reverse();
+			stringsHTMLArr.reverse();
+			noteTrackHTMLArr.reverse();
+		}
+		const tuningLetterHTML = tuningLetterHTMLArr.join();
+		const stringsHTML = stringsHTMLArr.join();
+		const noteTrackHTML = noteTrackHTMLArr.join();
+
+		App.Cache.eBassGuitarTuningWrap.insertAdjacentHTML('afterbegin', tuningLetterHTML);
+		App.Cache.eBassGuitarStringsWrap.insertAdjacentHTML('afterbegin', stringsHTML);
+		App.Cache.eBassGuitarNotesWrap.insertAdjacentHTML('afterbegin', noteTrackHTML);
+		// Store the generated note bars for later use.
+		this.eBassGuitarVisualizerNoteBars = document.querySelectorAll('#bass-guitar-notes-wrap .bass-guitar-note-bar');
+
+		// For every bar we collect html to display notes.
 		let notesHTML = {};
-		App.Cache.eBassGuitarVisualizerNoteBars.forEach((inElemX) => {
+		this.eBassGuitarVisualizerNoteBars.forEach((inElemX) => {
 			notesHTML[inElemX.dataset.midiOffset] = [];
 		});
 		
@@ -315,14 +402,29 @@ class BassGuitarVisualizer {
 				return;
 			}
 
-			notesHTML[optimalKey] += '<div class="bass-guitar-note" style="left: ' + notePosition + 'px; width: ' + noteWidth + 'px;"><span>' + note.midi + '</span></div>';
+			notesHTML[optimalKey] += '<div class="bass-guitar-note" style="left: ' + notePosition + 'px; width: ' + noteWidth + 'px;"><span>' + UIUtils.midiNumberToFretNumber(optimalKey, note.midi) + '</span></div>';
 		}
 
 		// Write the note bars html.
-		App.Cache.eBassGuitarVisualizerNoteBars.forEach((inElemX) => {
-			inElemX.insertAdjacentHTML('afterbegin', notesHTML[inElemX.dataset.midiOffset])
+		let processedOffsets = [];
+
+		this.eBassGuitarVisualizerNoteBars.forEach((inElemX) => {
+			const offsetX = inElemX.dataset.midiOffset;
+			if (processedOffsets.includes(offsetX)) {
+				console.log("The offset specified on this element has already been processed to calculate note positions. Two strings can not be tuned to the same value.");
+			}
+			else {
+				inElemX.insertAdjacentHTML('afterbegin', notesHTML[offsetX])
+				processedOffsets.push(inElemX.dataset.midiOffset);
+			}
 		});
 
+		// Set the default track width and position.
+		this.eBassGuitarVisualizerNoteBars.forEach((inElemX) => {
+			inElemX.style.width = this.widthOfNoteBar + 'px';
+		});
+		App.Cache.eBassGuitarNotesWrap.style.left = '0px';
+		
 		// Start 'playing' visuals.
 		this.refreshInterval = setInterval(() => { this.refresh() }, 1 / App.fps * 1000);
 	}
@@ -339,7 +441,7 @@ class BassGuitarVisualizer {
 		const noteBarPosition = currentAudioTime * this.pxPerSecond;
 		// TODO this is choppy movement?
 		// App.Cache.eBassGuitarNotesWrap.style.left = -noteBarPosition + 'px';
-		App.Cache.eBassGuitarVisualizerNoteBars.forEach((inElemX) => {
+		this.eBassGuitarVisualizerNoteBars.forEach((inElemX) => {
 			inElemX.style.transform = 'translatex(' + -noteBarPosition + 'px)';
 		});
 	}

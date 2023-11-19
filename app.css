@@ -218,19 +218,16 @@ input[type=checkbox] {
 	flex-direction: column;
 }
 
-.bass-guitar-string-tuning {
-	width: 50px;
-	text-align: center;
-	flex: 1;
-	display: flex;
-}
-
 .bass-guitar-tuning-letter {
 	font-size: 15px;
-	flex: 1;
 	color: white;
 	align-self: center;
 	border-right: medium solid #666;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	margin: auto;
+	width: 50px;
 }
 
 #bass-guitar-note-visualizer {
@@ -246,26 +243,11 @@ input[type=checkbox] {
 	flex-direction: column;
 }
 
-.bass-guitar-string-bar {
-	display: flex;
-	flex-direction: column;
-	flex: 1;
-}
-
-.bass-guitar-string-half {
-	flex: 1;
-}
-
-.bass-guitar-string-center {
-	display: flex;
-	align-items: center;
-}
-
 .bass-guitar-string-line {
 	height: 3px;
-	flex: 1;
 	background-image: linear-gradient(0.25turn, #fafafa, #666);
-	position: relative;
+	margin: auto;
+	width: 100%;
 }
 
 #bass-guitar-notes-wrap {

@@ -21,7 +21,7 @@
 					<div class="row">
 						<div class="col-12">
 							<fieldset class="fieldstyle">
-								<legend>Audio Input</legend>
+								<legend>Configuration</legend>
 
 								<label for="input-developer-page-audio">Audio input</label>
 								<input id="input-developer-page-audio" type="file" accept="audio/*"/>
@@ -30,6 +30,24 @@
 								<label for="input-developer-page-midi">Midi input</label>
 								<input id="input-developer-page-midi" type="file" accept="audio/midi"/>
 
+								<hr>
+
+								<label for="input-select-instrument">Select an instrument:</label>
+								<select id="input-select-instrument" name="input-select-instrument">
+								  <option value="bass-guitar">Bass guitar</option>
+								</select> 
+
+								<div id="config-bass-guitar" class="config-instrument-panel hide">
+									<label for="input-select-bass-guitar-tuning">Select a tuning:</label>
+									<select id="input-select-bass-guitar-tuning" name="input-select-bass-guitar-tuning">
+										<!-- MIDI number notation as actual value -->
+										<option value="28,33,38,43">E A D G</option>
+									</select>
+
+									<label for="input-bass-guitar-order-strings-thick-at-bottom">Order the strings by thickest at the bottom:</label>
+									<input id="input-bass-guitar-order-strings-thick-at-bottom" type="checkbox" checked/>
+								</div>
+								
 								<hr>
 
 								<input class="block" type="submit" value="Play">
@@ -47,68 +65,11 @@
 			</div>
 
 			<div id="bass-guitar-visualizer" class="main-wrap">
-				<div id="bass-guitar-tuning-wrap">
-					<div class="bass-guitar-string-tuning">
-						<span class="bass-guitar-tuning-letter">G</span>
-					</div>
-					<div class="bass-guitar-string-tuning">
-						<span class="bass-guitar-tuning-letter">D</span>
-					</div>
-					<div class="bass-guitar-string-tuning">
-						<span class="bass-guitar-tuning-letter">A</span>
-					</div>
-					<div class="bass-guitar-string-tuning">
-						<span class="bass-guitar-tuning-letter">E</span>
-					</div>
-				</div>
+				<div id="bass-guitar-tuning-wrap"></div>
 
 				<div id="bass-guitar-note-visualizer">
-					<div id="bass-guitar-strings-wrap">
-						<div class="bass-guitar-string-bar">
-							<div class="bass-guitar-string-half"></div>
-							<div class="bass-guitar-string-center">
-								<div class="bass-guitar-string-line"></div>
-							</div>
-							<div class="bass-guitar-string-half"></div>
-						</div>
-						<div class="bass-guitar-string-bar">
-							<div class="bass-guitar-string-half"></div>
-							<div class="bass-guitar-string-center">
-								<div class="bass-guitar-string-line"></div>
-							</div>
-							<div class="bass-guitar-string-half"></div>
-						</div>
-						<div class="bass-guitar-string-bar">
-							<div class="bass-guitar-string-half"></div>
-							<div class="bass-guitar-string-center">
-								<div class="bass-guitar-string-line"></div>
-							</div>
-							<div class="bass-guitar-string-half"></div>
-						</div>
-						<div class="bass-guitar-string-bar">
-							<div class="bass-guitar-string-half"></div>
-							<div class="bass-guitar-string-center">
-								<div class="bass-guitar-string-line"></div>
-							</div>
-							<div class="bass-guitar-string-half"></div>
-						</div>																			
-					</div>
-
-					<div id="bass-guitar-notes-wrap">
-						<!-- E1 A1 D2 G2 -->
-						<div class="bass-guitar-string-bar">
-							<div class="bass-guitar-note-bar" data-midi-offset="43"></div>
-						</div>
-						<div class="bass-guitar-string-bar">
-							<div class="bass-guitar-note-bar" data-midi-offset="38"></div>
-						</div>
-						<div class="bass-guitar-string-bar">
-							<div class="bass-guitar-note-bar" data-midi-offset="33"></div>
-						</div>
-						<div class="bass-guitar-string-bar">
-							<div class="bass-guitar-note-bar" data-midi-offset="28"></div>
-						</div>
-					</div>
+					<div id="bass-guitar-strings-wrap"></div>
+					<div id="bass-guitar-notes-wrap"></div>
 				</div>
 			</div>
 
