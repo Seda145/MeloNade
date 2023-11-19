@@ -207,8 +207,6 @@ input[type=checkbox] {
 #bass-guitar-visualizer {
 	height: 350px;
 	background-color: black;
-	border: thin solid #226f8d;
-  	border-radius: 4px;
 	display: flex;
 	flex-direction: row;
 }
@@ -228,6 +226,59 @@ input[type=checkbox] {
 	flex-direction: column;
 	margin: auto;
 	width: 50px;
+}
+
+#audio-analyzer-canvas {
+	width: 100%;
+	height: 300px;
+}
+
+#pitch-detection {
+	display: flex;
+	height: 150px;
+	position: relative;
+	container-type: size;
+	overflow: hidden;
+}
+
+.pitch-detection-bar {
+	height: 5px;
+	margin: auto;
+	background-color: #666;
+	flex: 1;
+}
+
+.pitch-detection-target {
+	background-color: #191717;
+	border-radius: 100%;
+	margin: auto;
+	width: 100px;
+	height: 100px;
+	border: medium solid #666;
+	display: flex;
+}
+
+.pitch-detection-target-letter {
+	margin: auto;
+	color: white;
+	font-size: 20px;
+}
+
+.pitch-detection-current-pos {
+	position: absolute;
+	width: 50px;
+	top: 0;
+	bottom: 0;
+	/* shift to left half its own width */
+	left: -25px;
+	background-color: #ffffff35;
+	height: 50px;
+	margin: auto;
+	border: medium solid white;
+	border-radius: 100%;
+	/* this transform uses the parent width to translate */
+	transform: translatex(50cqw);
+	transition: transform 0.05s linear;
 }
 
 #bass-guitar-note-visualizer {

@@ -60,15 +60,28 @@
 							</fieldset>
 						</div>
 					</div>
-
 				</form>
 			</div>
 
-			<div id="processing-content" class="main-wrap hide">
+			<div id="processing-content" class="main-wrap fieldstyle hide">
 
 			</div>
 
-			<div id="bass-guitar-visualizer" class="main-wrap">
+			<div id="audio-analyzer-content" class="main-wrap fieldstyle">
+				<!-- Canvas resolution needs to be specified like width and height here. -->
+				<canvas id="audio-analyzer-canvas"  width="1360px" height="300px"></canvas>
+				<div id="pitch-detection">
+					<div class="pitch-detection-bar"></div>
+					<div class="pitch-detection-target">
+						<span class="pitch-detection-target-letter">-</span>
+					</div>
+					<div class="pitch-detection-bar"></div>
+
+					<div class="pitch-detection-current-pos"></div>
+				</div>
+			</div>
+			
+			<div id="bass-guitar-visualizer" class="main-wrap fieldstyle">
 				<div id="bass-guitar-tuning-wrap"></div>
 
 				<div id="bass-guitar-note-visualizer">

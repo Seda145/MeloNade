@@ -2,7 +2,6 @@
 
 // External DOCS
 // https://web.dev/articles/media-recording-audio
-// https://stackoverflow.com/questions/69237143/how-do-i-get-the-audio-frequency-from-my-mic-using-javascript
 // https://medium.com/swinginc/playing-with-midi-in-javascript-b6999f2913c3
 // https://developer.mozilla.org/en-US/docs/Web/API/Web_MIDI_API
 // https://webaudio.github.io/web-audio-api/
@@ -14,6 +13,9 @@
 // https://github.com/WebAudio/web-midi-api/issues/232
 // https://stackoverflow.com/questions/41753349/convert-midi-file-to-list-of-notes-with-length-and-starting-time?rq=3
 // https://forum.metasystem.io/forum/metagrid-pro/beta/issues/2981-c-2-c-1-midi-notes-lower-keyboard-range-question
+// https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+// https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode
+// https://stackoverflow.com/questions/69237143/how-do-i-get-the-audio-frequency-from-my-mic-using-javascript
 
 
 class UIUtils {
@@ -291,6 +293,90 @@ class CreationForm {
 }
 
 
+class AudioAnalyzer {
+	constructor() {
+		this.audioContext = new AudioContext();
+		this.canvas = document.getElementById("audio-analyzer-canvas");
+
+		this.analyser = this.audioContext.createAnalyser();
+		this.analyser.fftSize = 2048;
+		this.bufferLength = this.analyser.frequencyBinCount;
+		this.dataArray = new Uint8Array(this.bufferLength);
+		this.analyser.getByteTimeDomainData(this.dataArray);
+
+		navigator.mediaDevices.getUserMedia({ video: false, audio: true })
+		.then((stream) => {
+			this.source = this.audioContext.createMediaStreamSource(stream);
+			this.source.connect(this.analyser);
+
+            const audioData = new Float32Array(this.analyser.fftSize);
+            // const corrolatedSignal = new Float32Array(this.analyser.fftSize);
+
+            setInterval(() => {
+                this.analyser.getFloatTimeDomainData(audioData);
+
+                const pitch = this.getAutocorrolatedPitch();
+
+                frequencyDisplayElement.innerHTML = `${pitch}`;
+            }, App.msForfps);
+		}).catch((err) => {
+			console.error(`${err.name}: ${err.message}`);
+		});
+
+		// Connect the source to be analysed
+		// Get a canvas defined with ID "oscilloscope"
+		this.canvasCtx = this.canvas.getContext("2d");
+
+		App.Cache.ePlayerDeveloperPageAudio.addEventListener(
+			"restart-audio",
+			async (e) => {
+				e.preventDefault();
+				this.draw();
+			},
+			false
+		);
+	}
+
+	draw() {
+		// draw an oscilloscope of the current audio source
+		window.requestAnimationFrame(() => { this.draw(); });
+
+		this.analyser.getByteTimeDomainData(this.dataArray);
+
+		this.canvasCtx.fillStyle = "rgb(200, 200, 200)";
+		this.canvasCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+		this.canvasCtx.lineWidth = 2;
+		this.canvasCtx.strokeStyle = "rgb(0, 0, 0)";
+
+		this.canvasCtx.beginPath();
+
+		const sliceWidth = (this.canvas.width * 1.0) / this.bufferLength;
+		let x = 0;
+		for (let i = 0; i < this.bufferLength; i++) {
+			const v = this.dataArray[i] / 128.0;
+			const y = (v * this.canvas.height) / 2;
+
+			if (i === 0) {
+				this.canvasCtx.moveTo(x, y);
+			} 
+			else {
+				this.canvasCtx.lineTo(x, y);
+			}
+
+			x += sliceWidth;
+		}
+
+		this.canvasCtx.lineTo(this.canvas.width, this.canvas.height / 2);
+		this.canvasCtx.stroke();
+	}
+
+	getAutocorrolatedPitch() {
+
+	}
+}
+
+
 class BassGuitarVisualizer {
 	constructor() {
 		/* State */
@@ -359,9 +445,9 @@ class BassGuitarVisualizer {
 			stringsHTMLArr.reverse();
 			noteTrackHTMLArr.reverse();
 		}
-		const tuningLetterHTML = tuningLetterHTMLArr.join();
-		const stringsHTML = stringsHTMLArr.join();
-		const noteTrackHTML = noteTrackHTMLArr.join();
+		const tuningLetterHTML = tuningLetterHTMLArr.join("");
+		const stringsHTML = stringsHTMLArr.join("");
+		const noteTrackHTML = noteTrackHTMLArr.join("");
 
 		App.Cache.eBassGuitarTuningWrap.insertAdjacentHTML('afterbegin', tuningLetterHTML);
 		App.Cache.eBassGuitarStringsWrap.insertAdjacentHTML('afterbegin', stringsHTML);
@@ -427,7 +513,7 @@ class BassGuitarVisualizer {
 		App.Cache.eBassGuitarNotesWrap.style.left = '0px';
 		
 		// Start 'playing' visuals.
-		this.refreshInterval = setInterval(() => { this.refresh() }, 1 / App.fps * 1000);
+		this.refreshInterval = setInterval(() => { this.refresh() }, App.msForfps);
 	}
 	
 	stop() {
@@ -498,6 +584,7 @@ class Navigation {
 class MyApp {
 	constructor() {
 		this.fps = 120;
+		this.msForfps = 1 / this.fps * 1000;
 	}
 
 	startModule() {
@@ -507,6 +594,8 @@ class MyApp {
 		this.AudioProcessor = new AudioProcessor();
 		// Register the forms
 		this.CreationForm = new CreationForm();
+		// Analyzers
+		this.AudioAnalyzer = new AudioAnalyzer();
 		// Visualizer
 		this.BassGuitarVisualizer = new BassGuitarVisualizer();
 		// Navigation.
