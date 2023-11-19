@@ -55,6 +55,7 @@ class Cache {
 		this.eInputDeveloperPageAudio = document.getElementById('input-developer-page-audio');
 		this.ePlayerDeveloperPageAudio = document.getElementById('player-developer-page-audio');
 		this.eInputDeveloperPageMidi = document.getElementById('input-developer-page-midi');
+		this.eInputListenToMidi = document.getElementById('input-listen-to-midi');
 		this.eInputDeveloperPageStopAudio = document.getElementById('input-developer-page-stop-audio');
 		// Elements - DeveloperPage - SelectInstrument
 		this.eInputSelectInstrument = document.getElementById('input-select-instrument');
@@ -88,6 +89,7 @@ class Cache {
 			&& this.eInputDeveloperPageAudio 
 			&& this.ePlayerDeveloperPageAudio 
 			&& this.eInputDeveloperPageMidi 
+			&& this.eInputListenToMidi 
 			&& this.eInputDeveloperPageStopAudio 
 			// Elements - DeveloperPage - SelectInstrument
 			&& this.eInputSelectInstrument
@@ -169,11 +171,7 @@ class AudioProcessor {
 		this.isPlaying = true;
 
 		App.Cache.ePlayerDeveloperPageAudio.play();
-		// Play the midi sound, for debugging.
-		this.DebugMIDIWithAudioSyncInterval = setInterval(() => { this.DebugMIDIWithAudioSync() }, this.intervalResolution);
-		// Listen for a match between midi and audio frequency.
-		// Used so we can play along with midi on an instrument and register if we play a note / play the right note.
-		this.ListenToAudioMatchInterval = setInterval(() => { this.ListenToAudioMatch() }, this.intervalResolution);
+		this.ProcessMIDIWithAudioSyncInterval = setInterval(() => { this.ProcessMIDIWithAudioSync() }, this.intervalResolution);
 
 		const restartAudioEvent = new Event('restart-audio', { bubbles: false });
 		App.Cache.ePlayerDeveloperPageAudio.dispatchEvent(restartAudioEvent);
@@ -186,15 +184,14 @@ class AudioProcessor {
 		console.log("Stopping audio");
 		App.Cache.ePlayerDeveloperPageAudio.currentTime = 0;
 		App.Cache.ePlayerDeveloperPageAudio.pause();
-		clearInterval(this.DebugMIDIWithAudioSyncInterval);
-		clearInterval(this.ListenToAudioMatchInterval);
+		clearInterval(this.ProcessMIDIWithAudioSyncInterval);
 		this.isPlaying = false;
 
 		const stopAudioEvent = new Event('stop-audio', { bubbles: false });
 		App.Cache.ePlayerDeveloperPageAudio.dispatchEvent(stopAudioEvent);
 	}
 
-	DebugMIDIWithAudioSync() {
+	ProcessMIDIWithAudioSync() {
 		// Since clocks are not accurate the current MIDI tick should be synced to audio playtime.
 		// To get a position in midi ticks from playback seconds, we can use methods in the midi header class.
 		// https://stackoverflow.com/questions/2038313/converting-midi-ticks-to-actual-playback-seconds
@@ -229,23 +226,27 @@ class AudioProcessor {
 			const midiFrequency = Math.pow(2, (note.midi - 69) / 12) * 440;
 			console.log("Note frequency: " + midiFrequency);
 			
-			// oscillator for debugging. It can't start / stop twice, so recreate it.
-			if (this.oscillator) {
-				this.oscillator.disconnect(this.audioContext.destination);
+			//
+
+			// TODO process input / audio against midi to see if we are playing matching notes on an instrument.
+
+			//
+
+			if (App.Cache.eInputListenToMidi.checked) {
+				// oscillator for debugging. It can't start / stop twice, so recreate it.
+				if (this.oscillator) {
+					this.oscillator.disconnect(this.audioContext.destination);
+				}
+				this.oscillator = this.audioContext.createOscillator();
+				this.oscillator.type = "sine";
+				// this.oscillator.gain = 0.5;
+				console.log(this.oscillator);
+				this.oscillator.connect(this.audioContext.destination);
+				this.oscillator.frequency.setTargetAtTime(midiFrequency, this.audioContext.currentTime, 0);
+				this.oscillator.start(this.audioContext.currentTime);
+				this.oscillator.stop(this.audioContext.currentTime + this.midi.header.ticksToSeconds(note.durationTicks));
 			}
-			this.oscillator = this.audioContext.createOscillator();
-			this.oscillator.type = "sine";
-			// this.oscillator.gain = 0.5;
-			console.log(this.oscillator);
-			this.oscillator.connect(this.audioContext.destination);
-			this.oscillator.frequency.setTargetAtTime(midiFrequency, this.audioContext.currentTime, 0);
-			this.oscillator.start(this.audioContext.currentTime);
-			this.oscillator.stop(this.audioContext.currentTime + this.midi.header.ticksToSeconds(note.durationTicks));
 		}
-	}
-
-	ListenToAudioMatch() {
-
 	}
 }
 
