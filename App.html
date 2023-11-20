@@ -70,6 +70,7 @@
 			<div id="audio-analyzer-content" class="main-wrap fieldstyle">
 				<!-- Canvas resolution needs to be specified like width and height here. -->
 				<canvas id="audio-analyzer-canvas"  width="1360px" height="300px"></canvas>
+
 				<div id="pitch-detection">
 					<div class="pitch-detection-bar"></div>
 					<div class="pitch-detection-target">
@@ -78,6 +79,11 @@
 					<div class="pitch-detection-bar"></div>
 
 					<div span="pitch-detection-current-pos"></div>
+				</div>
+
+				<div id="rms-detection">
+					<span>Volume:&nbsp;</span>
+					<span id="rms-detection-number">-</span>
 				</div>
 			</div>
 			

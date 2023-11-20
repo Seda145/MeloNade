@@ -19,6 +19,7 @@
 // https://newt.phys.unsw.edu.au/music/note/
 // https://newt.phys.unsw.edu.au/jw/notes.html
 // https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
+// https://stackoverflow.com/questions/40314457/audiobuffers-getchanneldata-equivalent-for-mediastream-or-mediastreamaudio
 
 
 class UIUtils {
@@ -52,7 +53,9 @@ class UIUtils {
 	}
 
 	static frequencyToNearestMidiNumber(inFrequency) {
-		return Math.round((12 * Math.log2(inFrequency / 440)) + 69);
+		const midiNumber = Math.round((12 * Math.log2(inFrequency / 440)) + 69);
+		console.log("nearest midi number to frequency: " + midiNumber);
+		return midiNumber;
 	}
 }
 
@@ -121,7 +124,7 @@ class Cache {
 		);
 
 		if (!bIsValid) {
-			console.log("Elements are invalid!");
+			console.error("Elements are invalid!");
 		}
 	}
 }
@@ -149,7 +152,7 @@ class AudioProcessor {
 				console.log("Setting audio source.");
 				const audioFile = App.Cache.eInputDeveloperPageAudio.files[0];
 				if (!audioFile) {
-					console.log("Invalid audio source.");
+					console.error("Invalid audio source.");
 					return;
 				}
 				const audioUrl = URL.createObjectURL(audioFile);
@@ -162,11 +165,11 @@ class AudioProcessor {
 				this.midi = await Midi.fromUrl(midiUrl);
 
 				if (!this.midi) {
-					console.log("Invalid midi source.");
+					console.error("Invalid midi source.");
 					return;
 				}
 				if (this.midi.tracks.length != 1) {
-					console.log("The amount of midi tracks must be 1.");
+					console.error("The amount of midi tracks must be 1.");
 					return;
 				}
 				console.log(this.midi);
@@ -233,10 +236,10 @@ class AudioProcessor {
 
 			// This means the note is currently playing within its duration time. Process it once.
 			note.processed = true;
-			console.log(note);
+			// console.log(note);
 
 			const midiFrequency = UIUtils.midiNumberToFrequency(note.midi);
-			console.log("Note frequency: " + midiFrequency);
+			// console.log("Note frequency: " + midiFrequency);
 			
 			//
 
@@ -308,23 +311,26 @@ class AudioAnalyzer {
 		this.audioContext = new AudioContext();
 		this.canvas = document.getElementById("audio-analyzer-canvas");
 
-		this.analyser = this.audioContext.createAnalyser();
-		this.analyser.fftSize = 2048;
-		// this.analyser.smoothingTimeConstant = 0.1;
-		this.bufferLength = this.analyser.frequencyBinCount;
-		this.dataArray = new Uint8Array(this.bufferLength);
-		this.analyser.getByteTimeDomainData(this.dataArray);
-		this.audioData = new Float32Array(this.analyser.fftSize);
-		this.corrolatedSignal = new Float32Array(this.analyser.fftSize);
-		this.localMaxima = new Array(3);
+		this.analyserNode = this.audioContext.createAnalyser();
+		this.analyserNode.fftSize = 2048;
+		// this.analyserNode.smoothingTimeConstant = 0.9;
+		this.bufferLength = this.analyserNode.fftSize;
+		this.audioData = new Float32Array(this.bufferLength);
+
+		this.corrolatedSignal = new Float32Array(this.analyserNode.fftSize);
+		this.localMaxima = new Array(4);
+		this.minRelevantRMS = 0.025;
+		this.currentRMS = 0.0;
+
 		this.eInputPitchDetectionTargetLetter = document.getElementById('pitch-detection-target-letter');
 		
 		navigator.mediaDevices.getUserMedia({ video: false, audio: true })
 		.then((stream) => {
 			this.source = this.audioContext.createMediaStreamSource(stream);
-			this.source.connect(this.analyser);
+			this.source.connect(this.analyserNode);
 		}).catch((err) => {
 			console.error(`${err.name}: ${err.message}`);
+			console.error("Could not find a microphone.");
 		});
 
 		// Connect the source to be analysed
@@ -351,24 +357,51 @@ class AudioAnalyzer {
 	}
 
 	start() {
-		this.drawInterval = setInterval(() => {
-			this.analyser.getFloatTimeDomainData(this.audioData);
-
-			const pitch = this.getAutocorrolatedPitch();
-			const midiNumber = UIUtils.frequencyToNearestMidiNumber(pitch);
-			const noteLetter = UIUtils.midiNumberToNoteLetter(midiNumber);
-
-			this.eInputPitchDetectionTargetLetter.innerHTML = `${noteLetter}`;
-		}, 20);
-
+		// this.canvasCtx.clearRect(0, 0, 1360, 300);
 		this.draw();
 	}
 
 	draw() {
-		// draw an oscilloscope of the current audio source
+		// Draw an oscilloscope of the current audio source.
+
 		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
 
-		this.analyser.getByteTimeDomainData(this.dataArray);
+		this.analyserNode.getFloatTimeDomainData(this.audioData);
+
+		{
+			// Read audioData volumes.
+			// Can also read from audio processing event.
+			// let input = event.inputBuffer.getChannelData(0);
+			let total = 0;
+			for (let i = 0; i < this.audioData.length; i++) {
+				total += Math.abs(this.audioData[i]);
+			} 
+			this.currentRMS = Math.sqrt(total / this.audioData.length);
+		}
+
+		if (this.currentRMS < this.minRelevantRMS) {
+			// We are playing low level noise that is garbage to display.
+			console.log("Irrelevant RMS");
+			this.eInputPitchDetectionTargetLetter.innerHTML = "-";
+		}
+		else {
+			console.log("Relevant RMS");
+
+			const pitch = this.getAutocorrolatedPitch();
+			const midiNumber = UIUtils.frequencyToNearestMidiNumber(pitch);
+			const noteLetter = UIUtils.midiNumberToNoteLetter(midiNumber);
+			this.eInputPitchDetectionTargetLetter.innerHTML = noteLetter;
+		}
+
+		// RMS to Decibels:
+		// const decibels = 20 * Math.log(this.currentRMS) / Math.log(10);
+		// Decibels to RMS:
+		// const rms = Math.pow(10, (decibel_level / 20));
+		// Example of using RMS visually as a 0 to 100 bar:
+		// const width = ( rms * 100 ) + '%' 
+
+		// console.log(decibels);
+		// console.log(this.currentRMS);
 
 		this.canvasCtx.fillStyle = "rgb(200, 200, 200)";
 		this.canvasCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -378,24 +411,31 @@ class AudioAnalyzer {
 
 		this.canvasCtx.beginPath();
 
-		const sliceWidth = (this.canvas.width * 1.0) / this.bufferLength;
-		let x = 0;
-		for (let i = 0; i < this.bufferLength; i++) {
-			const v = this.dataArray[i] / 128.0;
-			const y = (v * this.canvas.height) / 2;
+		{
+			const sliceWidth = (this.canvas.width * 1.0) / this.bufferLength;
+			let x = 0;
+			for (let i = 0; i < this.bufferLength; i++) {
+				// const v = this.audioData[i] * 200.0;
+				const v = this.audioData[i] * 200.0;
+				// const y = (v * this.canvas.height) / 2;
+				const y = this.canvas.height / 2 + v;
 
-			if (i === 0) {
-				this.canvasCtx.moveTo(x, y);
-			} 
-			else {
-				this.canvasCtx.lineTo(x, y);
+				if (i === 0) {
+					this.canvasCtx.moveTo(x, y);
+				} 
+				else {
+					this.canvasCtx.lineTo(x, y);
+				}
+
+				x += sliceWidth;
 			}
-
-			x += sliceWidth;
 		}
 
 		this.canvasCtx.lineTo(this.canvas.width, this.canvas.height / 2);
 		this.canvasCtx.stroke();
+
+		this.eRMSDetectionNumber = document.getElementById('rms-detection-number');
+		this.eRMSDetectionNumber.innerHTML = Math.round(this.currentRMS * 100);
 	}
 
 	stop() {
@@ -408,9 +448,9 @@ class AudioAnalyzer {
 
 		let maximaCount = 0;
 
-		for (let l = 0; l < this.analyser.fftSize; l++) {
+		for (let l = 0; l < this.analyserNode.fftSize; l++) {
 			this.corrolatedSignal[l] = 0;
-			for (let i = 0; i < this.analyser.fftSize - l; i++) {
+			for (let i = 0; i < this.analyserNode.fftSize - l; i++) {
 				this.corrolatedSignal[l] += this.audioData[i] * this.audioData[i + l];
 			}
 			if (l > 1) {
@@ -548,7 +588,7 @@ class BassGuitarVisualizer {
 				}
 			}
 			if (!notesHTML[optimalKey]) {
-				console.log("Error! Did not get an optimal offset for midi note on the note bar.");
+				console.error("Error! Did not get an optimal offset for midi note on the note bar.");
 				return;
 			}
 
@@ -561,7 +601,7 @@ class BassGuitarVisualizer {
 		this.eBassGuitarVisualizerNoteBars.forEach((inElemX) => {
 			const offsetX = inElemX.dataset.midiOffset;
 			if (processedOffsets.includes(offsetX)) {
-				console.log("The offset specified on this element has already been processed to calculate note positions. Two strings can not be tuned to the same value.");
+				console.error("The offset specified on this element has already been processed to calculate note positions. Two strings can not be tuned to the same value.");
 			}
 			else {
 				inElemX.insertAdjacentHTML('afterbegin', notesHTML[offsetX])
@@ -585,7 +625,7 @@ class BassGuitarVisualizer {
 	}
 
 	refresh() {
-		console.log("refreshing visualizer.");
+		// console.log("refreshing visualizer.");
 		// Move the absolute position of all notes from start to end, based on current play time of the audio.
 		const currentAudioTime = App.Cache.ePlayerDeveloperPageAudio.currentTime;
 		const noteBarPosition = currentAudioTime * this.pxPerSecond;
@@ -626,7 +666,7 @@ class Navigation {
 				UIUtils.updateVisibility(App.Cache.eProcessingContent, true);
 				break;
 			default:
-				console.log("Navigation error, this contentId is not used.");
+				console.error("Navigation error, this contentId is not used.");
 				return;
 		}
 
