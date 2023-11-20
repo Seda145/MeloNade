@@ -16,6 +16,9 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
 // https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode
 // https://stackoverflow.com/questions/69237143/how-do-i-get-the-audio-frequency-from-my-mic-using-javascript
+// https://newt.phys.unsw.edu.au/music/note/
+// https://newt.phys.unsw.edu.au/jw/notes.html
+// https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
 
 
 class UIUtils {
@@ -43,8 +46,15 @@ class UIUtils {
 		// Note that this does not clamp the value to a positive number or to a max amount of frets.
 		return inNumber - inStringNumberOffset;
 	}
-}
 
+	static midiNumberToFrequency(inMidiNumber) {
+		return Math.pow(2, (inMidiNumber - 69) / 12) * 440;
+	}
+
+	static frequencyToNearestMidiNumber(inFrequency) {
+		return Math.round((12 * Math.log2(inFrequency / 440)) + 69);
+	}
+}
 
 class Cache {
 	constructor() {
@@ -225,7 +235,7 @@ class AudioProcessor {
 			note.processed = true;
 			console.log(note);
 
-			const midiFrequency = Math.pow(2, (note.midi - 69) / 12) * 440;
+			const midiFrequency = UIUtils.midiNumberToFrequency(note.midi);
 			console.log("Note frequency: " + midiFrequency);
 			
 			//
@@ -300,25 +310,19 @@ class AudioAnalyzer {
 
 		this.analyser = this.audioContext.createAnalyser();
 		this.analyser.fftSize = 2048;
+		// this.analyser.smoothingTimeConstant = 0.1;
 		this.bufferLength = this.analyser.frequencyBinCount;
 		this.dataArray = new Uint8Array(this.bufferLength);
 		this.analyser.getByteTimeDomainData(this.dataArray);
-
+		this.audioData = new Float32Array(this.analyser.fftSize);
+		this.corrolatedSignal = new Float32Array(this.analyser.fftSize);
+		this.localMaxima = new Array(3);
+		this.eInputPitchDetectionTargetLetter = document.getElementById('pitch-detection-target-letter');
+		
 		navigator.mediaDevices.getUserMedia({ video: false, audio: true })
 		.then((stream) => {
 			this.source = this.audioContext.createMediaStreamSource(stream);
 			this.source.connect(this.analyser);
-
-            const audioData = new Float32Array(this.analyser.fftSize);
-            // const corrolatedSignal = new Float32Array(this.analyser.fftSize);
-
-            setInterval(() => {
-                this.analyser.getFloatTimeDomainData(audioData);
-
-                const pitch = this.getAutocorrolatedPitch();
-
-                frequencyDisplayElement.innerHTML = `${pitch}`;
-            }, App.msForfps);
 		}).catch((err) => {
 			console.error(`${err.name}: ${err.message}`);
 		});
@@ -331,15 +335,38 @@ class AudioAnalyzer {
 			"restart-audio",
 			async (e) => {
 				e.preventDefault();
-				this.draw();
+				this.start();
+			},
+			false
+		);
+
+		App.Cache.ePlayerDeveloperPageAudio.addEventListener(
+			"stop-audio",
+			(e) => {
+				e.preventDefault();
+				this.stop();
 			},
 			false
 		);
 	}
 
+	start() {
+		this.drawInterval = setInterval(() => {
+			this.analyser.getFloatTimeDomainData(this.audioData);
+
+			const pitch = this.getAutocorrolatedPitch();
+			const midiNumber = UIUtils.frequencyToNearestMidiNumber(pitch);
+			const noteLetter = UIUtils.midiNumberToNoteLetter(midiNumber);
+
+			this.eInputPitchDetectionTargetLetter.innerHTML = `${noteLetter}`;
+		}, 20);
+
+		this.draw();
+	}
+
 	draw() {
 		// draw an oscilloscope of the current audio source
-		window.requestAnimationFrame(() => { this.draw(); });
+		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
 
 		this.analyser.getByteTimeDomainData(this.dataArray);
 
@@ -371,8 +398,44 @@ class AudioAnalyzer {
 		this.canvasCtx.stroke();
 	}
 
-	getAutocorrolatedPitch() {
+	stop() {
+		clearInterval(this.drawInterval);
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
+	}
 
+	getAutocorrolatedPitch() {
+		// First: autocorrolate the signal
+
+		let maximaCount = 0;
+
+		for (let l = 0; l < this.analyser.fftSize; l++) {
+			this.corrolatedSignal[l] = 0;
+			for (let i = 0; i < this.analyser.fftSize - l; i++) {
+				this.corrolatedSignal[l] += this.audioData[i] * this.audioData[i + l];
+			}
+			if (l > 1) {
+				if ((this.corrolatedSignal[l - 2] - this.corrolatedSignal[l - 1]) < 0
+					&& (this.corrolatedSignal[l - 1] - this.corrolatedSignal[l]) > 0) {
+					this.localMaxima[maximaCount] = (l - 1);
+					maximaCount++;
+					if ((maximaCount >= this.localMaxima.length)) {
+						break;
+					}
+				}
+			}
+		}
+
+		// Second: find the average distance in samples between maxima
+
+		let maximaMean = this.localMaxima[0];
+
+		for (let i = 1; i < maximaCount; i++) {
+			maximaMean += this.localMaxima[i] - this.localMaxima[i - 1];
+		}
+
+		maximaMean /= maximaCount;
+
+		return this.audioContext.sampleRate / maximaMean;
 	}
 }
 
@@ -583,7 +646,7 @@ class Navigation {
 
 class MyApp {
 	constructor() {
-		this.fps = 120;
+		this.fps = 60;
 		this.msForfps = 1 / this.fps * 1000;
 	}
 

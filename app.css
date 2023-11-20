@@ -258,13 +258,13 @@ input[type=checkbox] {
 	display: flex;
 }
 
-.pitch-detection-target-letter {
+#pitch-detection-target-letter {
 	margin: auto;
 	color: white;
 	font-size: 20px;
 }
 
-.pitch-detection-current-pos {
+#pitch-detection-current-pos {
 	position: absolute;
 	width: 50px;
 	top: 0;
