@@ -11,107 +11,42 @@
 	</head>
 
 	<body>
-	
-		<header></header>
-
-		<main class="main-wrap container">
-
-			<div id="developer-page" class="main-wrap hide">
-				<form id="developer-page-form">
-					<div class="row">
-						<div class="col-12">
-							<fieldset class="fieldstyle">
-								<legend>Configuration</legend>
-
-								<label for="input-developer-page-audio">Audio input</label>
-								<input id="input-developer-page-audio" type="file" accept="audio/*"/>
-								<audio id="player-developer-page-audio" controls muted></audio>
-
-								<label for="input-developer-page-midi">Midi input</label>
-								<input id="input-developer-page-midi" type="file" accept="audio/midi"/>
-
-								<label for="input-listen-to-midi">ListenToMidi:</label>
-								<input id="input-listen-to-midi" type="checkbox" checked/>
-
-								<hr>
-
-								<label for="input-select-instrument">Select an instrument:</label>
-								<select id="input-select-instrument" name="input-select-instrument">
-								  <option value="bass-guitar">Bass guitar</option>
-								</select> 
-
-								<div id="config-bass-guitar" class="config-instrument-panel hide">
-									<label for="input-select-bass-guitar-tuning">Select a tuning:</label>
-									<select id="input-select-bass-guitar-tuning" name="input-select-bass-guitar-tuning">
-										<!-- MIDI number notation as actual value -->
-										<option value="28,33,38,43">E A D G</option>
-										<option value="26,33,38,43">D A D G</option>
-									</select>
-
-									<label for="input-bass-guitar-order-strings-thick-at-bottom">Order the strings by thickest at the bottom:</label>
-									<input id="input-bass-guitar-order-strings-thick-at-bottom" type="checkbox" checked/>
-								</div>
-								
-								<hr>
-
-								<input class="block" type="submit" value="Play">
-								<br>
-								<button id="input-developer-page-stop-audio" class="block" type="button">Stop</button>
-							</fieldset>
-						</div>
-					</div>
-				</form>
-			</div>
-
-			<div id="processing-content" class="main-wrap fieldstyle hide">
-
-			</div>
-
-			<div id="audio-analyzer-content" class="main-wrap fieldstyle">
-				<!-- Canvas resolution needs to be specified like width and height here. -->
-				<canvas id="audio-analyzer-canvas"  width="1360px" height="300px"></canvas>
-
-				<div id="pitch-detection">
-					<div class="pitch-detection-bar"></div>
-					<div class="pitch-detection-target">
-						<span id="pitch-detection-target-letter">-</span>
-					</div>
-					<div class="pitch-detection-bar"></div>
-
-					<div span="pitch-detection-current-pos"></div>
-				</div>
-
-				<div id="rms-detection">
-					<span>Volume:&nbsp;</span>
-					<span id="rms-detection-number">-</span>
-				</div>
-			</div>
-			
-			<div id="bass-guitar-visualizer" class="main-wrap fieldstyle">
-				<div id="bass-guitar-tuning-wrap"></div>
-
-				<div id="bass-guitar-note-visualizer">
-					<div id="bass-guitar-strings-wrap"></div>
-					<div id="bass-guitar-notes-wrap"></div>
-				</div>
-			</div>
-
-			<div id="bottom-bar">
-				<div id="tabs" class="main-wrap">
-					<span class="tab" data-contentid="0">Input</span>
-					<span class="tab" data-contentid="1">Processing</span>
-				</div>
-			</div>
-						
-		</main>
 		
-		<footer></footer>
+		<!-- JS files are linked here. Dynamic loading without a web server would result in CORS blocking. -->
 
-		<!-- Libs https://github.com/Tonejs/Midi/tree/master -->
+		<!-- Load external libraries -->
+		<!-- https://github.com/Tonejs/Midi/tree/master -->
 		<script src="./libs/ToneJS-Midi/Midi.js"></script> 
-		<!-- App -->
+
+		<!-- Load utilities -->
+		<script src="./utils/ui-utils.js"></script> 
+
+		<!-- Load components. Dynamic loading of local files not possible without a webserver (CORS). -->
+		<script src="./components/audio-processor.js"></script> 
+
+        <link rel="stylesheet" href="./components/bass-guitar-visualizer.css">
+		<script src="./components/bass-guitar-visualizer.js"></script> 
+
+		<script src="./components/developer-page.js"></script> 
+
+        <link rel="stylesheet" href="./components/navigation.css">
+		<script src="./components/navigation.js"></script> 
+
+        <link rel="stylesheet" href="./components/oscilloscope.css">
+		<script src="./components/oscilloscope.js"></script> 
+
+        <link rel="stylesheet" href="./components/pitch-detection.css">
+		<script src="./components/pitch-detection.js"></script> 
+
+		<script src="./components/processing-content.js"></script> 
+
+        <link rel="stylesheet" href="./components/rms-detection.css">
+		<script src="./components/rms-detection.js"></script> 
+
+		<!-- Load the app -->
+		<div id="app-wrap"></div>
 		<script src="./app.js"></script> 
-	 
+
 	</body>
 
 </html> 

@@ -31,10 +31,11 @@ legend, label, p, span, h1, h2, h3, h4, h5, h6 {
 	color: white;
 }
 
-label {
+label > span {
+	/* Make text within labels use the full width available. Block tags are not allowed. */
 	display: block;
+	margin-bottom: 10px;
 	margin-top: 10px;
-	margin-bottom: 5px;
 }
 
 label:hover,
@@ -111,60 +112,6 @@ hr {
 	padding-bottom: 25px;
 }
 
-/* Tab system */
-
-#bottom-bar {
-	position: fixed;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background-color: #040504;
-	border-top: thin solid gray;
-	filter: drop-shadow(0px -4px 4px #226f8d);
-	display: flex;
-	flex-direction: column;
-	padding-left: 15px;
-	padding-right: 15px;
-}
-
-#tabs {
-	display: flex;
-	width: 100%;
-	justify-content: flex-end;
-}
-
-.tab {
-	display: inline-block;
-	padding: 5px 10px;
-	background-color: #384757;
-	color: white;
-	font-size: 14px;
-	border-radius: 4px;
-	margin: 10px 7px;
-	margin-left: 0;
-	flex: 1;
-	min-height: 40px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-.tab:first-child {
-	margin-left: 0;
-}
-.tab:last-child {
-	margin-right: 0;
-}
-.tab:hover {
-	cursor: pointer;
-	opacity: 0.8;
-	transition: opacity 0.2s;
-}
-.tab.active {
-	background-color: #226f8d;
-}
-
-/* Re-used in app */
-
 .fieldstyle {
 	background-color: #181e18;
 	border: thin solid #226f8d;
@@ -199,154 +146,6 @@ input[type=checkbox] {
 	width: 20px;
 	height: 20px;
 }
-
-/* Developer page */
-
-/* Bass Guitar Visualizer */
-
-#bass-guitar-visualizer {
-	height: 350px;
-	background-color: black;
-	display: flex;
-	flex-direction: row;
-}
-
-#bass-guitar-tuning-wrap {
-	display: flex;
-	flex-direction: column;
-}
-
-.bass-guitar-tuning-letter {
-	font-size: 15px;
-	color: white;
-	align-self: center;
-	border-right: medium solid #666;
-	text-align: center;
-	display: flex;
-	flex-direction: column;
-	margin: auto;
-	width: 50px;
-}
-
-#audio-analyzer-canvas {
-	width: 100%;
-	height: 300px;
-}
-
-#pitch-detection {
-	display: flex;
-	height: 150px;
-	position: relative;
-	container-type: size;
-	overflow: hidden;
-}
-
-.pitch-detection-bar {
-	height: 5px;
-	margin: auto;
-	background-color: #666;
-	flex: 1;
-}
-
-.pitch-detection-target {
-	background-color: #191717;
-	border-radius: 100%;
-	margin: auto;
-	width: 100px;
-	height: 100px;
-	border: medium solid #666;
-	display: flex;
-}
-
-#pitch-detection-target-letter {
-	margin: auto;
-	color: white;
-	font-size: 20px;
-}
-
-#pitch-detection-current-pos {
-	position: absolute;
-	width: 50px;
-	top: 0;
-	bottom: 0;
-	/* shift to left half its own width */
-	left: -25px;
-	background-color: #ffffff35;
-	height: 50px;
-	margin: auto;
-	border: medium solid white;
-	border-radius: 100%;
-	/* this transform uses the parent width to translate */
-	transform: translatex(50cqw);
-	transition: transform 0.05s linear;
-}
-
-#rms-detection {
-	width: 200px;
-	background-color: black;
-	display: flex;
-	align-items: center;
-	padding: 15px;
-	border: thin solid white;
-	font-size: 18px;
-}
-
-#bass-guitar-note-visualizer {
-	position: relative;
-	overflow: hidden;
-	display: flex;
-	flex: 1;
-}
-
-#bass-guitar-strings-wrap {
-	display: flex;
-	flex: 1;
-	flex-direction: column;
-}
-
-.bass-guitar-string-line {
-	height: 3px;
-	background-image: linear-gradient(0.25turn, #fafafa, #666);
-	margin: auto;
-	width: 100%;
-}
-
-#bass-guitar-notes-wrap {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	display: flex;
-	flex-direction: column;
-}
-
-.bass-guitar-note-bar {
-	display: flex;
-	flex: 1;
-	align-items: center;
-	/* Still choppy */
-	transition: transform 0.2s cubic-bezier(0,1.11,1,1);
-}
-
-.bass-guitar-note {
-	position: absolute;
-	height: 32px;
-	width: 55px;
-	border-radius: 10px;
-	border: medium solid rgb(0, 119, 230);
-	background-color: #153342;
-	display: flex;
-	align-items: center;
-	text-align: center;
-	overflow: hidden;
-}
-
-.bass-guitar-note > span {
-	flex: 1;
-	font-size: 18px;
-}
-
 
 /* States */
 

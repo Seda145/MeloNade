@@ -1,0 +1,9 @@
+.rms-detection {
+	width: 200px;
+	background-color: black;
+	display: flex;
+	align-items: center;
+	padding: 15px;
+	border: thin solid white;
+	font-size: 18px;
+}
