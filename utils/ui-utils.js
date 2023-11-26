@@ -49,5 +49,10 @@ class UIUtils {
 		// console.log("nearest midi number to frequency: " + midiNumber);
 		return midiNumber;
 	}
+
+    static centsOffFromPitch(inFrequency, inNote) {
+        return Math.floor(1200 * Math.log(inFrequency / UIUtils.midiNumberToFrequency(inNote)) / Math.log(2));
+    }
+    
 }
 

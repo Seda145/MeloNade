@@ -8,21 +8,18 @@ class PitchDetection {
 	}
 
 	draw() {
-		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
+        this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
 
-        if (app.audioProcessor.currentRMS < app.audioProcessor.minRelevantRMS) {
-			// We are playing low level noise that is garbage to display.
-			// console.log("Irrelevant RMS");
-			this.eInputPitchDetectionTargetLetter.innerHTML = "-";
-		}
-		else {
-			// console.log("Relevant RMS");
-
-			const pitch = app.audioProcessor.autocorrolatedPitch;
-			const midiNumber = UIUtils.frequencyToNearestMidiNumber(pitch);
-			const noteLetter = UIUtils.midiNumberToNoteLetter(midiNumber);
-			this.eInputPitchDetectionTargetLetter.innerHTML = noteLetter;
-		}
+        const pitch = app.audioProcessor.autocorrolatedPitch;
+        const midiNumber = UIUtils.frequencyToNearestMidiNumber(pitch);
+        const noteLetter = UIUtils.midiNumberToNoteLetter(midiNumber);
+        if (typeof noteLetter === 'undefined') {
+            // console.error("noteLetter undefined. (rms too low?)");
+            this.eInputPitchDetectionTargetLetter.innerHTML = "-";
+        }
+        else {
+            this.eInputPitchDetectionTargetLetter.innerHTML = noteLetter;
+        }
     }
 
     create(inParentID) {

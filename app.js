@@ -62,6 +62,16 @@ class MyApp {
             },
             false
         );
+
+        
+        window.addEventListener(
+			"audio-processor-restarts-audio",
+			(e) => {
+				e.preventDefault();
+				this.navigation.navigateTo(1);
+			},
+			false
+		);
     }
 
     async startGame() {
