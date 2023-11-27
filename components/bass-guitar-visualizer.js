@@ -26,7 +26,7 @@ class BassGuitarVisualizer {
 			const stringNumberX = x + 1;
 			const stringOffsetX = app.audioProcessor.instrumentMidiOffsets[x];
 
-			tuningLetterHTMLArr.push('<span class="tuning-letter" data-string-number="' + stringNumberX + '">' + UIUtils.midiNumberToNoteLetter(stringOffsetX) + '</span>');
+			tuningLetterHTMLArr.push('<span class="tuning-letter" data-string-number="' + stringNumberX + '">' + midiUtils.midiNumberToNoteLetter(stringOffsetX) + '</span>');
 			stringsHTMLArr.push('<div class="string-line" data-string-number="' + stringNumberX + '"></div>');
 			noteTrackHTMLArr.push('<div class="note-bar" data-midi-offset="' + stringOffsetX + '" data-string-number="' + stringNumberX  + '"></div>');
 		}
@@ -79,7 +79,7 @@ class BassGuitarVisualizer {
 				return;
 			}
 
-			notesHTML[optimalKey] += '<div class="note" style="left: ' + notePosition + 'px; width: ' + noteWidth + 'px;"><span>' + UIUtils.midiNumberToFretNumber(optimalKey, note.midi) + '</span></div>';
+			notesHTML[optimalKey] += '<div class="note" data-note-index="' + i + '" style="left: ' + notePosition + 'px; width: ' + noteWidth + 'px;"><span>' + midiUtils.midiNumberToFretNumber(optimalKey, note.midi) + '</span></div>';
 		}
 
 		// Write the note bars html.
@@ -157,6 +157,25 @@ class BassGuitarVisualizer {
 			(e) => {
 				e.preventDefault();
 				this.stop();
+			},
+			false
+		);
+
+		window.addEventListener(
+			"audio-processor-processing-note",
+			(e) => {
+				e.preventDefault();
+				// console.log("response to hit note:");
+				// console.log(e.note);
+
+				let eCurrentNote = this.eNotesWrap.querySelector('.note[data-note-index="' + e.noteIndex + '"]');
+				if (!eCurrentNote) {
+					console.error("no matching note element found for processed note with index: " + e.noteIndex);
+					return;
+				} 
+				if (e.note.bHit) {
+					eCurrentNote.classList.add("hit");
+				}
 			},
 			false
 		);

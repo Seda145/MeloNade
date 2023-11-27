@@ -77,30 +77,27 @@ class MyApp {
     async startGame() {
         this.audioProcessor = new AudioProcessor();
 
-        this.ProcessingContent = new ProcessingContent();
-		this.ProcessingContent.create("processing-content-wrap", this.developerPage.eInputBassGuitarOrderStringsThickAtBottom.checked);
+        this.processingContent = new ProcessingContent();
+		this.processingContent.create("processing-content-wrap", this.developerPage.eInputBassGuitarOrderStringsThickAtBottom.checked);
 
         console.log("Setting audio source.");
         const audioFile = this.developerPage.eInputDeveloperPageAudio.files[0];
         let newAudio = new Audio(URL.createObjectURL(audioFile));
         
         console.log("Loading MIDI object.");
-        const midiFile = this.developerPage.eInputDeveloperPageMidi.files[0];
-        const midiUrl = URL.createObjectURL(midiFile);
-        const midi = await Midi.fromUrl(midiUrl);
-        console.log(midi);
+        const midiObj = await midiUtils.formatMidiFile(this.developerPage.eInputDeveloperPageMidi.files[0]);
 
         const stringMidiOffsets = this.developerPage.eInputSelectBassGuitarTuning.value.split(",");
-        const listenToMidi = this.developerPage.eInputListenToMidi.checked;
-        this.audioProcessor.restartAudio(newAudio, midi, stringMidiOffsets, listenToMidi);
+        const bListenToMidi = this.developerPage.eInputListenToMidi.checked;
+        this.audioProcessor.restartAudio(newAudio, midiObj, stringMidiOffsets, bListenToMidi);
     }
 
     stopGame() {
-        if (this.ProcessingContent) {
-            if (this.ProcessingContent.element) {
-                this.ProcessingContent.element.remove();
+        if (this.processingContent) {
+            if (this.processingContent.element) {
+                this.processingContent.element.remove();
             }
-            this.ProcessingContent = null;
+            this.processingContent = null;
         }
 
         if (this.audioProcessor) {

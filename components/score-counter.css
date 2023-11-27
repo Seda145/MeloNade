@@ -1,0 +1,19 @@
+.score-counter {
+    display: flex;
+    background: black;
+}
+
+.score-counter .counter-wrap {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+}
+
+.score-counter .counter {
+    text-align: center;
+    padding: 10px;
+    background: black;
+    font-size: 18px;
+}
+

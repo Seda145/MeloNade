@@ -73,6 +73,10 @@
 	overflow: hidden;
 }
 
+.bass-guitar-visualizer .note.hit {
+	border-color: white;	
+}
+
 .bass-guitar-visualizer .note > span {
 	flex: 1;
 	font-size: 18px;

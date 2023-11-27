@@ -13,11 +13,13 @@ class AudioProcessor {
 		this.autocorrolatedPitch = 0;
 		this.midi = 0;
 		this.instrumentMidiOffsets = [];
-		this.listenToMidi = true;
+		this.bListenToMidi = true;
+        this.currentNote = null;
+        this.currentNoteIndex = 0;
 	}
 
-	restartAudio(inAudio, inMidi, inInstrumentMidiOffsets, inListenToMidi) {
-		if (!inAudio || !inMidi || inMidi.tracks.length != 1) {
+	restartAudio(inAudio, inMidi, inInstrumentMidiOffsets, bInListenToMidi) {
+		if (!inAudio || !inMidi || !inMidi.tracks || inMidi.tracks.length != 1) {
 			console.error("Invalid audio element or midi. Midi track count must be 1.");
 			return;
 		}
@@ -40,7 +42,9 @@ class AudioProcessor {
             this.audio = inAudio;
             this.midi = inMidi;
             this.instrumentMidiOffsets = inInstrumentMidiOffsets
-            this.listenToMidi = inListenToMidi;
+            this.bListenToMidi = bInListenToMidi;
+            this.currentNote = null;
+            this.currentNoteIndex = 0;
     
             this.audio.play();
             this.isPlaying = true;
@@ -88,7 +92,7 @@ class AudioProcessor {
 		}
 
         // autocorrelate pitch.
-        let updatedAutocorrelatedPitch = false;
+        let bUpdatedAutocorrelatedPitch = false;
         if (this.currentRMS > this.minRelevantRMS) {
             // https://github.com/cwilso/PitchDetect/blob/main/js/pitchdetect.js
             // autocorrelation V2
@@ -147,7 +151,7 @@ class AudioProcessor {
         
             if (T0 != -1) {
                 this.autocorrolatedPitch = this.audioContext.sampleRate / T0;
-                updatedAutocorrelatedPitch = true;
+                bUpdatedAutocorrelatedPitch = true;
             }
             else {
                 // console.warn("Pitch not properly set. (rms too low?)");
@@ -157,31 +161,51 @@ class AudioProcessor {
         // Find the midi data at the current time of the audio file that is playing.
 		// Since clocks are not accurate the current MIDI tick should be synced to audio playtime.
 		// To get a position in midi ticks from playback seconds, we can use methods in the midi header class.
-		// https://stackoverflow.com/questions/2038313/converting-midi-ticks-to-actual-playback-seconds
 		// console.log(midi.header.secondsToTicks(2));
 		// TODO: Optimize this somehow. Perhaps reformat the data to be keyed to time.	
 		// TODO: Assumed is the MIDI comes with 1 track only.	
         // TODO: Current note is processed, not a chord. detect lowest frequency note and skip chord? do chord comparison?
-        let currentNote = null;
         {
-            for (let i = 0; i < this.midi.tracks[0].notes.length; i++) {
-                let note = this.midi.tracks[0].notes[i];
-                if (timeAsTick < note.ticks) {
-                    // This part of the audio has not been reached yet, there is nothing to do.
-                    break;
-                }
-                if (timeAsTick > (note.ticks + note.durationTicks)) {
+            // We track the current midi note index, which needs to be matched to the audio playback by time.
+            // The loop starts at this.currentNoteIndex to avoid running over all old data, so we assume we don't go back in time with the audio.
+            for (; this.currentNoteIndex < this.midi.tracks[0].notes.length; this.currentNoteIndex++) {
+                this.currentNote = this.midi.tracks[0].notes[this.currentNoteIndex];
+
+                if (timeAsTick > (this.currentNote.ticks + this.currentNote.durationTicks)) {
                     // This note is in the past and no longer 'during'.
+                    // We keep the index as a tracker but set the note to null because it is not matching audio time.
+                    this.currentNote = null;
                     continue;
                 }
-    
-                currentNote = note;
-                // console.log(note);
+
+                if (timeAsTick < this.currentNote.ticks) {
+                    // This part of the audio is in the future.
+                    // Expected is that notes are ordered past to future, so at this point there is nothing left to do but wait.
+                    // We keep the index as a tracker but set the note to null because it is not matching audio time.
+                    this.currentNote = null;
+                    break;
+                }
+
+                // Found a note that should be playing right now.
+                break;
+            }
+
+            // We should walk back from the current index to register any notes that we missed. 
+            // Mark those notes missed so we don't walk further than we have to.
+            for (let i = this.currentNoteIndex - 1; i >= 0; i--) {
+                let oldNote = this.midi.tracks[0].notes[i];
+                if (typeof oldNote.bHit !== 'undefined') {
+                    break;
+                }
+                oldNote.bHit = false;
+                let missedNoteEvent = new Event('audio-processor-missed-note', { bubbles: false });
+                missedNoteEvent.noteIndex = i;
+                window.dispatchEvent(missedNoteEvent);
             }
         }
 
-        if (this.listenToMidi && currentNote != null && !currentNote.playedByOscillator) {
-            const midiFrequency = UIUtils.midiNumberToFrequency(currentNote.midi);
+        if (this.bListenToMidi && this.currentNote != null && !this.currentNote.playedByOscillator) {
+            const midiFrequency = midiUtils.midiNumberToFrequency(this.currentNote.midi);
             // console.log("Note frequency: " + midiFrequency);
     
             // If listening to midi
@@ -196,22 +220,33 @@ class AudioProcessor {
             this.oscillator.connect(this.audioContext.destination);
             this.oscillator.frequency.setTargetAtTime(midiFrequency, this.audioContext.currentTime, 0);
             this.oscillator.start(this.audioContext.currentTime);
-            this.oscillator.stop(this.audioContext.currentTime + this.midi.header.ticksToSeconds(note.durationTicks));
-            currentNote.playedByOscillator = true;
+            this.oscillator.stop(this.audioContext.currentTime + this.midi.header.ticksToSeconds(this.currentNote.durationTicks));
+            this.currentNote.playedByOscillator = true;
         }
 
         // Process the MIDI data against the current audio data (microphone), to see if we find matching frequencies (like playing guitar along to music).
-        if (updatedAutocorrelatedPitch && currentNote != null) {
+        if (bUpdatedAutocorrelatedPitch && this.currentNote != null) {
             // const freqDiff = Math.abs(this.autocorrolatedPitch - midiFrequency);
             // console.log("Abs freq diff between midi (" + midiFrequency + ") and audio ("+ this.autocorrolatedPitch + "): " + freqDiff);
-            // console.log("Cents off from pitch (" + this.autocorrolatedPitch + "): "+ UIUtils.centsOffFromPitch(this.autocorrolatedPitch, currentNote.midi)); 
+            // console.log("Cents off from pitch (" + this.autocorrolatedPitch + "): "+ midiUtils.centsOffFromPitch(this.autocorrolatedPitch, this.currentNote.midi)); 
             // console.log(this.autocorrolatedPitch);
-            // console.log(currentNote.midi);
+            // console.log(this.currentNote.midi);
 
-            const absCentsDiff = Math.abs(UIUtils.centsOffFromPitch(this.autocorrolatedPitch, currentNote.midi));
-            if (absCentsDiff < 40) {
-                console.log("Hit!: " + absCentsDiff);
-                currentNote.hit = true;
+            console.log(this.currentNote);
+
+            // Only need to register the hit once.
+            if (!this.currentNote.bHit) {
+                const absCentsDiff = Math.abs(midiUtils.centsOffFromPitch(this.autocorrolatedPitch, this.currentNote.midi));
+                // Cents tolerance can help if detection is innacurate.
+                const centsTolerance = 40;
+                if (absCentsDiff < centsTolerance) {
+                    // Note that we don't register a miss here, only a hit. A miss is irrelevant since we can make a hit at any time while the note plays.
+                    this.currentNote.bHit = true;
+                    // console.log("Hit note: " + this.currentNoteIndex);
+                    let hitNoteEvent = new Event('audio-processor-hit-note', { bubbles: false });
+                    hitNoteEvent.noteIndex = this.currentNoteIndex;
+                    window.dispatchEvent(hitNoteEvent);
+                }
             }
         }
 	}
