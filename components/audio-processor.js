@@ -232,7 +232,7 @@ class AudioProcessor {
             // console.log(this.autocorrolatedPitch);
             // console.log(this.currentNote.midi);
 
-            console.log(this.currentNote);
+            // console.log(this.currentNote);
 
             // Only need to register the hit once.
             if (!this.currentNote.bHit) {
