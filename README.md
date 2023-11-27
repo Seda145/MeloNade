@@ -14,6 +14,6 @@ Instructions:
 
 1. Open app.html in your web browser.
 2. Choose an audio file (music).
-3. Choose a MIDI file containing 1 track, matching the audio file.
+3. Choose a MIDI file containing 1 track, matching the audio file. Chord support has not yet been implemented. Bass guitar visualizer is implemented.
 4. Press the "Play" button and give permission for access to your microphone. The "microphone" can be a connected music instrument, or if you wish use the windows "stereo mix" device to use system audio output as input data.
 5. This is it. Notes are automatically generated on screen for you to play at the correct timing (midi), which will increase or decrease your score.
