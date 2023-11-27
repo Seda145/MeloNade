@@ -27,6 +27,7 @@
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
 // https://forum.metasystem.io/forum/metagrid-pro/beta/issues/2981-c-2-c-1-midi-notes-lower-keyboard-range-question
 // https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro
+// https://en.wikipedia.org/wiki/List_of_guitar_tunings
 
 
 class MyApp {
