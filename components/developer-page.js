@@ -16,6 +16,7 @@ class DeveloperPage {
         this.eInputConfigBassGuitar = this.element.querySelector('.config-bass-guitar');
         this.eInputSelectBassGuitarTuning = this.element.querySelector('.input-select-bass-guitar-tuning');
         this.eInputBassGuitarOrderStringsThickAtBottom = this.element.querySelector('.input-bass-guitar-order-strings-thick-at-bottom');
+        this.eInputBassGuitarColorStrings = this.element.querySelector('.input-bass-guitar-color-strings');
         /* State */
 
         /* Events */
@@ -117,6 +118,11 @@ class DeveloperPage {
                         <label>
                             <span>Order the strings by thickest at the bottom:</span>
                             <input class="input-bass-guitar-order-strings-thick-at-bottom" type="checkbox" checked/>
+                        </label>
+
+                        <label>
+                            <span>Color strings:</span>
+                            <input class="input-bass-guitar-color-strings" type="checkbox"/>
                         </label>
                     </div>
                     

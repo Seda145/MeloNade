@@ -79,7 +79,9 @@ class MyApp {
         this.audioProcessor = new AudioProcessor();
 
         this.processingContent = new ProcessingContent();
-		this.processingContent.create("processing-content-wrap", this.developerPage.eInputBassGuitarOrderStringsThickAtBottom.checked);
+        const bOrderStringsThickAtBottom = this.developerPage.eInputBassGuitarOrderStringsThickAtBottom.checked;
+        const bColorStrings = this.developerPage.eInputBassGuitarColorStrings.checked;
+		this.processingContent.create("processing-content-wrap", bOrderStringsThickAtBottom, bColorStrings);
 
         console.log("Setting audio source.");
         const audioFile = this.developerPage.eInputDeveloperPageAudio.files[0];

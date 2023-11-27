@@ -22,15 +22,16 @@ class BassGuitarVisualizer {
 		let tuningLetterHTMLArr = [];
 		let stringsHTMLArr = [];
 		let noteTrackHTMLArr = [];
+		const colorClass = this.bColorStrings ? "color-string" : "";
 		for (let x = 0; x < app.audioProcessor.instrumentMidiOffsets.length; x++) {
 			const stringNumberX = x + 1;
 			const stringOffsetX = app.audioProcessor.instrumentMidiOffsets[x];
 
 			tuningLetterHTMLArr.push('<span class="tuning-letter" data-string-number="' + stringNumberX + '">' + midiUtils.midiNumberToNoteLetter(stringOffsetX) + '</span>');
 			stringsHTMLArr.push('<div class="string-line" data-string-number="' + stringNumberX + '"></div>');
-			noteTrackHTMLArr.push('<div class="note-bar" data-midi-offset="' + stringOffsetX + '" data-string-number="' + stringNumberX  + '"></div>');
+			noteTrackHTMLArr.push('<div class="note-bar ' + colorClass + '" data-midi-offset="' + stringOffsetX + '" data-string-number="' + stringNumberX  + '"></div>');
 		}
-		if (this.orderStringsThickAtBottom) {
+		if (this.bOrderStringsThickAtBottom) {
 			tuningLetterHTMLArr.reverse();
 			stringsHTMLArr.reverse();
 			noteTrackHTMLArr.reverse();
@@ -127,7 +128,7 @@ class BassGuitarVisualizer {
 		});
 	}
 
-    create(inParentID, inOrderStringsThickAtBottom) {
+    create(inParentID, bInOrderStringsThickAtBottom, bInColorStrings) {
 		/* Elements */
 		this.element = UIUtils.setInnerHTML(inParentID, this.getHTMLTemplate());
 		this.eNoteBars = [];
@@ -141,7 +142,8 @@ class BassGuitarVisualizer {
 		this.pxPerSecond = 0;
 		this.endOfTrackTicks = 0;
 		this.endOfTrackSeconds = 0;
-		this.orderStringsThickAtBottom = inOrderStringsThickAtBottom;
+		this.bOrderStringsThickAtBottom = bInOrderStringsThickAtBottom;
+		this.bColorStrings = bInColorStrings;
 
         window.addEventListener(
 			"audio-processor-restarts-audio",
@@ -162,7 +164,7 @@ class BassGuitarVisualizer {
 		);
 
 		window.addEventListener(
-			"audio-processor-processing-note",
+			"audio-processor-hit-note",
 			(e) => {
 				e.preventDefault();
 				// console.log("response to hit note:");
@@ -173,9 +175,7 @@ class BassGuitarVisualizer {
 					console.error("no matching note element found for processed note with index: " + e.noteIndex);
 					return;
 				} 
-				if (e.note.bHit) {
-					eCurrentNote.classList.add("hit");
-				}
+				eCurrentNote.classList.add("hit");
 			},
 			false
 		);

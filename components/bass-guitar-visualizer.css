@@ -73,9 +73,29 @@
 	overflow: hidden;
 }
 
-.bass-guitar-visualizer .note.hit {
-	border-color: white;	
+.bass-guitar-visualizer .note-bar[data-string-number="1"].color-string .note {
+	border-color: #d32626;
 }
+
+.bass-guitar-visualizer .note-bar[data-string-number="2"].color-string .note {
+	border-color: #dbdb10;
+}
+
+.bass-guitar-visualizer .note-bar[data-string-number="3"].color-string .note {
+	border-color: #1c7cf9;
+}
+
+.bass-guitar-visualizer .note-bar[data-string-number="4"].color-string .note {
+	border-color: #ff8f00;
+}
+
+.bass-guitar-visualizer .note.hit {
+	border-color: white !important;	
+}
+
+/* .bass-guitar-visualizer .note.hit {
+	border-color: white !important;	
+} */
 
 .bass-guitar-visualizer .note > span {
 	flex: 1;

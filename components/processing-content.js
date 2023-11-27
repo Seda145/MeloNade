@@ -1,5 +1,5 @@
 class ProcessingContent {
-    create(inParentID, inOrderStringsThickAtBottom) {
+    create(inParentID, bInOrderStringsThickAtBottom, bInColorStrings) {
         /* Elements */
         this.element = UIUtils.setInnerHTML(inParentID, this.getHTMLTemplate());
 
@@ -16,7 +16,7 @@ class ProcessingContent {
         this.scoreCounter.create("score-counter-wrap");
 
         this.bassGuitarVisualizer = new BassGuitarVisualizer();
-        this.bassGuitarVisualizer.create("bass-guitar-visualizer-wrap", inOrderStringsThickAtBottom);
+        this.bassGuitarVisualizer.create("bass-guitar-visualizer-wrap", bInOrderStringsThickAtBottom, bInColorStrings);
     }
 
     getHTMLTemplate() {
