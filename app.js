@@ -1,4 +1,4 @@
-/**[[ Copyright Roy Wierer (Seda145) ]]**/
+/**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
 
 // External DOCS
 // https://web.dev/articles/media-recording-audio

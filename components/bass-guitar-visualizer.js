@@ -1,3 +1,5 @@
+/**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
+
 class BassGuitarVisualizer {
     restart() {
 		console.log("restarting visualizer.");
