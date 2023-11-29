@@ -46,9 +46,9 @@ class Oscilloscope {
 		this.eCanvasCtx.stroke();
 	}
 
-	create(inParentID) {
+	create(inScopeElement) {
 		/* Elements */
-		this.element = UIUtils.setInnerHTML(inParentID, this.getHTMLTemplate());
+		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="oscilloscope"]'), this.getHTMLTemplate());
 		this.eCanvas = this.element.querySelector(".oscilloscope-canvas");
 		this.eCanvasCtx = this.eCanvas.getContext("2d");
 

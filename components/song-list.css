@@ -1,0 +1,23 @@
+/**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
+
+.song-list {
+    background-color: black;
+    height: calc(100vh - 150px);
+    overflow: auto;
+}
+
+.song-list .song-entry {
+    padding: 10px;
+    margin-bottom: 10px;
+    transition: background-color 0.2s ease;
+    border-bottom: thin solid rgba(255, 255, 255, 0.25);;
+}
+
+.song-list .song-entry:hover {
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+.song-list .song-name {
+    font-size: 18px;
+}

@@ -1,15 +1,13 @@
 /**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
 
 class DeveloperPage {
-    create(inParentID) {
-        /* Elements */
-		this.element = UIUtils.setInnerHTML(inParentID, this.getHTMLTemplate());
+	create(inScopeElement) {
+		/* Elements */
+		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="developer-page"]'), this.getHTMLTemplate());
         // Elements - DeveloperPage
         this.eDeveloperPageForm = this.element.querySelector(".developer-page-form");
-        this.eInputDeveloperPageAudio = this.element.querySelector('.input-developer-page-audio');
-        this.eInputDeveloperPageMidi = this.element.querySelector('.input-developer-page-midi');
+		this.eInputUserdataFolder = this.element.querySelector('.input-userdata-folder');
         this.eInputListenToMidi = this.element.querySelector('.input-listen-to-midi');
-        this.eInputDeveloperPageStopAudio = this.element.querySelector('.input-developer-page-stop-audio');
         // Elements - DeveloperPage - SelectInstrument
         this.eInputSelectInstrument = this.element.querySelector('.input-select-instrument');
         // Elements - DeveloperPage - ConfigInstruments
@@ -23,10 +21,23 @@ class DeveloperPage {
 
         /* Events */
 
-        this.eInputDeveloperPageStopAudio.addEventListener(
-            "click",
+        this.eInputUserdataFolder.addEventListener(
+            "change",
             (e) => {
-                app.audioProcessor.stopAudio();
+                e.preventDefault();
+
+                app.userdata.setUserdataFromFileList(e.target.files);
+
+                // Silly, but we need to reset this value manually or we can run into old data next time.
+                // e.target.value = "";
+
+                if (!app.userdata.isValid()) {
+                    console.error("Invalid userdata was uploaded.");
+                    return;
+                }
+                
+                console.log("got valid userdata:");
+                console.log(app.userdata);
             },
             false
         );
@@ -39,7 +50,7 @@ class DeveloperPage {
             },
             false
         );
-        
+
         this.updateConfigInstrumentPanels();
     }
 
@@ -70,15 +81,10 @@ class DeveloperPage {
                     <legend>Configuration</legend>
 
                     <label>
-                        <span>Audio input</span>
-                        <input class="input-developer-page-audio" type="file" accept="audio/*"/>
+                        <span>Upload MeloNade userdata folder</span>
+                        <input class="input-userdata-folder" type="file" webkitdirectory="true"/>
                     </label>
-
-                    <label>
-                        <span>Midi input</span>
-                        <input class="input-developer-page-midi" type="file" accept="audio/midi"/>
-                    </label>
-
+					
                     <label>
                         <span>ListenToMidi:</span>
                         <input class="input-listen-to-midi" type="checkbox"/>
@@ -130,15 +136,12 @@ class DeveloperPage {
                     
                     <hr>
 
-                    <input class="block" type="submit" value="Play">
-                    <br>
-                    <button class="input-developer-page-stop-audio" class="block" type="button">Stop</button>
+                    <input class="block" type="submit" value="Submit">
                 </fieldset>
             </div>
         </div>
     </form>
 </div>
-
 
         `);
     }

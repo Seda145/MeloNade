@@ -13,7 +13,7 @@ class AudioProcessor {
 		this.minRelevantRMS = 0.01;
 		this.currentRMS = 0;
 		this.autocorrolatedPitch = 0;
-		this.midi = 0;
+		this.midi = null;
 		this.instrumentMidiOffsets = [];
 		this.bListenToMidi = true;
         this.currentNote = null;
@@ -21,11 +21,15 @@ class AudioProcessor {
 	}
 
 	restartAudio(inAudio, inMidi, inInstrumentMidiOffsets, bInListenToMidi) {
-		if (!inAudio || !inMidi || !inMidi.tracks || inMidi.tracks.length != 1) {
-			console.error("Invalid audio element or midi. Midi track count must be 1.");
+		if (!inAudio || !inMidi || !inMidi.tracks) {
+			console.error("Invalid audio element or midi.");
 			return;
 		}
+        // First stop if required.
 		this.stopAudio();
+
+		// TODO
+		console.warn("The first track of the midi data is used.");
 
 		navigator.mediaDevices.getUserMedia({ video: false, audio: true })
 		.then((stream) => {

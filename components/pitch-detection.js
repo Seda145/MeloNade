@@ -24,9 +24,9 @@ class PitchDetection {
         }
     }
 
-    create(inParentID) {
-        /* Elements */
-        this.element = UIUtils.setInnerHTML(inParentID, this.getHTMLTemplate());
+	create(inScopeElement) {
+		/* Elements */
+		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="pitch-detection"]'), this.getHTMLTemplate());
         this.eInputPitchDetectionTargetLetter = this.element.querySelector('.target-letter');
 
         window.addEventListener(

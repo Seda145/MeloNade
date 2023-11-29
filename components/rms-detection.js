@@ -1,6 +1,30 @@
 /**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
 
 class RMSDetection {
+	create(inScopeElement) {
+		/* Elements */
+		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="rms-detection"]'), this.getHTMLTemplate());
+		this.eRMSDetectionNumber = this.element.querySelector('.rms-detection-number');
+
+        window.addEventListener(
+			"audio-processor-restarts-audio",
+			(e) => {
+				e.preventDefault();
+				this.start();
+			},
+			false
+		);
+
+		window.addEventListener(
+			"audio-processor-stops-audio",
+			(e) => {
+				e.preventDefault();
+				this.stop();
+			},
+			false
+		);
+    }
+	
     start() {
 		this.draw();
 	}
@@ -23,30 +47,6 @@ class RMSDetection {
 
 		// console.log(decibels);
 		// console.log(app.audioProcessor.currentRMS);
-    }
-
-    create(inParentID) {
-        /* Elements */
-        this.element = UIUtils.setInnerHTML(inParentID, this.getHTMLTemplate());
-		this.eRMSDetectionNumber = this.element.querySelector('.rms-detection-number');
-
-        window.addEventListener(
-			"audio-processor-restarts-audio",
-			(e) => {
-				e.preventDefault();
-				this.start();
-			},
-			false
-		);
-
-		window.addEventListener(
-			"audio-processor-stops-audio",
-			(e) => {
-				e.preventDefault();
-				this.stop();
-			},
-			false
-		);
     }
 
     getHTMLTemplate() {

@@ -22,11 +22,10 @@ class UIUtils {
 		return newElem;		
 	}
 
-	static setInnerHTML(inParentID, inHTML) {
+	static setInnerHTML(inParentElement, inHTML) {
 		// Helper method to create and append an element exactly as the html argument specifies, without leaving a wrapping parent container created by "createElement".
-        let parentElem = document.getElementById(inParentID);
 		let newElem = UIUtils.createElement(inHTML);
-        parentElem.appendChild(newElem);
+        inParentElement.appendChild(newElem);
 		return newElem;
 	}
 }

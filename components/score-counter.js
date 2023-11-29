@@ -1,9 +1,9 @@
 /**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
 
 class ScoreCounter {
-    create(inParentID) {
-        /* Elements */
-        this.element = UIUtils.setInnerHTML(inParentID, this.getHTMLTemplate());
+	create(inScopeElement) {
+		/* Elements */
+		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="score-counter"]'), this.getHTMLTemplate());
         this.eCounterStreak = this.element.querySelector(".streak");
         this.eCounterHit = this.element.querySelector(".hit");
         this.eCounterMissed = this.element.querySelector(".missed");

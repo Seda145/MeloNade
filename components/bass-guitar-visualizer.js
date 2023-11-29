@@ -1,7 +1,7 @@
 /**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
 
 class BassGuitarVisualizer {
-    restart() {
+    start() {
 		console.log("restarting visualizer.");
 		
 		// regenerate all notes on the visualizer.
@@ -106,15 +106,17 @@ class BassGuitarVisualizer {
 		this.eNotesWrap.style.left = '0px';
 		
 		// Start 'playing' visuals.
-		this.refreshInterval = setInterval(() => { this.refresh() }, app.msForfps);
+		this.draw();
 	}
 	
 	stop() {
 		console.log("stopping visualizer.");
-		clearInterval(this.refreshInterval);
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
 	}
 
-	refresh() {
+	draw() {
+		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
+
 		if (!app.audioProcessor.audio) {
 			console.error("audioProcessor.audio is invalid.");
 			return;
@@ -130,9 +132,9 @@ class BassGuitarVisualizer {
 		});
 	}
 
-    create(inParentID, bInOrderStringsThickAtBottom, bInColorStrings) {
+	create(inScopeElement, bInOrderStringsThickAtBottom, bInColorStrings) {
 		/* Elements */
-		this.element = UIUtils.setInnerHTML(inParentID, this.getHTMLTemplate());
+		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="bass-guitar-visualizer"]'), this.getHTMLTemplate());
 		this.eNoteBars = [];
 		this.eTuningWrap = this.element.querySelector('.tuning-wrap');
 		this.eStringsWrap = this.element.querySelector('.strings-wrap');
@@ -151,7 +153,7 @@ class BassGuitarVisualizer {
 			"audio-processor-restarts-audio",
 			(e) => {
 				e.preventDefault();
-				this.restart();
+				this.start();
 			},
 			false
 		);
