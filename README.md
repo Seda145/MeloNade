@@ -13,20 +13,19 @@ You can play a music instrument through your microphone in realtime while music 
 Instructions:
 
 1. Open app.html in your web browser.
-2. Select a "userdata" folder. This folder contains data for MeloNade including your songs. (an example userdata folder is provided). 
+
+2. Select a "userdata" folder. This folder contains data for MeloNade including your songs. (an example userdata folder is provided).
+![2](https://github.com/Seda145/MeloNade/assets/30213433/b14dfbe8-4a86-4c95-94e3-c18e7df3f935)
+![1](https://github.com/Seda145/MeloNade/assets/30213433/f7a77ea3-dcd5-4405-950e-ed125934f9b9)
+
 3. Submit the data on the configuration page and select a song on the now available song list.
+![3](https://github.com/Seda145/MeloNade/assets/30213433/dedcf49f-f927-44d0-b883-be22c4bf622b)
+
 4. Give permission for access to your microphone. The "microphone" can be a connected music instrument, or if you wish use the windows "stereo mix" device to use system audio output as input data.
+![4](https://github.com/Seda145/MeloNade/assets/30213433/a56f15f4-3a7d-43a3-940c-196532e02a71)
+
 5. The music will play, Notes are automatically generated on a fretboard for your selected tuning. You can play at the correct timing (midi), which will increase or decrease your score.
-
-
-Configuration (developer):
-
-![configuration](https://github.com/Seda145/MeloNade/assets/30213433/bebc5cbd-76e3-48e4-bf61-67ea1165bae9)
-
-
-Processing:
-
-![Processing](https://github.com/Seda145/MeloNade/assets/30213433/14d9f841-241a-4ed6-b50d-d16acc660441)
+![5](https://github.com/Seda145/MeloNade/assets/30213433/9f4d8eef-2423-4a86-a014-c45d67d60d50)
 
 
 Tips and Todos:
