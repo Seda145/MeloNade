@@ -24,7 +24,7 @@ class SongList {
                 (e) => {
                     e.preventDefault();
 
-                    const songName = e.target.dataset.songName;
+                    const songName = e.currentTarget.dataset.songName;
                     console.log("Song list chose a song: " + songName);
                     let songListChoseSongEvent = new Event('song-list-chose-song', { bubbles: false });
                     songListChoseSongEvent.songName = songName;

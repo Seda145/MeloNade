@@ -2,6 +2,8 @@
 
 class Navigation {
 	constructor() {
+		this.element = null;
+		this.eTabs = null;
 		this.panels = {};
 		this.tabs = {};
 		this.activePanelId = null;
@@ -35,13 +37,18 @@ class Navigation {
 		this.panels[inId] = inElement;
 
 		if (inTabTitle != null) {
+			if (this.eTabs == null) {
+				console.error("Navigation has been set up without html, so we can't add tabs.");
+				return;
+			}
+
 			let newTab = UIUtils.createElement('<span class="tab" style="order:' + inTabOrderIndex + ';" data-contentid="' + inId + '">' + inTabTitle + '</span>');
 			this.eTabs.appendChild(newTab);
 	
 			newTab.addEventListener(
 				"click",
 				(e) => {
-					this.navigateTo(e.target.dataset.contentid);
+					this.navigateTo(e.currentTarget.dataset.contentid);
 				}
 			);
 
@@ -92,6 +99,11 @@ class Navigation {
 
 	create(inScopeElement) {
 		/* Elements */
+		if (inScopeElement == null) { 
+			// Allow this, we don't need the tabs to navigate.
+			// Navigation can be set up to be done without user interaction.
+			return;
+		}
 		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="navigation"]'), this.getHTMLTemplate());
 		this.eTabs = this.element.querySelector(".tabs");
     }

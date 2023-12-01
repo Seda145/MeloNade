@@ -25,8 +25,8 @@ class MyApp {
 
 		/* Events */
 
-		this.developerPage.eDeveloperPageForm.addEventListener(
-            "submit",
+		this.developerPage.eInputSubmit.addEventListener(
+            "click",
             async (e) => {
                 e.preventDefault();
     
