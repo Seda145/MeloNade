@@ -35,14 +35,6 @@
 	justify-content: center;
 }
 
-.navigation .tab:first-child {
-	margin-left: 0;
-}
-
-.navigation .tab:last-child {
-	margin-right: 0;
-}
-
 .navigation .tab:hover {
 	cursor: pointer;
 	opacity: 0.8;
