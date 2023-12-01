@@ -26,30 +26,5 @@ class midiUtils {
     static centsOffFromPitch(inFrequency, inMidiNumber) {
         return Math.floor(1200 * Math.log(inFrequency / midiUtils.midiNumberToFrequency(inMidiNumber)) / Math.log(2));
     }
-
-	static async formatMidiFile(inMidiFile) {
-		if (!inMidiFile) {
-			console.error("Invalid midi file.");
-		}
-	    const midiUrl = URL.createObjectURL(inMidiFile);
-		// The original midi object formatted from the midi file.
-        const original = await Midi.fromUrl(midiUrl);
-        console.log(original);
-
-		// Format so that we can use tick time of the midi as a key for looking up notes.
-		let result = original;
-		// for (let i = 0; i < result.tracks.length; i++) {
-		// 	let newNotes = {};
-
-		// 	for (let k = 0; k < result.tracks[i].notes.length; k++) {
-				
-		// 	}
-
-		// 	result.tracks[i].notes = newNotes;
-		// }
-
-		return result;
-	}
-    
 }
 

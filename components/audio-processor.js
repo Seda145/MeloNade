@@ -1,5 +1,13 @@
 /**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
 
+// https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+// https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode
+// https://stackoverflow.com/questions/69237143/how-do-i-get-the-audio-frequency-from-my-mic-using-javascript
+// https://newt.phys.unsw.edu.au/music/note/
+// https://newt.phys.unsw.edu.au/jw/notes.html
+// https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
+
+
 class AudioProcessor {
 	constructor() {
 		/* State */
@@ -31,6 +39,7 @@ class AudioProcessor {
 		// TODO
 		console.warn("The first track of the midi data is used.");
 
+        // https://webaudio.github.io/web-audio-api/
 		navigator.mediaDevices.getUserMedia({ video: false, audio: true })
 		.then((stream) => {
             console.log("Starting audio");
@@ -211,10 +220,10 @@ class AudioProcessor {
         }
 
         if (this.bListenToMidi && this.currentNote != null && !this.currentNote.playedByOscillator) {
+            // https://medium.com/swinginc/playing-with-midi-in-javascript-b6999f2913c3
             const midiFrequency = midiUtils.midiNumberToFrequency(this.currentNote.midi);
             // console.log("Note frequency: " + midiFrequency);
     
-            // If listening to midi
             // oscillator for debugging. It can't start / stop twice, so recreate it.
             if (this.oscillator) {
                 this.oscillator.disconnect(this.audioContext.destination);

@@ -84,7 +84,7 @@ class DeveloperPage {
                         <span>Upload MeloNade userdata folder</span>
                         <input class="input-userdata-folder" type="file" webkitdirectory="true"/>
                     </label>
-					
+
                     <label>
                         <span>ListenToMidi:</span>
                         <input class="input-listen-to-midi" type="checkbox"/>
@@ -104,6 +104,8 @@ class DeveloperPage {
                             <span>Select a tuning:</span>
                             <select class="input-select-bass-guitar-tuning" name="input-select-bass-guitar-tuning">
                                 <!-- MIDI number notation as actual value -->
+                                <!-- https://forum.metasystem.io/forum/metagrid-pro/beta/issues/2981-c-2-c-1-midi-notes-lower-keyboard-range-question -->
+                                <!-- https://en.wikipedia.org/wiki/List_of_guitar_tunings -->
                                 <option value="28,33,38,43">E A D G (Standard E)</option>
 
                                 <option value="26,33,38,43">D A D G (Drop D)</option>
