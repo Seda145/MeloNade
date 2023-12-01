@@ -14,9 +14,9 @@ class SongList {
 
         this.element.innerHTML = "";
 
-        let songsHTML = "";
         for (const [key, value] of Object.entries(app.userdata.data.songs)) { 
-            let newSongEntry = UIUtils.createElement('<div class="song-entry" data-song-name="' + value.name + '"><span class="song-name">' + value.name + '</span></div>');
+            const albumImageUrl = URL.createObjectURL(value.albumImage);
+            let newSongEntry = UIUtils.createElement('<div class="song-entry" data-song-name="' + value.name + '"><span class="song-name">' + value.name + '</span><img class="album-image" src="' + albumImageUrl + '"></div>');
 
             // When we click on a song in the list, broadcast its name.
             newSongEntry.addEventListener(
