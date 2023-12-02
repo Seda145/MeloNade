@@ -69,11 +69,19 @@ class MyApp {
                     console.log("Writing song stats to user profile:");
         
                     // Update accuracy if it is a highscore.
-                    const oldAccuracy = this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle].accuracy;
                     const newAccuracy = this.audioProcessor.countHitAccuracy;
-                    if (newAccuracy > oldAccuracy) {
+                    // Check if we have song stats stored, or if we have to create it.
+                    if (this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle]) {
+                        const oldAccuracy = this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle].accuracy;
+                        if (newAccuracy > oldAccuracy) {
+                            this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle].accuracy = newAccuracy;
+                        } 
+                    }
+                    else {
+                        this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle] = {};
                         this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle].accuracy = newAccuracy;
-                    } 
+                    }
+
         
                     console.log(this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle]);
                 }
