@@ -3,7 +3,7 @@
     "name": "Default",
     "songStats": {
       "Example song": {
-        "accuracy": "0"
+        "hitTotalPercentage": "0"
       }
     }
   }

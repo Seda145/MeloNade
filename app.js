@@ -64,22 +64,21 @@ class MyApp {
 
                 // First off, we can update the userdata with the data gathered in the audioProcessor.
                 // If the audioProcessor was playing a song, we can still access the data.
-                // Here we can read data like hit accuracy to write to the profiles, tracking highscores.
                 if (this.audioProcessor.songTitle != null) {
                     console.log("Writing song stats to user profile:");
         
-                    // Update accuracy if it is a highscore.
-                    const newAccuracy = this.audioProcessor.countHitAccuracy;
+                    // Update total hit percentage if it is a highscore.
                     // Check if we have song stats stored, or if we have to create it.
+                    const newHitTotalPercentage = this.audioProcessor.countHitTotalPercentage;
                     if (this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle]) {
-                        const oldAccuracy = this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle].accuracy;
-                        if (newAccuracy > oldAccuracy) {
-                            this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle].accuracy = newAccuracy;
+                        const oldHitTotalPercentage = this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle].hitTotalPercentage;
+                        if (newHitTotalPercentage > oldHitTotalPercentage) {
+                            this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle].hitTotalPercentage = newHitTotalPercentage;
                         } 
                     }
                     else {
                         this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle] = {};
-                        this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle].accuracy = newAccuracy;
+                        this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle].hitTotalPercentage = newHitTotalPercentage;
                     }
 
         

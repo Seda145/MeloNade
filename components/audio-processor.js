@@ -31,6 +31,7 @@ class AudioProcessor {
         this.countMissedNotes = 0;
         this.countHitNotes = 0;
         this.countHitAccuracy = 0;
+        this.countHitTotalPercentage = 0;
         this.countHitStreak = 0;
 	}
 
@@ -73,6 +74,7 @@ class AudioProcessor {
             this.countMissedNotes = 0;
             this.countHitNotes = 0;
             this.countHitAccuracy = 0;
+            this.countHitTotalPercentage = 0;
             this.countHitStreak = 0;
     
             this.audio.play();
@@ -235,6 +237,7 @@ class AudioProcessor {
                 this.countHitStreak = 0;
                 // if total is 0, return 0 to avoid division by 0. The decimals on the calculated hit accuracy are removed.
                 this.countHitAccuracy = (this.countHitNotes + this.countMissedNotes != 0 ? (this.countHitNotes / (this.countMissedNotes + this.countHitNotes) * 100) : 0).toFixed(0);
+                this.countHitTotalPercentage = (this.countHitNotes / this.midi.tracks[0].notes.length * 100).toFixed(0);
                 let missedNoteEvent = new Event('audio-processor-missed-note', { bubbles: false });
                 missedNoteEvent.noteIndex = i;
                 window.dispatchEvent(missedNoteEvent);
@@ -284,6 +287,7 @@ class AudioProcessor {
                     this.countHitStreak++;
                     // if total is 0, return 0 to avoid division by 0. The decimals on the calculated hit accuracy are removed.
                     this.countHitAccuracy = (this.countHitNotes + this.countMissedNotes != 0 ? (this.countHitNotes / (this.countMissedNotes + this.countHitNotes) * 100) : 0).toFixed(0);
+                    this.countHitTotalPercentage = (this.countHitNotes / this.midi.tracks[0].notes.length * 100).toFixed(0);
                     let hitNoteEvent = new Event('audio-processor-hit-note', { bubbles: false });
                     hitNoteEvent.noteIndex = this.currentNoteIndex;
                     window.dispatchEvent(hitNoteEvent);

@@ -4,10 +4,10 @@ class SongListEntry {
 	create(inSongTitle) {
         this.songTitle = inSongTitle;
         const songStats = app.userdata.data.activeProfile.songStats[this.songTitle];
-        this.songAccuracy = 0;
+        this.hitTotalPercentage = 0;
         if (songStats) {
             // If we have already saved data in the stats, grab it to display it.
-            this.songAccuracy = app.userdata.data.activeProfile.songStats[this.songTitle].accuracy;
+            this.hitTotalPercentage = app.userdata.data.activeProfile.songStats[this.songTitle].hitTotalPercentage;
         }
         this.albumImageUrl = "";
         if (app.userdata.data.songs[this.songTitle].albumImage) {
@@ -19,12 +19,12 @@ class SongListEntry {
 
     getHTMLTemplate() {
         // TODO autoformat this how? the html tag function is used by lit-html to highlight html. With it active there is no autoformat of the string itself.
-        // const html = (inStrings, inSongTitle, inAlbumImageUrl) => { return `${inStrings[0]}${inSongTitle}${inStrings[1]}${this.songAccuracy}${inStrings[2]}${inAlbumImageUrl}${inStrings[3]}`; };
+        // const html = (inStrings, inSongTitle, inAlbumImageUrl) => { return `${inStrings[0]}${inSongTitle}${inStrings[1]}${this.hitTotalPercentage}${inStrings[2]}${inAlbumImageUrl}${inStrings[3]}`; };
         // const html = (inString) => { return inString };
         // return (html`
         return (`
  
- <div class="song-list-entry" data-song-title="${this.songTitle}"><span class="title">${this.songTitle}</span><span class="accuracy">Accuracy: ${this.songAccuracy}</span><img class="album-image" src="${this.albumImageUrl}"></div>
+ <div class="song-list-entry" data-song-title="${this.songTitle}"><span class="title">${this.songTitle}</span><span class="completed-percentage">Completed: ${this.hitTotalPercentage}%</span><img class="album-image" src="${this.albumImageUrl}"></div>
 
         `);
     }
