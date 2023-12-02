@@ -105,7 +105,6 @@ class DeveloperPage {
                     <span>Select an instrument:</span>
                     <select class="input-select-instrument" name="input-select-instrument">
                         <option value="bass-guitar">Bass guitar</option>
-                        <option value="guitar">Guitar</option>
                     </select> 
                 </label>
 
