@@ -24,6 +24,7 @@ class AudioProcessor {
         this.songTitle = null;
 		this.audio = null;
 		this.midi = null;
+        this.midiTrackIndex = 0;
 		this.instrumentMidiOffsets = [];
 		this.bListenToMidi = true;
         this.currentNote = null;
@@ -48,6 +49,9 @@ class AudioProcessor {
 			console.error("Invalid song data.");
 			return;
 		}
+
+        console.log("Midi as object:");
+        console.log(this.midi);
 
 		// TODO
 		console.warn("The first track of the midi data is used.");
@@ -114,7 +118,7 @@ class AudioProcessor {
         // Collect current audio data.
         this.analyserNode.getFloatTimeDomainData(this.audioBuffer);
         // console.log("Current play time: " + currentTime + ". timeAsTick: " + timeAsTick);
-        // console.log(this.midi.tracks[0].notes);
+        // console.log(this.midi.tracks[this.midiTrackIndex].notes);
 
         // Update RMS value (volume).
         {
@@ -203,8 +207,8 @@ class AudioProcessor {
         {
             // We track the current midi note index, which needs to be matched to the audio playback by time.
             // The loop starts at this.currentNoteIndex to avoid running over all old data, so we assume we don't go back in time with the audio.
-            for (; this.currentNoteIndex < this.midi.tracks[0].notes.length; this.currentNoteIndex++) {
-                this.currentNote = this.midi.tracks[0].notes[this.currentNoteIndex];
+            for (; this.currentNoteIndex < this.midi.tracks[this.midiTrackIndex].notes.length; this.currentNoteIndex++) {
+                this.currentNote = this.midi.tracks[this.midiTrackIndex].notes[this.currentNoteIndex];
 
                 if (timeAsTick > (this.currentNote.ticks + this.currentNote.durationTicks)) {
                     // This note is in the past and no longer 'during'.
@@ -228,7 +232,7 @@ class AudioProcessor {
             // We should walk back from the current index to register any notes that we missed. 
             // Mark those notes missed so we don't walk further than we have to.
             for (let i = this.currentNoteIndex - 1; i >= 0; i--) {
-                let oldNote = this.midi.tracks[0].notes[i];
+                let oldNote = this.midi.tracks[this.midiTrackIndex].notes[i];
                 if (typeof oldNote.bHit !== 'undefined') {
                     break;
                 }
@@ -237,7 +241,7 @@ class AudioProcessor {
                 this.countHitStreak = 0;
                 // if total is 0, return 0 to avoid division by 0. The decimals on the calculated hit accuracy are removed.
                 this.countHitAccuracy = (this.countHitNotes + this.countMissedNotes != 0 ? (this.countHitNotes / (this.countMissedNotes + this.countHitNotes) * 100) : 0).toFixed(0);
-                this.countHitTotalPercentage = (this.countHitNotes / this.midi.tracks[0].notes.length * 100).toFixed(0);
+                this.countHitTotalPercentage = (this.countHitNotes / this.midi.tracks[this.midiTrackIndex].notes.length * 100).toFixed(0);
                 let missedNoteEvent = new Event('audio-processor-missed-note', { bubbles: false });
                 missedNoteEvent.noteIndex = i;
                 window.dispatchEvent(missedNoteEvent);
@@ -287,7 +291,7 @@ class AudioProcessor {
                     this.countHitStreak++;
                     // if total is 0, return 0 to avoid division by 0. The decimals on the calculated hit accuracy are removed.
                     this.countHitAccuracy = (this.countHitNotes + this.countMissedNotes != 0 ? (this.countHitNotes / (this.countMissedNotes + this.countHitNotes) * 100) : 0).toFixed(0);
-                    this.countHitTotalPercentage = (this.countHitNotes / this.midi.tracks[0].notes.length * 100).toFixed(0);
+                    this.countHitTotalPercentage = (this.countHitNotes / this.midi.tracks[this.midiTrackIndex].notes.length * 100).toFixed(0);
                     let hitNoteEvent = new Event('audio-processor-hit-note', { bubbles: false });
                     hitNoteEvent.noteIndex = this.currentNoteIndex;
                     window.dispatchEvent(hitNoteEvent);

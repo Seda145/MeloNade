@@ -9,40 +9,63 @@ class MyApp {
 	create(inScopeElement) {
 		/* Elements */
 		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="app"]'), this.getHTMLTemplate());
+        this.eLoadUserdataWrap = this.element.querySelector('[data-component="load-userdata"]');
         this.eDeveloperPageWrap = this.element.querySelector('[data-component="developer-page"]');
         this.eSongListWrap = this.element.querySelector('[data-component="song-list"]');
         this.eProcessingContentWrap = this.element.querySelector('[data-component="processing-content"]');
 
         this.audioProcessor = new AudioProcessor();
 
-		this.developerPage = new DeveloperPage();
-		this.developerPage.create(this.element);
+		this.loadUserdata = new LoadUserdata();
+		this.loadUserdata.create(this.element);
 
 		this.navigation = new Navigation();
 		this.navigation.create(this.element);
-		this.navigation.registerNavigation("Developer", null, 0, this.eDeveloperPageWrap);
-		this.navigation.navigateTo("Developer");
+		this.navigation.registerNavigation("Load Userdata", null, 0, this.eLoadUserdataWrap);
+		this.navigation.navigateTo("Load Userdata");
 
 		/* Events */
 
-		this.developerPage.eInputSubmit.addEventListener(
-            "click",
+        window.addEventListener(
+            "userdata-updated-data",
             async (e) => {
                 e.preventDefault();
-    
-                if (!this.userdata.isValid()) {
-                    console.error("Invalid userdata");
-                    return;
-                }
-                
-                if (this.songList) {
-                    this.songList.element.remove();
-                }
-                this.songList = new SongList();
-                this.songList.create(this.element);
-		        this.navigation.registerNavigation("Developer", "Developer", 0, this.eDeveloperPageWrap);
-		        this.navigation.registerNavigation("Song List", "Song List", 1, this.eSongListWrap);
-                this.navigation.navigateTo("Song List");
+
+                console.log("got valid userdata:");
+                console.log(app.userdata);
+
+                // No need anymore for the uploader, remove it.
+                this.navigation.unregisterNavigation("Load Userdata");
+                this.loadUserdata.element.remove();
+                this.loadUserdata = null;
+
+                // Create the developer page.
+                this.developerPage = new DeveloperPage();
+                this.developerPage.create(this.element);
+
+                this.developerPage.eInputSubmit.addEventListener(
+                    "click",
+                    async (e) => {
+                        e.preventDefault();
+            
+                        if (!this.userdata.isValid()) {
+                            console.error("Invalid userdata");
+                            return;
+                        }
+                        
+                        if (this.songList) {
+                            this.songList.element.remove();
+                        }
+                        this.songList = new SongList();
+                        this.songList.create(this.element);
+                        this.navigation.registerNavigation("Song List", "Song List", 1, this.eSongListWrap);
+                        this.navigation.navigateTo("Song List");
+                    },
+                    false
+                );
+
+                this.navigation.registerNavigation("Developer", "Developer", 0, this.eDeveloperPageWrap);
+                this.navigation.navigateTo("Developer");
             },
             false
         );
@@ -157,6 +180,7 @@ class MyApp {
     <header></header>
 
     <main class="main-wrap container">
+        <div data-component="load-userdata" class="hide"></div>
         <div data-component="developer-page" class="hide"></div>
         <div data-component="song-list" class="hide"></div>
 		<div data-component="processing-content" class="hide"></div>

@@ -5,6 +5,14 @@
       "Example song": {
         "hitTotalPercentage": "0"
       }
+    },
+    "config": {
+      "currentInstrument": "bass-guitar",
+      "instruments": {
+        "bass-guitar": {
+          "tuning": "28,33,38,43"
+        }
+      }
     }
   }
 ]

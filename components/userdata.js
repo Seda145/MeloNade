@@ -78,6 +78,7 @@ class Userdata {
 
                 // There is no profile manager yet, but we can use the default provided.
                 newData.activeProfile = newData.profiles[0];
+                // When there is a profile manager, profile contents must still be validated here.
             }
         }
 

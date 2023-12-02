@@ -1,12 +1,64 @@
 /**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
 
 class BassGuitarVisualizer {
+	create(inScopeElement, bInOrderStringsThickAtBottom, bInColorStrings) {
+		/* Elements */
+		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="bass-guitar-visualizer"]'), this.getHTMLTemplate());
+		this.eNoteBars = [];
+		this.eTuningWrap = this.element.querySelector('.tuning-wrap');
+		this.eStringsWrap = this.element.querySelector('.strings-wrap');
+		this.eNotesWrap = this.element.querySelector('.notes-wrap');
+        /* State */
+		this.widthMultiplier = 100;
+		this.widthOfNoteBar = 0;
+		this.pxPerTick = 0;
+		this.pxPerSecond = 0;
+		this.endOfTrackSeconds = 0;
+		this.bOrderStringsThickAtBottom = bInOrderStringsThickAtBottom;
+		this.bColorStrings = bInColorStrings;
+
+        window.addEventListener(
+			"audio-processor-start-song",
+			(e) => {
+				e.preventDefault();
+				this.start();
+			},
+			false
+		);
+
+		window.addEventListener(
+			"audio-processor-stop-song",
+			(e) => {
+				e.preventDefault();
+				this.stop();
+			},
+			false
+		);
+
+		window.addEventListener(
+			"audio-processor-hit-note",
+			(e) => {
+				e.preventDefault();
+				// console.log("response to hit note:");
+				// console.log(e.note);
+
+				let eCurrentNote = this.eNotesWrap.querySelector('.note[data-note-index="' + e.noteIndex + '"]');
+				if (!eCurrentNote) {
+					console.error("no matching note element found for processed note with index: " + e.noteIndex);
+					return;
+				} 
+				eCurrentNote.classList.add("hit");
+			},
+			false
+		);
+	}
+	
     start() {
 		console.log("restarting visualizer.");
 		
 		// regenerate all notes on the visualizer.
 
-		this.endOfTrackTicks = app.audioProcessor.midi.tracks[0].endOfTrackTicks;
+		this.endOfTrackTicks = app.audioProcessor.midi.tracks[app.audioProcessor.midiTrackIndex].endOfTrackTicks;
 		this.endOfTrackSeconds = app.audioProcessor.midi.header.ticksToSeconds(this.endOfTrackTicks);
 		// Calculate the visual width of the note bar by the length of the audio. Tick rate varies per midi, so seconds are calculated.
 		this.widthOfNoteBar = this.endOfTrackSeconds * this.widthMultiplier;
@@ -54,8 +106,8 @@ class BassGuitarVisualizer {
 			notesHTML[inElemX.dataset.midiOffset] = [];
 		});
 		
-		for (let i = 0; i < app.audioProcessor.midi.tracks[0].notes.length; i++) {
-			const note = app.audioProcessor.midi.tracks[0].notes[i];
+		for (let i = 0; i < app.audioProcessor.midi.tracks[app.audioProcessor.midiTrackIndex].notes.length; i++) {
+			const note = app.audioProcessor.midi.tracks[app.audioProcessor.midiTrackIndex].notes[i];
 			const endNoteTick = note.ticks + note.durationTicks;
 			const notePosition = note.ticks * this.pxPerTick;
 			const noteWidth = (endNoteTick - note.ticks) * this.pxPerTick;
@@ -130,59 +182,6 @@ class BassGuitarVisualizer {
 		this.eNoteBars.forEach((inElemX) => {
 			inElemX.style.transform = 'translatex(' + -noteBarPosition + 'px)';
 		});
-	}
-
-	create(inScopeElement, bInOrderStringsThickAtBottom, bInColorStrings) {
-		/* Elements */
-		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="bass-guitar-visualizer"]'), this.getHTMLTemplate());
-		this.eNoteBars = [];
-		this.eTuningWrap = this.element.querySelector('.tuning-wrap');
-		this.eStringsWrap = this.element.querySelector('.strings-wrap');
-		this.eNotesWrap = this.element.querySelector('.notes-wrap');
-        /* State */
-		this.widthMultiplier = 100;
-		this.widthOfNoteBar = 0;
-		this.pxPerTick = 0;
-		this.pxPerSecond = 0;
-		this.endOfTrackTicks = 0;
-		this.endOfTrackSeconds = 0;
-		this.bOrderStringsThickAtBottom = bInOrderStringsThickAtBottom;
-		this.bColorStrings = bInColorStrings;
-
-        window.addEventListener(
-			"audio-processor-start-song",
-			(e) => {
-				e.preventDefault();
-				this.start();
-			},
-			false
-		);
-
-		window.addEventListener(
-			"audio-processor-stop-song",
-			(e) => {
-				e.preventDefault();
-				this.stop();
-			},
-			false
-		);
-
-		window.addEventListener(
-			"audio-processor-hit-note",
-			(e) => {
-				e.preventDefault();
-				// console.log("response to hit note:");
-				// console.log(e.note);
-
-				let eCurrentNote = this.eNotesWrap.querySelector('.note[data-note-index="' + e.noteIndex + '"]');
-				if (!eCurrentNote) {
-					console.error("no matching note element found for processed note with index: " + e.noteIndex);
-					return;
-				} 
-				eCurrentNote.classList.add("hit");
-			},
-			false
-		);
 	}
 
     getHTMLTemplate() {

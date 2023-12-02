@@ -5,56 +5,25 @@ class DeveloperPage {
 		/* Elements */
 		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="developer-page"]'), this.getHTMLTemplate());
         // Elements - DeveloperPage
-		this.eWrapUploadUserdata = this.element.querySelector('[data-wrap="upload-userdata"]');
-		this.eInputUserdataFolder = this.eWrapUploadUserdata.querySelector('.input-userdata-folder');
 		this.eWrapConfiguration = this.element.querySelector('[data-wrap="configuration"]');
         this.eInputSubmit = this.eWrapConfiguration.querySelector(".input-submit");
 		this.eInputSaveProfiles = this.eWrapConfiguration.querySelector('.input-save-profiles');
         this.eInputListenToMidi = this.eWrapConfiguration.querySelector('.input-listen-to-midi');
         // Elements - DeveloperPage - SelectInstrument
         this.eInputSelectInstrument = this.eWrapConfiguration.querySelector('.input-select-instrument');
+        this.eInputSelectInstrument.value = app.userdata.data.activeProfile.config.currentInstrument;
         // Elements - DeveloperPage - ConfigInstruments
         this.eConfigInstrumentPanels = this.eWrapConfiguration.querySelectorAll('.config-instrument-panel');
         // Elements - DeveloperPage - ConfigBassGuitar
-        this.eInputConfigBassGuitar = this.eWrapConfiguration.querySelector('.config-bass-guitar');
+        this.eConfigBassGuitar = this.eWrapConfiguration.querySelector('.config-bass-guitar');
         this.eInputSelectBassGuitarTuning = this.eWrapConfiguration.querySelector('.input-select-bass-guitar-tuning');
+        this.eInputSelectBassGuitarTuning.value = app.userdata.data.activeProfile.config.instruments["bass-guitar"].tuning;
         this.eInputBassGuitarOrderStringsThickAtBottom = this.eWrapConfiguration.querySelector('.input-bass-guitar-order-strings-thick-at-bottom');
         this.eInputBassGuitarColorStrings = this.eWrapConfiguration.querySelector('.input-bass-guitar-color-strings');
-
-        this.navigation = new Navigation();
-        // Don't create tab elements for this navigation. 
-        // Create "steps" to ensure one first uploads the userdata folder and selects a profile from it.
-        // Without userdata we can't load profiles, songs, etc.
-		this.navigation.create(null);
-		this.navigation.registerNavigation("Upload userdata", null, 0, this.eWrapUploadUserdata);
-		this.navigation.registerNavigation("Configuration", null, 0, this.eWrapConfiguration);
-		this.navigation.navigateTo("Upload userdata");
 
         /* State */
 
         /* Events */
-
-        this.eInputUserdataFolder.addEventListener(
-            "change",
-            async (e) => {
-                e.preventDefault();
-
-                await app.userdata.setUserdataFromFileList(e.currentTarget.files);
-
-                // Silly, but we need to reset this value manually or we can run into old data next time.
-                // e.currentTarget.value = "";
-
-                if (!app.userdata.isValid()) {
-                    console.error("Invalid userdata was uploaded.");
-                    return;
-                }
-                
-                console.log("got valid userdata:");
-                console.log(app.userdata);
-		        this.navigation.navigateTo("Configuration");
-            },
-            false
-        );
 
         this.eInputSaveProfiles.addEventListener(
             "click",
@@ -81,25 +50,36 @@ class DeveloperPage {
             "change",
             (e) => {
                 e.preventDefault();
+                // Update userdata to the new value.
+                app.userdata.data.activeProfile.config.currentInstrument = e.currentTarget.value;
+                // With a new instrument selected, only config widgets related to that instrument should be shown.
                 this.updateConfigInstrumentPanels();
             },
             false
         );
 
+        this.eInputSelectBassGuitarTuning.addEventListener(
+            "change",
+            (e) => {
+                e.preventDefault();
+                // Update userdata to the new value.
+                app.userdata.data.activeProfile.config.instruments["bass-guitar"].tuning = e.currentTarget.value;
+            },
+            false
+        );
+
+        /* Setup */
         this.updateConfigInstrumentPanels();
     }
 
 
     updateConfigInstrumentPanels() {
-        const choice = this.eInputSelectInstrument.value;
-        // console.log("eInputSelectInstrument value: " + choice);
-
         this.eConfigInstrumentPanels.forEach((inElemX) => {
             UIUtils.updateVisibility(inElemX, false);
         });
 
-        if (choice == "bass-guitar") {
-            UIUtils.updateVisibility(this.eInputConfigBassGuitar, true);
+        if (app.userdata.data.activeProfile.config.currentInstrument == "bass-guitar") {
+            UIUtils.updateVisibility(this.eConfigBassGuitar, true);
         }
     }
 
@@ -111,16 +91,7 @@ class DeveloperPage {
 <div class="developer-page main-wrap">
     <div class="row">
         <div class="col-12">
-            <fieldset data-wrap="upload-userdata" class="fieldstyle hide">
-                <legend>Upload MeloNade userdata folder</legend>
-
-                <label>
-                    <span>Upload MeloNade userdata folder</span>
-                    <input class="input-userdata-folder" type="file" webkitdirectory="true"/>
-                </label>
-            </fieldset>
-
-            <fieldset data-wrap="configuration" class="fieldstyle hide">
+            <fieldset data-wrap="configuration" class="fieldstyle">
                 <legend>Configuration</legend>
                 
                 <label>
@@ -134,10 +105,11 @@ class DeveloperPage {
                     <span>Select an instrument:</span>
                     <select class="input-select-instrument" name="input-select-instrument">
                         <option value="bass-guitar">Bass guitar</option>
+                        <option value="guitar">Guitar</option>
                     </select> 
                 </label>
 
-                <div class="config-bass-guitar" class="config-instrument-panel hide">
+                <div class="config-bass-guitar config-instrument-panel">
                     <label>
                         <span>Select a tuning:</span>
                         <select class="input-select-bass-guitar-tuning" name="input-select-bass-guitar-tuning">
