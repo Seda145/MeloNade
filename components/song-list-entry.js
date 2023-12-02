@@ -3,8 +3,17 @@
 class SongListEntry {
 	create(inSongTitle) {
         this.songTitle = inSongTitle;
-        this.songAccuracy = app.userdata.data.activeProfile.songStats[this.songTitle].accuracy;
-        this.albumImageUrl = URL.createObjectURL(app.userdata.data.songs[this.songTitle].albumImage);
+        const songStats = app.userdata.data.activeProfile.songStats[this.songTitle];
+        this.songAccuracy = 0;
+        if (songStats) {
+            // If we have already saved data in the stats, grab it to display it.
+            this.songAccuracy = app.userdata.data.activeProfile.songStats[this.songTitle].accuracy;
+        }
+        this.albumImageUrl = "";
+        if (app.userdata.data.songs[this.songTitle].albumImage) {
+            // If the user added an image for the album, grab it.
+            this.albumImageUrl = URL.createObjectURL(app.userdata.data.songs[this.songTitle].albumImage);
+        }
 		this.element = UIUtils.createElement(this.getHTMLTemplate());
     }
 
