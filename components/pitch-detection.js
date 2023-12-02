@@ -30,7 +30,7 @@ class PitchDetection {
         this.eInputPitchDetectionTargetLetter = this.element.querySelector('.target-letter');
 
         window.addEventListener(
-			"audio-processor-restarts-audio",
+			"audio-processor-start-song",
 			(e) => {
 				e.preventDefault();
 				this.start();
@@ -39,7 +39,7 @@ class PitchDetection {
 		);
 
 		window.addEventListener(
-			"audio-processor-stops-audio",
+			"audio-processor-stop-song",
 			(e) => {
 				e.preventDefault();
 				this.stop();

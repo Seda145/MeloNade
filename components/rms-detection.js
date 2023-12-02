@@ -7,7 +7,7 @@ class RMSDetection {
 		this.eRMSDetectionNumber = this.element.querySelector('.rms-detection-number');
 
         window.addEventListener(
-			"audio-processor-restarts-audio",
+			"audio-processor-start-song",
 			(e) => {
 				e.preventDefault();
 				this.start();
@@ -16,7 +16,7 @@ class RMSDetection {
 		);
 
 		window.addEventListener(
-			"audio-processor-stops-audio",
+			"audio-processor-stop-song",
 			(e) => {
 				e.preventDefault();
 				this.stop();

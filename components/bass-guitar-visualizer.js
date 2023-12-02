@@ -150,7 +150,7 @@ class BassGuitarVisualizer {
 		this.bColorStrings = bInColorStrings;
 
         window.addEventListener(
-			"audio-processor-restarts-audio",
+			"audio-processor-start-song",
 			(e) => {
 				e.preventDefault();
 				this.start();
@@ -159,7 +159,7 @@ class BassGuitarVisualizer {
 		);
 
 		window.addEventListener(
-			"audio-processor-stops-audio",
+			"audio-processor-stop-song",
 			(e) => {
 				e.preventDefault();
 				this.stop();

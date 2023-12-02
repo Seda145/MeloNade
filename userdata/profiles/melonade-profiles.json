@@ -1,0 +1,10 @@
+[
+  {
+    "name": "Default",
+    "songStats": {
+      "Example song": {
+        "accuracy": "0"
+      }
+    }
+  }
+]

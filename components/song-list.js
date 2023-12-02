@@ -15,25 +15,24 @@ class SongList {
         this.element.innerHTML = "";
 
         for (const [key, value] of Object.entries(app.userdata.data.songs)) { 
-            const albumImageUrl = URL.createObjectURL(value.albumImage);
-            let newSongEntry = UIUtils.createElement('<div class="song-entry" data-song-name="' + value.name + '"><span class="song-name">' + value.name + '</span><img class="album-image" src="' + albumImageUrl + '"></div>');
+            let songListEntryX = new SongListEntry();
+            songListEntryX.create(value.title);
+            this.element.appendChild(songListEntryX.element);
 
             // When we click on a song in the list, broadcast its name.
-            newSongEntry.addEventListener(
+            songListEntryX.element.addEventListener(
                 "click",
                 (e) => {
                     e.preventDefault();
 
-                    const songName = e.currentTarget.dataset.songName;
-                    console.log("Song list chose a song: " + songName);
+                    const songTitle = e.currentTarget.dataset.songTitle;
+                    console.log("Song list chose a song: " + songTitle);
                     let songListChoseSongEvent = new Event('song-list-chose-song', { bubbles: false });
-                    songListChoseSongEvent.songName = songName;
+                    songListChoseSongEvent.songTitle = songTitle;
                     window.dispatchEvent(songListChoseSongEvent);
                 },
                 false
             );
-
-            this.element.appendChild(newSongEntry);
         }
     }
 

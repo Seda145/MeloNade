@@ -5,7 +5,7 @@ class Userdata {
         this.data = null;
     }
 
-    setUserdataFromFileList(inFileList) {
+    async setUserdataFromFileList(inFileList) {
         // Clear the current data.
         this.data = null;
 
@@ -18,6 +18,8 @@ class Userdata {
 
         let newData = {};
         newData.songs = {};
+        newData.profiles = null;
+        newData.activeProfile = null;
 
         // Loop through all files and rebuild userdata.
         for (let i = 0; i < inFileList.length; i++) {
@@ -26,35 +28,56 @@ class Userdata {
             const pathStructure = path.split("/");
             // console.log(pathStructure);
 
+            if (pathStructure.length < 1) {
+                console.error("invalid path");
+                return;
+            }
+
             // Attempt to parse as song.
-            if (pathStructure.length > 1 && pathStructure[1] === "songs") {
+            if (pathStructure[1] === "songs") {
                 if (pathStructure.length < 4) {
-                    // The path is expected to be built of 4 components ("*data folder*/songs/*song name*/*song files*"). 
-                    console.error("The structure of a song path is expected to be (*data folder*/songs/*song name*/*song files*): " + path);
+                    // The path is expected to be built of 4 components ("*data folder*/songs/*song title*/*song files*"). 
+                    console.error("The structure of a song path is expected to be (*data folder*/songs/*song title*/*song files*): " + path);
                     return;
                 } 
 
                 // Song path is valid. Now build the object.
-                const songName = pathStructure[2];
-                if (!newData.songs[songName]) {
-                    newData.songs[songName] = {};
-                    newData.songs[songName].name = songName;
+                const songTitle = pathStructure[2];
+                if (!newData.songs[songTitle]) {
+                    newData.songs[songTitle] = {};
+                    newData.songs[songTitle].title = songTitle;
                 }
 
                 const fileNameX = pathStructure[3]
                 switch(fileNameX) {
                     case ("album.jpg"):
-                        newData.songs[songName].albumImage = fileX;
+                        newData.songs[songTitle].albumImage = fileX;
                     break;
                     case ("audio.ogg"):
-                        newData.songs[songName].audio = fileX;
+                        newData.songs[songTitle].audio = fileX;
                     break;
                     case ("midi.mid"):
-                        newData.songs[songName].midi = fileX;
+                        newData.songs[songTitle].midi = fileX;
                     break;
                     default:
                         console.warn("This file lives in the song directory but will not be parsed, as it is not expected to be here: " + path);
                 }
+            }
+
+            // Attempt to parse as profiles file.
+            else if (pathStructure[1] == "profiles") {
+                if (pathStructure.length != 3 || pathStructure[2] != "melonade-profiles.json") {
+                    console.error("The structure of a path to the profiles file is expected to be (*data folder*/profiles/melonade-profiles.json): " + path);
+                    return;
+                } 
+
+                // Found the profiles file.
+                newData.profiles = JSON.parse(await fileX.text());
+                console.log("Got profile data:");
+                console.log(newData.profiles);
+
+                // There is no profile manager yet, but we can use the default provided.
+                newData.activeProfile = newData.profiles[0];
             }
         }
 
@@ -69,8 +92,20 @@ class Userdata {
             }
         }
 
+        if (newData.profiles == null) {
+            console.error("Failed to retrieve profiles from file.");
+            return;
+        }
+
+        if (!newData.activeProfile) {
+            console.error("Failed to retrieve an active profile.");
+            return;
+        }
+
         // Valid, so overwrite the actual data property.
         this.data = newData;
+        const updatedDataEvent = new Event('userdata-updated-data', { bubbles: false });
+        window.dispatchEvent(updatedDataEvent);
     }
 
     isValid() {
@@ -78,4 +113,3 @@ class Userdata {
         return this.data != null;
     }
 }
-

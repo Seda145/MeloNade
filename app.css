@@ -15,6 +15,7 @@ main {
 
 button,
 input[type=submit],
+input[type=button],
 input[type=radio],
 input[type=checkbox],
 label,
@@ -43,6 +44,7 @@ button:hover,
 input[type=checkbox]:hover,
 input[type=radio]:hover,
 input[type=submit]:hover,
+input[type=button]:hover,
 input[type=file] {
 	cursor: pointer;
 }
@@ -68,6 +70,7 @@ textarea,
 button, 
 pre,
 input[type=submit], 
+input[type=button], 
 input[type=text], 
 input[type=number],
 input[type=file] {
@@ -81,6 +84,7 @@ input[type=file] {
 
 button,
 input[type=submit],
+input[type=button],
 input[type=file]
 label {
 	transition: opacity 0.15s;
@@ -88,6 +92,7 @@ label {
 
 button:hover,
 input[type=submit]:hover,
+input[type=button]:hover,
 input[type=file]:hover,
 label:hover {
 	opacity: 0.8;
@@ -95,6 +100,7 @@ label:hover {
 
 button, 
 input[type=submit],
+input[type=button],
 input[type=file] {
 	min-height: 40px;
 	font-weight: bold;

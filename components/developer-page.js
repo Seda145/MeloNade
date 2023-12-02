@@ -9,6 +9,7 @@ class DeveloperPage {
 		this.eInputUserdataFolder = this.eWrapUploadUserdata.querySelector('.input-userdata-folder');
 		this.eWrapConfiguration = this.element.querySelector('[data-wrap="configuration"]');
         this.eInputSubmit = this.eWrapConfiguration.querySelector(".input-submit");
+		this.eInputSaveProfiles = this.eWrapConfiguration.querySelector('.input-save-profiles');
         this.eInputListenToMidi = this.eWrapConfiguration.querySelector('.input-listen-to-midi');
         // Elements - DeveloperPage - SelectInstrument
         this.eInputSelectInstrument = this.eWrapConfiguration.querySelector('.input-select-instrument');
@@ -35,10 +36,10 @@ class DeveloperPage {
 
         this.eInputUserdataFolder.addEventListener(
             "change",
-            (e) => {
+            async (e) => {
                 e.preventDefault();
 
-                app.userdata.setUserdataFromFileList(e.currentTarget.files);
+                await app.userdata.setUserdataFromFileList(e.currentTarget.files);
 
                 // Silly, but we need to reset this value manually or we can run into old data next time.
                 // e.currentTarget.value = "";
@@ -51,6 +52,27 @@ class DeveloperPage {
                 console.log("got valid userdata:");
                 console.log(app.userdata);
 		        this.navigation.navigateTo("Configuration");
+            },
+            false
+        );
+
+        this.eInputSaveProfiles.addEventListener(
+            "click",
+            (e) => {
+                e.preventDefault();
+                console.log("Saving (downloading) profiles.");
+
+                // I would prefer to implement automatic loading / saving of userdata from the working directory, but it's not yet supported on firefox and experimental.
+                // https://stackoverflow.com/questions/42743511/reading-writing-to-a-file-in-javascript
+                // https://developer.chrome.com/articles/file-system-access/
+                const blobUrl = URL.createObjectURL(new Blob([JSON.stringify(app.userdata.data.profiles, null, 2)], { type: "application/json" }));
+                // There is still no supported way to just download this to wherever?
+                // downloads.download({ url: blobUrl, saveAs: true, fileName: "melonade-profiles.json" });
+                let link = document.createElement("a");
+                link.download = "melonade-profiles.json";
+                link.href = blobUrl;
+                link.click();
+                link.remove();
             },
             false
         );
@@ -100,7 +122,7 @@ class DeveloperPage {
 
             <fieldset data-wrap="configuration" class="fieldstyle hide">
                 <legend>Configuration</legend>
-
+                
                 <label>
                     <span>ListenToMidi:</span>
                     <input class="input-listen-to-midi" type="checkbox"/>
@@ -154,7 +176,12 @@ class DeveloperPage {
                 
                 <hr>
 
-                <input class="input-submit block" type="submit" value="Submit">
+                <button class="input-submit block" type="button">Play</button> 
+
+                <hr>
+
+                <button class="input-save-profiles block" type="button">Save progress</button> 
+
             </fieldset>
         </div>
     </div>

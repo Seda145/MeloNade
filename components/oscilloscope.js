@@ -26,8 +26,8 @@ class Oscilloscope {
 			const sliceWidth = (this.eCanvas.width * 1.0) / app.audioProcessor.bufferLength;
 			let x = 0;
 			for (let i = 0; i < app.audioProcessor.bufferLength; i++) {
-				// const v = app.audioProcessor.audioData[i] * 200.0;
-				const v = app.audioProcessor.audioData[i] * 200.0;
+				// const v = app.audioProcessor.audioBuffer[i] * 200.0;
+				const v = app.audioProcessor.audioBuffer[i] * 200.0;
 				// const y = (v * this.eCanvas.height) / 2;
 				const y = this.eCanvas.height / 2 + v;
 
@@ -53,7 +53,7 @@ class Oscilloscope {
 		this.eCanvasCtx = this.eCanvas.getContext("2d");
 
 		window.addEventListener(
-			"audio-processor-restarts-audio",
+			"audio-processor-start-song",
 			(e) => {
 				e.preventDefault();
 				this.start();
@@ -62,7 +62,7 @@ class Oscilloscope {
 		);
 
 		window.addEventListener(
-			"audio-processor-stops-audio",
+			"audio-processor-stop-song",
 			(e) => {
 				e.preventDefault();
 				this.stop();

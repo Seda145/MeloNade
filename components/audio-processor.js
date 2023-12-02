@@ -15,26 +15,38 @@ class AudioProcessor {
 		this.audioContext = new AudioContext();
 		this.intervalResolution = 50;
 		this.analyserNode = null;
-		this.audioData = null;
+		this.audioBuffer = null;
 		this.corrolatedSignal = null;
 		this.localMaxima = null;
 		this.minRelevantRMS = 0.01;
 		this.currentRMS = 0;
 		this.autocorrolatedPitch = 0;
+        this.songTitle = null;
+		this.audio = null;
 		this.midi = null;
 		this.instrumentMidiOffsets = [];
 		this.bListenToMidi = true;
         this.currentNote = null;
         this.currentNoteIndex = 0;
+        this.countMissedNotes = 0;
+        this.countHitNotes = 0;
+        this.countHitAccuracy = 0;
+        this.countHitStreak = 0;
 	}
 
-	restartAudio(inAudio, inMidi, inInstrumentMidiOffsets, bInListenToMidi) {
-		if (!inAudio || !inMidi || !inMidi.tracks) {
-			console.error("Invalid audio element or midi.");
+	async startSong(inSongData, inInstrumentMidiOffsets, bInListenToMidi) {
+        // First stop if required.
+		this.stopSong();
+
+        this.songTitle = inSongData.title;
+        this.audio = new Audio(URL.createObjectURL(inSongData.audio));
+        // https://github.com/Tonejs/Midi
+        this.midi = await Midi.fromUrl(URL.createObjectURL(inSongData.midi));
+
+		if (!this.songTitle || !this.audio || !this.midi || !this.midi.tracks) {
+			console.error("Invalid song data.");
 			return;
 		}
-        // First stop if required.
-		this.stopAudio();
 
 		// TODO
 		console.warn("The first track of the midi data is used.");
@@ -47,52 +59,58 @@ class AudioProcessor {
             this.analyserNode = this.audioContext.createAnalyser();
             this.analyserNode.fftSize = 2048;
             this.bufferLength = this.analyserNode.fftSize;
-            this.audioData = new Float32Array(this.bufferLength);
+            this.audioBuffer = new Float32Array(this.bufferLength);
             this.corrolatedSignal = new Float32Array(this.analyserNode.fftSize);
             this.localMaxima = new Array(4);
 
             this.source = this.audioContext.createMediaStreamSource(stream);
 			this.source.connect(this.analyserNode);
 
-            this.audio = inAudio;
-            this.midi = inMidi;
-            this.instrumentMidiOffsets = inInstrumentMidiOffsets
+            this.instrumentMidiOffsets = inInstrumentMidiOffsets;
             this.bListenToMidi = bInListenToMidi;
             this.currentNote = null;
             this.currentNoteIndex = 0;
+            this.countMissedNotes = 0;
+            this.countHitNotes = 0;
+            this.countHitAccuracy = 0;
+            this.countHitStreak = 0;
     
             this.audio.play();
             this.isPlaying = true;
             this.ProcessMIDIWithAudioSyncInterval = setInterval(() => { this.ProcessMIDIWithAudioSync() }, this.intervalResolution);
     
-            const restartAudioEvent = new Event('audio-processor-restarts-audio', { bubbles: false });
-            window.dispatchEvent(restartAudioEvent);
+            const startSongEvent = new Event('audio-processor-start-song', { bubbles: false });
+            window.dispatchEvent(startSongEvent);
 		}).catch((err) => {
 			console.error(`${err.name}: ${err.message}`);
 			console.error("Could not find a microphone.");
 		});
 	}
 
-	stopAudio() {
+	stopSong() {
 		if (!this.isPlaying) {
 			return;
 		}
 		console.log("Stopping audio");
 		if (this.audio) {
 			this.audio.pause();
-			this.audio = null;
 		}
 		clearInterval(this.ProcessMIDIWithAudioSyncInterval);
 		this.isPlaying = false;
-		const stopAudioEvent = new Event('audio-processor-stops-audio', { bubbles: false });
-		window.dispatchEvent(stopAudioEvent);
+		const stopSongEvent = new Event('audio-processor-stop-song', { bubbles: false });
+		window.dispatchEvent(stopSongEvent);
 	}
 
 	ProcessMIDIWithAudioSync() {
-        // Collect current audio data.
-        this.analyserNode.getFloatTimeDomainData(this.audioData);
         const currentTime = this.audio.currentTime;
+        if (currentTime == this.audio.duration) {
+            // Reached the end.
+            console.log("Reached end of song. Stopping.");
+            this.stopSong();
+        }
         const timeAsTick = this.midi.header.secondsToTicks(currentTime);
+        // Collect current audio data.
+        this.analyserNode.getFloatTimeDomainData(this.audioBuffer);
         // console.log("Current play time: " + currentTime + ". timeAsTick: " + timeAsTick);
         // console.log(this.midi.tracks[0].notes);
 
@@ -100,7 +118,7 @@ class AudioProcessor {
         {
             let sum = 0;
             for (let i = 0; i < this.bufferLength; i++) {
-                const val = this.audioData[i];
+                const val = this.audioBuffer[i];
                 sum += val * val;
             }
             this.currentRMS = Math.sqrt(sum / this.bufferLength);
@@ -113,7 +131,7 @@ class AudioProcessor {
             // autocorrelation V2
 
             // Implements the ACF2+ algorithm
-            let bufferCopy = this.audioData;
+            let bufferCopy = this.audioBuffer;
         
             let r1 = 0;
             let r2 = this.bufferLength - 1;
@@ -213,6 +231,10 @@ class AudioProcessor {
                     break;
                 }
                 oldNote.bHit = false;
+                this.countMissedNotes++;
+                this.countHitStreak = 0;
+                // if total is 0, return 0 to avoid division by 0. The decimals on the calculated hit accuracy are removed.
+                this.countHitAccuracy = (this.countHitNotes + this.countMissedNotes != 0 ? (this.countHitNotes / (this.countMissedNotes + this.countHitNotes) * 100) : 0).toFixed(0);
                 let missedNoteEvent = new Event('audio-processor-missed-note', { bubbles: false });
                 missedNoteEvent.noteIndex = i;
                 window.dispatchEvent(missedNoteEvent);
@@ -258,6 +280,10 @@ class AudioProcessor {
                     // Note that we don't register a miss here, only a hit. A miss is irrelevant since we can make a hit at any time while the note plays.
                     this.currentNote.bHit = true;
                     // console.log("Hit note: " + this.currentNoteIndex);
+                    this.countHitNotes++;
+                    this.countHitStreak++;
+                    // if total is 0, return 0 to avoid division by 0. The decimals on the calculated hit accuracy are removed.
+                    this.countHitAccuracy = (this.countHitNotes + this.countMissedNotes != 0 ? (this.countHitNotes / (this.countMissedNotes + this.countHitNotes) * 100) : 0).toFixed(0);
                     let hitNoteEvent = new Event('audio-processor-hit-note', { bubbles: false });
                     hitNoteEvent.noteIndex = this.currentNoteIndex;
                     window.dispatchEvent(hitNoteEvent);
