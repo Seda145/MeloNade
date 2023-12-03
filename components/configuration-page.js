@@ -1,20 +1,20 @@
 /**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
 
-class DeveloperPage {
+class ConfigurationPage {
 	create(inScopeElement) {
 		/* Elements */
-		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="developer-page"]'), this.getHTMLTemplate());
-        // Elements - DeveloperPage
+		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="configuration-page"]'), this.getHTMLTemplate());
+        // Elements - ConfigurationPage
 		this.eWrapConfiguration = this.element.querySelector('[data-wrap="configuration"]');
         this.eInputSubmit = this.eWrapConfiguration.querySelector(".input-submit");
 		this.eInputSaveProfiles = this.eWrapConfiguration.querySelector('.input-save-profiles');
         this.eInputListenToMidi = this.eWrapConfiguration.querySelector('.input-listen-to-midi');
-        // Elements - DeveloperPage - SelectInstrument
+        // Elements - ConfigurationPage - SelectInstrument
         this.eInputSelectInstrument = this.eWrapConfiguration.querySelector('.input-select-instrument');
         this.eInputSelectInstrument.value = app.userdata.data.activeProfile.config.currentInstrument;
-        // Elements - DeveloperPage - ConfigInstruments
+        // Elements - ConfigurationPage - ConfigInstruments
         this.eConfigInstrumentPanels = this.eWrapConfiguration.querySelectorAll('.config-instrument-panel');
-        // Elements - DeveloperPage - ConfigBassGuitar
+        // Elements - ConfigurationPage - ConfigBassGuitar
         this.eConfigBassGuitar = this.eWrapConfiguration.querySelector('.config-bass-guitar');
         this.eInputSelectBassGuitarTuning = this.eWrapConfiguration.querySelector('.input-select-bass-guitar-tuning');
         this.eInputSelectBassGuitarTuning.value = app.userdata.data.activeProfile.config.instruments["bass-guitar"].tuning;
@@ -90,7 +90,7 @@ class DeveloperPage {
         // return (html`
         return (`
  
-<div class="developer-page main-wrap">
+<div class="configuration-page main-wrap">
     <div class="row">
         <div class="col-12">
             <fieldset data-wrap="configuration" class="fieldstyle">

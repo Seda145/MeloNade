@@ -10,7 +10,7 @@ class MyApp {
 		/* Elements */
 		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="app"]'), this.getHTMLTemplate());
         this.eLoadUserdataWrap = this.element.querySelector('[data-component="load-userdata"]');
-        this.eDeveloperPageWrap = this.element.querySelector('[data-component="developer-page"]');
+        this.eConfigurationPageWrap = this.element.querySelector('[data-component="configuration-page"]');
         this.eSongListWrap = this.element.querySelector('[data-component="song-list"]');
         this.eProcessingContentWrap = this.element.querySelector('[data-component="processing-content"]');
 
@@ -39,11 +39,11 @@ class MyApp {
                 this.loadUserdata.element.remove();
                 this.loadUserdata = null;
 
-                // Create the developer page.
-                this.developerPage = new DeveloperPage();
-                this.developerPage.create(this.element);
+                // Create the configuration page.
+                this.configurationPage = new ConfigurationPage();
+                this.configurationPage.create(this.element);
 
-                this.developerPage.eInputSubmit.addEventListener(
+                this.configurationPage.eInputSubmit.addEventListener(
                     "click",
                     async (e) => {
                         e.preventDefault();
@@ -64,8 +64,8 @@ class MyApp {
                     false
                 );
 
-                this.navigation.registerNavigation("Developer", "Developer", 0, this.eDeveloperPageWrap);
-                this.navigation.navigateTo("Developer");
+                this.navigation.registerNavigation("Configuration", "Configuration", 0, this.eConfigurationPageWrap);
+                this.navigation.navigateTo("Configuration");
             },
             false
         );
@@ -151,14 +151,14 @@ class MyApp {
         console.log("Starting song: " + songData.title);
 
         this.processingContent = new ProcessingContent();
-        const bOrderStringsThickAtBottom = this.developerPage.eInputBassGuitarOrderStringsThickAtBottom.checked;
-        const bColorStrings = this.developerPage.eInputBassGuitarColorStrings.checked;
+        const bOrderStringsThickAtBottom = this.configurationPage.eInputBassGuitarOrderStringsThickAtBottom.checked;
+        const bColorStrings = this.configurationPage.eInputBassGuitarColorStrings.checked;
 		this.processingContent.create(this.element, bOrderStringsThickAtBottom, bColorStrings);
-        this.navigation.registerNavigation("Processing", "Processing", 2, this.eProcessingContentWrap);
+        this.navigation.registerNavigation("Processing", "Now Playing", 2, this.eProcessingContentWrap);
         this.navigation.navigateTo("Processing");
 
-        const stringMidiOffsets = this.developerPage.eInputSelectBassGuitarTuning.value.split(",");
-        const bListenToMidi = this.developerPage.eInputListenToMidi.checked;
+        const stringMidiOffsets = this.configurationPage.eInputSelectBassGuitarTuning.value.split(",");
+        const bListenToMidi = this.configurationPage.eInputListenToMidi.checked;
 
         await this.audioProcessor.startSong(songData, inMidiTrackIndex, stringMidiOffsets, bListenToMidi);
     }
@@ -181,7 +181,7 @@ class MyApp {
 
     <main class="main-wrap container">
         <div data-component="load-userdata" class="hide"></div>
-        <div data-component="developer-page" class="hide"></div>
+        <div data-component="configuration-page" class="hide"></div>
         <div data-component="song-list" class="hide"></div>
 		<div data-component="processing-content" class="hide"></div>
 		<div data-component="navigation"></div>

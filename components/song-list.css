@@ -2,7 +2,7 @@
 
 .song-list {
     background-color: black;
-    height: calc(100vh - 115px);
+    height: calc(100vh - 125px);
     overflow: auto;
     margin-bottom: 0;
 }
