@@ -48,5 +48,5 @@ Tips and Todos:
 1. Use this app responsibly. I do not support piracy, so no songs are included except for the example I made.
 2. Chord sound detection has not yet been implemented. 
 3. Bass guitar is the currently implemented instrument.
-4. Use a microphone device to play along, or use the "stereo mix" (realtek driver) to route system audio as input.
+4. Use a microphone device to play along, or use the "stereo mix" (realtek driver) to route system audio as input. The latter is useful when the audio frequencies match the midi and you want to test the system.
 5. If you are a Rocksmith player, you should know cdlc (psarc) can fully be parsed to this app using Rocksmith EOF (Editor On Fire) and RocksmithToolkit. Still looking for a converter which exports the start positions of midi + audio synchronized.
