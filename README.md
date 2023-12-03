@@ -44,4 +44,4 @@ Tips and Todos:
 3. Bass guitar is the currently implemented instrument.
 4. Use a microphone device to play along, or use the "stereo mix" (realtek driver) to route system audio as input.
 5. If your midi [causes the script to timeout](https://github.com/Tonejs/Midi/issues/187), or produces bad results, open it in Reaper and export it. Some software (guitar pro, audacity, musescore, tuxguitar) still produce inconsistent results.
-6. If you are a Rocksmith player, or unfortunate enough not to be now it has been pulled from the stores, you should know cdlc (psarc) can fully be parsed to this app using Rocksmith EOF (Editor On Fire).
+6. If you are a Rocksmith player, or unfortunate enough not to be now it has been pulled from the stores, you should know cdlc (psarc) can fully be parsed to this app using Rocksmith EOF (Editor On Fire) and RocksmithToolkit.
