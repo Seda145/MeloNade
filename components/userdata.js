@@ -49,18 +49,17 @@ class Userdata {
                 }
 
                 const fileNameX = pathStructure[3]
-                switch(fileNameX) {
-                    case ("album.jpg"):
-                        newData.songs[songTitle].albumImage = fileX;
-                    break;
-                    case ("audio.ogg"):
-                        newData.songs[songTitle].audio = fileX;
-                    break;
-                    case ("midi.mid"):
-                        newData.songs[songTitle].midi = fileX;
-                    break;
-                    default:
-                        console.warn("This file lives in the song directory but will not be parsed, as it is not expected to be here: " + path);
+                if (fileNameX == "album.jpg" || fileNameX == "album.png") {
+                    newData.songs[songTitle].albumImage = fileX;
+                }
+                else if (fileNameX == "audio.ogg") {
+                    newData.songs[songTitle].audio = fileX;
+                }
+                else if (fileNameX == "midi.mid") {
+                    newData.songs[songTitle].midi = fileX;
+                }
+                else {
+                    console.warn("This file lives in the song directory but will not be parsed, as it is not expected to be here: " + path);
                 }
             }
 
