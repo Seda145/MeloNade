@@ -57,7 +57,7 @@ class MyApp {
                             this.songList.element.remove();
                         }
                         this.songList = new SongList();
-                        this.songList.create(this.element);
+                        await this.songList.create(this.element);
                         this.navigation.registerNavigation("Song List", "Song List", 1, this.eSongListWrap);
                         this.navigation.navigateTo("Song List");
                     },
@@ -75,7 +75,7 @@ class MyApp {
             (e) => {
                 e.preventDefault();
 
-                this.startGame(e.songTitle);
+                this.startGame(e.songTitle, e.midiTrackIndex);
             },
             false
         );
@@ -131,7 +131,7 @@ class MyApp {
         );
     }
 
-    async startGame(insongTitle) {
+    async startGame(insongTitle, inMidiTrackIndex) {
         // First stop if required.
         this.stopGame();
         this.startedGame = true;
@@ -160,7 +160,7 @@ class MyApp {
         const stringMidiOffsets = this.developerPage.eInputSelectBassGuitarTuning.value.split(",");
         const bListenToMidi = this.developerPage.eInputListenToMidi.checked;
 
-        await this.audioProcessor.startSong(songData, stringMidiOffsets, bListenToMidi);
+        await this.audioProcessor.startSong(songData, inMidiTrackIndex, stringMidiOffsets, bListenToMidi);
     }
 
     stopGame() {

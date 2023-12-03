@@ -85,8 +85,10 @@ class DeveloperPage {
 
 
     getHTMLTemplate() {
-        const html = (inString) => { return inString };
-        return (html`
+        // TODO autoformat this how? the html tag function is used by lit-html to highlight html. With it active there is no autoformat of the string itself.
+        // const html = (inString) => { return inString };
+        // return (html`
+        return (`
  
 <div class="developer-page main-wrap">
     <div class="row">
@@ -104,7 +106,7 @@ class DeveloperPage {
                 <label>
                     <span>Select an instrument:</span>
                     <select class="input-select-instrument" name="input-select-instrument">
-                        <option value="bass-guitar">Bass guitar</option>
+                        <option value="${MidiUtils.instruments.bassGuitar}">Bass guitar</option>
                     </select> 
                 </label>
 

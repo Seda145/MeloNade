@@ -36,7 +36,7 @@ class AudioProcessor {
         this.countHitStreak = 0;
 	}
 
-	async startSong(inSongData, inInstrumentMidiOffsets, bInListenToMidi) {
+	async startSong(inSongData, inMidiTrackIndex, inInstrumentMidiOffsets, bInListenToMidi) {
         // First stop if required.
 		this.stopSong();
 
@@ -44,6 +44,7 @@ class AudioProcessor {
         this.audio = new Audio(URL.createObjectURL(inSongData.audio));
         // https://github.com/Tonejs/Midi
         this.midi = await Midi.fromUrl(URL.createObjectURL(inSongData.midi));
+        this.midiTrackIndex = inMidiTrackIndex;
 
 		if (!this.songTitle || !this.audio || !this.midi || !this.midi.tracks) {
 			console.error("Invalid song data.");
@@ -53,8 +54,7 @@ class AudioProcessor {
         console.log("Midi as object:");
         console.log(this.midi);
 
-		// TODO
-		console.warn("The first track of the midi data is used.");
+		console.log("The index of the midi track that will be used is: " + this.midiTrackIndex);
 
         // https://webaudio.github.io/web-audio-api/
 		navigator.mediaDevices.getUserMedia({ video: false, audio: true })
@@ -250,7 +250,7 @@ class AudioProcessor {
 
         if (this.bListenToMidi && this.currentNote != null && !this.currentNote.playedByOscillator) {
             // https://medium.com/swinginc/playing-with-midi-in-javascript-b6999f2913c3
-            const midiFrequency = midiUtils.midiNumberToFrequency(this.currentNote.midi);
+            const midiFrequency = MidiUtils.midiNumberToFrequency(this.currentNote.midi);
             // console.log("Note frequency: " + midiFrequency);
     
             // oscillator for debugging. It can't start / stop twice, so recreate it.
@@ -272,7 +272,7 @@ class AudioProcessor {
         if (bUpdatedAutocorrelatedPitch && this.currentNote != null) {
             // const freqDiff = Math.abs(this.autocorrolatedPitch - midiFrequency);
             // console.log("Abs freq diff between midi (" + midiFrequency + ") and audio ("+ this.autocorrolatedPitch + "): " + freqDiff);
-            // console.log("Cents off from pitch (" + this.autocorrolatedPitch + "): "+ midiUtils.centsOffFromPitch(this.autocorrolatedPitch, this.currentNote.midi)); 
+            // console.log("Cents off from pitch (" + this.autocorrolatedPitch + "): "+ MidiUtils.centsOffFromPitch(this.autocorrolatedPitch, this.currentNote.midi)); 
             // console.log(this.autocorrolatedPitch);
             // console.log(this.currentNote.midi);
 
@@ -280,7 +280,7 @@ class AudioProcessor {
 
             // Only need to register the hit once.
             if (!this.currentNote.bHit) {
-                const absCentsDiff = Math.abs(midiUtils.centsOffFromPitch(this.autocorrolatedPitch, this.currentNote.midi));
+                const absCentsDiff = Math.abs(MidiUtils.centsOffFromPitch(this.autocorrolatedPitch, this.currentNote.midi));
                 // Cents tolerance can help if detection is innacurate.
                 const centsTolerance = 40;
                 if (absCentsDiff < centsTolerance) {

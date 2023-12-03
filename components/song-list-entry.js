@@ -1,8 +1,9 @@
 /**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
 
 class SongListEntry {
-	create(inSongTitle) {
+	create(inSongTitle, inMidiTrackIndex) {
         this.songTitle = inSongTitle;
+        this.midiTrackIndex = inMidiTrackIndex;
         const songStats = app.userdata.data.activeProfile.songStats[this.songTitle];
         this.hitTotalPercentage = 0;
         if (songStats) {
@@ -24,7 +25,7 @@ class SongListEntry {
         // return (html`
         return (`
  
- <div class="song-list-entry" data-song-title="${this.songTitle}"><span class="title">${this.songTitle}</span><span class="completed-percentage">Completed: ${this.hitTotalPercentage}%</span><img class="album-image" src="${this.albumImageUrl}"></div>
+ <div class="song-list-entry" data-midi-track-index="${this.midiTrackIndex}" data-song-title="${this.songTitle}"><span class="title">${this.songTitle}</span><span class="completed-percentage">Completed: ${this.hitTotalPercentage}%</span><img class="album-image" src="${this.albumImageUrl}"></div>
 
         `);
     }

@@ -81,7 +81,7 @@ class BassGuitarVisualizer {
 			const stringNumberX = x + 1;
 			const stringOffsetX = app.audioProcessor.instrumentMidiOffsets[x];
 
-			tuningLetterHTMLArr.push('<span class="tuning-letter" data-string-number="' + stringNumberX + '">' + midiUtils.midiNumberToNoteLetter(stringOffsetX) + '</span>');
+			tuningLetterHTMLArr.push('<span class="tuning-letter" data-string-number="' + stringNumberX + '">' + MidiUtils.midiNumberToNoteLetter(stringOffsetX) + '</span>');
 			stringsHTMLArr.push('<div class="string-line" data-string-number="' + stringNumberX + '"></div>');
 			noteTrackHTMLArr.push('<div class="note-bar ' + colorClass + '" data-midi-offset="' + stringOffsetX + '" data-string-number="' + stringNumberX  + '"></div>');
 		}
@@ -116,25 +116,26 @@ class BassGuitarVisualizer {
 			const midiNumber = note.midi;
 			let smallestDistance = 128;
 			// The string tuned to be the closest to the desired note.
-			let optimalKey = -1;
+			let optimalKey = null;
 
 			for (const [key, value] of Object.entries(notesHTML)) {
-				if (midiNumber < key) {
+				const stringMidiOffset = parseInt(key);
+				if (midiNumber < stringMidiOffset) {
 					// We can't play lower than a 0 on the string.
 					continue;
 				}
-				const difference = midiNumber - key;
+				const difference = midiNumber - stringMidiOffset;
 				if (difference < smallestDistance) {
 					optimalKey = key;
 					smallestDistance = difference;
 				}
 			}
-			if (!notesHTML[optimalKey]) {
-				console.error("Error! Did not get an optimal offset for midi note on the note bar.");
-				return;
+			if (optimalKey != null) {
+				notesHTML[optimalKey] += '<div class="note" data-note-index="' + i + '" style="left: ' + notePosition + 'px; width: ' + noteWidth + 'px;"><span>' + MidiUtils.midiNumberToFretNumber(optimalKey, note.midi) + '</span></div>';
 			}
-
-			notesHTML[optimalKey] += '<div class="note" data-note-index="' + i + '" style="left: ' + notePosition + 'px; width: ' + noteWidth + 'px;"><span>' + midiUtils.midiNumberToFretNumber(optimalKey, note.midi) + '</span></div>';
+			else {
+				console.warn("Could not find a position on any notebar for this note, within the current offsets (instrument tuning). Midi number: " + midiNumber + ", as note letter: " + MidiUtils.midiNumberToNoteLetter(midiNumber) + ", note index: " + i);
+			}
 		}
 
 		// Write the note bars html.

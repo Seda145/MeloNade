@@ -13,8 +13,8 @@ class PitchDetection {
         this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
 
         const pitch = app.audioProcessor.autocorrolatedPitch;
-        const midiNumber = midiUtils.frequencyToNearestMidiNumber(pitch);
-        const noteLetter = midiUtils.midiNumberToNoteLetter(midiNumber);
+        const midiNumber = MidiUtils.frequencyToNearestMidiNumber(pitch);
+        const noteLetter = MidiUtils.midiNumberToNoteLetter(midiNumber);
         if (typeof noteLetter === 'undefined') {
             // console.error("noteLetter undefined. (rms too low?)");
             this.eInputPitchDetectionTargetLetter.innerHTML = "-";
