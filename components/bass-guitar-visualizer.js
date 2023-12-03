@@ -9,13 +9,9 @@ class BassGuitarVisualizer {
 		this.eStringsWrap = this.element.querySelector('.strings-wrap');
 		this.eNotesWrap = this.element.querySelector('.notes-wrap');
         /* State */
-		this.widthMultiplier = 240;
-		this.widthOfNoteBar = 0;
-		this.pxPerTick = 0;
-		this.pxPerSecond = 0;
-		this.endOfTrackSeconds = 0;
 		this.bOrderStringsThickAtBottom = bInOrderStringsThickAtBottom;
 		this.bColorStrings = bInColorStrings;
+		this.movePixelsPerSecond = 200;
 
         window.addEventListener(
 			"audio-processor-start-song",
@@ -58,15 +54,6 @@ class BassGuitarVisualizer {
 		
 		// regenerate all notes on the visualizer.
 
-		this.endOfTrackTicks = app.audioProcessor.midi.tracks[app.audioProcessor.midiTrackIndex].endOfTrackTicks;
-		this.endOfTrackSeconds = app.audioProcessor.midi.header.ticksToSeconds(this.endOfTrackTicks);
-		// Calculate the visual width of the note bar by the length of the audio. Tick rate varies per midi, so seconds are calculated.
-		this.widthOfNoteBar = this.endOfTrackSeconds * this.widthMultiplier;
-		// console.log("width of note bar: " + this.widthOfNoteBar);
-		this.pxPerTick = this.widthOfNoteBar / this.endOfTrackTicks;
-		this.pxPerSecond = this.pxPerTick * this.endOfTrackTicks / this.endOfTrackSeconds;
-		// console.log("Pixels per note tick: " + this.pxPerTick);
-
 		// Clear html that will be regenerated.
 		this.eTuningWrap.innerHTML = "";
 		this.eStringsWrap.innerHTML = "";
@@ -108,9 +95,10 @@ class BassGuitarVisualizer {
 		
 		for (let i = 0; i < app.audioProcessor.midi.tracks[app.audioProcessor.midiTrackIndex].notes.length; i++) {
 			const note = app.audioProcessor.midi.tracks[app.audioProcessor.midiTrackIndex].notes[i];
-			const endNoteTick = note.ticks + note.durationTicks;
-			const notePosition = note.ticks * this.pxPerTick;
-			let minNoteWidth = Math.round((endNoteTick - note.ticks) * this.pxPerTick);
+			const notePositionSeconds = app.audioProcessor.midi.header.ticksToSeconds(note.ticks);
+			const notePosition = notePositionSeconds * this.movePixelsPerSecond;
+			const noteDurationSeconds = app.audioProcessor.midi.header.ticksToSeconds(note.durationTicks);
+			const minNoteWidth = Math.round(noteDurationSeconds * this.movePixelsPerSecond);
 
 			// Figure out which bar is best to display the note on.
 			const midiNumber = note.midi;
@@ -154,8 +142,10 @@ class BassGuitarVisualizer {
 		});
 
 		// Set the default track width and position.
+		// I specifically don't use the duration (endOfTrackTicks) of the midi track because of an issue with https://github.com/Tonejs/Midi/issues/187
+		const widthOfNoteBar = app.audioProcessor.audio.duration * this.movePixelsPerSecond;
 		this.eNoteBars.forEach((inElemX) => {
-			inElemX.style.width = this.widthOfNoteBar + 'px';
+			inElemX.style.width = widthOfNoteBar + 'px';
 		});
 		this.eNotesWrap.style.left = '0px';
 		
@@ -178,7 +168,7 @@ class BassGuitarVisualizer {
 		// console.log("refreshing visualizer.");
 		// Move the absolute position of all notes from start to end, based on current play time of the audio.
 		const currentAudioTime = app.audioProcessor.audio.currentTime;
-		const noteBarPosition = currentAudioTime * this.pxPerSecond;
+		const noteBarPosition = currentAudioTime * this.movePixelsPerSecond;
 		// TODO this is choppy movement?
 		// this.eNotesWrap.style.left = -noteBarPosition + 'px';
 		this.eNoteBars.forEach((inElemX) => {
