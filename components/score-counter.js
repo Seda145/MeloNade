@@ -18,6 +18,9 @@ class ScoreCounter {
                 false
             )
         });
+
+        /* Setup */
+        this.updateCountElements();
     }
 
     updateCountElements() {
