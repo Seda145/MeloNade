@@ -10,7 +10,7 @@ body {
 }
 
 main {
-	margin-bottom: 175px;
+	margin-bottom: 75px;
 }
 
 button,
@@ -125,7 +125,7 @@ hr {
 	border-radius: 4px;
 	color: white;
 	margin: 0;
-	margin-bottom: 50px;
+	margin-bottom: 25px;
 }
 
 .fieldstyle legend {

@@ -64,14 +64,12 @@
 
 .bass-guitar-visualizer .note {
 	position: absolute;
-	height: 32px;
-	width: 55px;
 	border-radius: 10px;
 	border: medium solid rgb(0, 119, 230);
 	background-color: #153342;
 	display: flex;
 	align-items: center;
-	text-align: center;
+	text-align: left;
 	overflow: hidden;
 }
 
@@ -95,11 +93,10 @@
 	border-color: white !important;	
 }
 
-/* .bass-guitar-visualizer .note.hit {
-	border-color: white !important;	
-} */
-
 .bass-guitar-visualizer .note > span {
-	flex: 1;
 	font-size: 18px;
+	padding: 5px;
+	border-right: medium solid rgb(0, 119, 230);
+	background-color: black;
+	border-radius: 10px;
 }

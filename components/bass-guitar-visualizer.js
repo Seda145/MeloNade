@@ -9,7 +9,7 @@ class BassGuitarVisualizer {
 		this.eStringsWrap = this.element.querySelector('.strings-wrap');
 		this.eNotesWrap = this.element.querySelector('.notes-wrap');
         /* State */
-		this.widthMultiplier = 100;
+		this.widthMultiplier = 240;
 		this.widthOfNoteBar = 0;
 		this.pxPerTick = 0;
 		this.pxPerSecond = 0;
@@ -110,14 +110,15 @@ class BassGuitarVisualizer {
 			const note = app.audioProcessor.midi.tracks[app.audioProcessor.midiTrackIndex].notes[i];
 			const endNoteTick = note.ticks + note.durationTicks;
 			const notePosition = note.ticks * this.pxPerTick;
-			const noteWidth = (endNoteTick - note.ticks) * this.pxPerTick;
-			
+			let minNoteWidth = Math.round((endNoteTick - note.ticks) * this.pxPerTick);
+
 			// Figure out which bar is best to display the note on.
 			const midiNumber = note.midi;
-			let smallestDistance = 128;
+			let smallestDistance = 999;
 			// The string tuned to be the closest to the desired note.
 			let optimalKey = null;
 
+			// For every "string" (note bar), where key is the tuning of the string and value the html.
 			for (const [key, value] of Object.entries(notesHTML)) {
 				const stringMidiOffset = parseInt(key);
 				if (midiNumber < stringMidiOffset) {
@@ -131,7 +132,7 @@ class BassGuitarVisualizer {
 				}
 			}
 			if (optimalKey != null) {
-				notesHTML[optimalKey] += '<div class="note" data-note-index="' + i + '" style="left: ' + notePosition + 'px; width: ' + noteWidth + 'px;"><span>' + MidiUtils.midiNumberToFretNumber(optimalKey, note.midi) + '</span></div>';
+				notesHTML[optimalKey] += '<div class="note" data-note-index="' + i + '" style="left: ' + notePosition + 'px; min-width: ' + minNoteWidth + 'px;"><span>' + MidiUtils.midiNumberToFretNumber(optimalKey, note.midi) + '</span></div>';
 			}
 			else {
 				console.warn("Could not find a position on any notebar for this note, within the current offsets (instrument tuning). Midi number: " + midiNumber + ", as note letter: " + MidiUtils.midiNumberToNoteLetter(midiNumber) + ", note index: " + i);
