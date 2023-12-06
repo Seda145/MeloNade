@@ -18,7 +18,6 @@ Instructions:
 2. Select a "userdata" folder. This folder contains all your songs and your profile data. (an example userdata folder is provided).
 
 ![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/7d7fe1c0-4d71-4bd7-b512-decbef62c942)
-
 ![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/b14dfbe8-4a86-4c95-94e3-c18e7df3f935)
 
 
@@ -33,6 +32,8 @@ Instructions:
 
 
 5. Connect your instrument if you haven't yet. The common way to connect your music instrument is through the Line-In port on your pc. This port is similar to the microphone port with less noise and a better signal tolerance. If the signal from your instrument is not loud enough you can use a pre-amp pedal between your istrument and the Line-In port. I personally use a "tc electronic Spark Booster" pedal to boost the signal, which greatly improves how well your accuracy is detected by this app. Ensure that the Line-In input level is set high enough.
+
+![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/15d409bf-33df-444f-94ba-f9138dd46356)
 
 
 6. Give permission for access to your microphone, so your connected music instrument will be detected. 
