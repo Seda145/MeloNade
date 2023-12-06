@@ -32,12 +32,15 @@ Instructions:
 ![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/7329294d-ee3b-4b6a-9523-5322ecfab82e)
 
 
-5. Give permission for access to your microphone. The "microphone" can be a connected music instrument, or if you wish use the windows "stereo mix" device to use system audio output as input data.
+5. Connect your instrument if you haven't yet. The common way to connect your music instrument is through the Line-In port on your pc. This port is similar to the microphone port with less noise and a better signal tolerance. If the signal from your instrument is not loud enough you can use a pre-amp pedal between your istrument and the Line-In port. I personally use a "tc electronic Spark Booster" pedal to boost the signal, which greatly improves how well your accuracy is detected by this app. Ensure that the Line-In input level is set high enough.
+
+
+6. Give permission for access to your microphone, so your connected music instrument will be detected. 
    
 ![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/a56f15f4-3a7d-43a3-940c-196532e02a71)
 
 
-6. The music will play, Notes are automatically generated on a fretboard for your selected tuning. You can play at the correct timing (midi), which will increase or decrease your score.
+7. The music will play, Notes are automatically generated on a fretboard for your selected tuning. You can play at the correct timing (midi), which will increase or decrease your score.
    
 ![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/1ee7aa41-897a-45d8-a1db-11d4215e75ad)
 
@@ -49,4 +52,4 @@ Tips and Todos:
 2. Chord sound detection has not yet been implemented. 
 3. Bass guitar is the currently implemented instrument.
 4. Use a microphone device to play along, or use the "stereo mix" (realtek driver) to route system audio as input. The latter is useful when the audio frequencies match the midi and you want to test the system.
-5. If you are a Rocksmith player, you should know cdlc (psarc) can fully be parsed to this app using Rocksmith EOF (Editor On Fire) and RocksmithToolkit. Still looking for a converter which exports the start positions of midi + audio synchronized.
+6. If you are a Rocksmith player, you should know cdlc (psarc) can fully be parsed to this app using Rocksmith EOF (Editor On Fire) and RocksmithToolkit. Still looking for a converter which exports the start positions of midi + audio synchronized.
