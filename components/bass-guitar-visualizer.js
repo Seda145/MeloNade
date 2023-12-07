@@ -11,7 +11,7 @@ class BassGuitarVisualizer {
         /* State */
 		this.bOrderStringsThickAtBottom = bInOrderStringsThickAtBottom;
 		this.bColorStrings = bInColorStrings;
-		this.movePixelsPerSecond = 200;
+		this.movePixelsPerSecond = 300;
 
         window.addEventListener(
 			"audio-processor-start-song",

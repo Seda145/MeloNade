@@ -1,11 +1,31 @@
 /**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
 
 .rms-detection {
-	width: 200px;
+	width: 100%;
 	background-color: black;
 	display: flex;
 	align-items: center;
 	padding: 15px;
-	border: thin solid white;
 	font-size: 18px;
+}
+
+.rms-detection .bar-wrap {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	container-type: size;
+}
+
+.rms-detection .bar {
+	background-image: linear-gradient(90deg, green 70%, orange 90%, red 100%);
+	height: 10px;
+	transition: width 0.1s linear;
+	background-attachment: fixed;
+}
+
+.rms-detection .min-rms {
+	height: 10px;
+	background-color: white;
+	width: 3px;
+	position: absolute;
 }

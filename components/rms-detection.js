@@ -4,7 +4,8 @@ class RMSDetection {
 	create(inScopeElement) {
 		/* Elements */
 		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="rms-detection"]'), this.getHTMLTemplate());
-		this.eRMSDetectionNumber = this.element.querySelector('.rms-detection-number');
+		this.eBar = this.element.querySelector('.bar');
+		this.eMinRMS = this.element.querySelector('.min-rms');
 
         window.addEventListener(
 			"audio-processor-start-song",
@@ -36,8 +37,6 @@ class RMSDetection {
 	draw() {
 		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
 
-        this.eRMSDetectionNumber.innerHTML = Math.round(app.audioProcessor.currentRMS * 100);
-
         // RMS to Decibels:
 		// const decibels = 20 * Math.log(app.audioProcessor.currentRMS) / Math.log(10);
 		// Decibels to RMS:
@@ -47,17 +46,21 @@ class RMSDetection {
 
 		// console.log(decibels);
 		// console.log(app.audioProcessor.currentRMS);
+
+		this.eBar.style.width = Math.round(app.audioProcessor.currentRMS * 100) + "%";
+		this.eMinRMS.style.transform = "translateX(" + Math.round(app.audioProcessor.minRelevantRMS * 100) + "cqw)";
     }
 
     getHTMLTemplate() {
         const html = (inString) => { return inString };
         return (html`
  
-<div class="main-wrap oscilloscope fieldstyle">
-    <div class="rms-detection">
-        <span>Volume:&nbsp;</span>
-        <span class="rms-detection-number">-</span>
-    </div>
+<div class="main-wrap rms-detection fieldstyle">
+	<span>Input Volume:&nbsp;</span>
+	<span class="bar-wrap">
+		<span class="bar"></span>
+		<span class="min-rms"></span>
+	</span>
 </div>
 
 
