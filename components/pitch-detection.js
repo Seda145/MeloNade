@@ -27,7 +27,7 @@ class PitchDetection {
             this.eBarNegativeFill.style.width = "0%";
             this.eBarPositiveFill.style.width = "0%";
             this.eInputPitchDetectionTarget.classList.remove("accurate");
-            console.log("Reset pitch widget to 0, because there is no pitch to show.");
+            // console.log("Reset pitch widget to 0, because there is no pitch to show.");
         }, 200);
 
         const pitch = app.audioProcessor.autocorrolatedPitch;
@@ -46,7 +46,7 @@ class PitchDetection {
         // clamp to a value of 0 to 100 to use as percentage.
         const absCentsOffPitch = Math.abs(centsOffPitch);
         const absCentsOffPercentage = (absCentsOffPitch < 0 ? 0 : absCentsOffPitch > 100 ? 100 : absCentsOffPitch);
-        console.log(centsOffPitch);
+        // console.log(centsOffPitch);
 
         if (centsOffPitch < 0) {
             this.eBarNegativeFill.style.width = absCentsOffPercentage + "%";
