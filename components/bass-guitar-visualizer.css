@@ -64,8 +64,9 @@
 
 .bass-guitar-visualizer .note {
 	position: absolute;
-	border-radius: 10px;
-	border: medium solid rgb(0, 119, 230);
+	border-bottom: medium solid rgb(0, 119, 230);
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
 	background-color: #153342;
 	display: flex;
 	align-items: center;
@@ -91,12 +92,13 @@
 
 .bass-guitar-visualizer .note.hit {
 	border-color: white !important;	
+	background-color: #666;
 }
 
 .bass-guitar-visualizer .note > span {
 	font-size: 18px;
 	padding: 5px;
-	border-right: medium solid rgb(0, 119, 230);
+	border: medium solid rgb(0, 119, 230);
 	background-color: black;
 	border-radius: 10px;
 }
