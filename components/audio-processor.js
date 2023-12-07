@@ -18,7 +18,7 @@ class AudioProcessor {
 		this.audioBuffer = null;
 		this.corrolatedSignal = null;
 		this.localMaxima = null;
-		this.minRelevantRMS = 0.01;
+		this.minRelevantRMS = 0.015;
 		this.currentRMS = 0;
 		this.autocorrolatedPitch = 0;
         this.songTitle = null;
@@ -34,6 +34,9 @@ class AudioProcessor {
         this.countHitAccuracy = 0;
         this.countHitTotalPercentage = 0;
         this.countHitStreak = 0;
+        // Cents tolerance can help if detection is innacurate.
+        this.hitDetectionCentsTolerance = 40;
+        this.currentCentsDifferenceFromNote = 0;
 	}
 
 	async startSong(inSongData, inMidiTrackIndex, inInstrumentMidiOffsets, bInListenToMidi) {
@@ -270,20 +273,13 @@ class AudioProcessor {
 
         // Process the MIDI data against the current audio data (microphone), to see if we find matching frequencies (like playing guitar along to music).
         if (bUpdatedAutocorrelatedPitch && this.currentNote != null) {
-            // const freqDiff = Math.abs(this.autocorrolatedPitch - midiFrequency);
-            // console.log("Abs freq diff between midi (" + midiFrequency + ") and audio ("+ this.autocorrolatedPitch + "): " + freqDiff);
-            // console.log("Cents off from pitch (" + this.autocorrolatedPitch + "): "+ MidiUtils.centsOffFromPitch(this.autocorrolatedPitch, this.currentNote.midi)); 
-            // console.log(this.autocorrolatedPitch);
-            // console.log(this.currentNote.midi);
+            this.currentCentsDifferenceFromNote = MidiUtils.centsOffFromPitch(this.autocorrolatedPitch, this.currentNote.midi);
 
             // console.log(this.currentNote);
 
             // Only need to register the hit once.
             if (!this.currentNote.bHit) {
-                const absCentsDiff = Math.abs(MidiUtils.centsOffFromPitch(this.autocorrolatedPitch, this.currentNote.midi));
-                // Cents tolerance can help if detection is innacurate.
-                const centsTolerance = 40;
-                if (absCentsDiff < centsTolerance) {
+                if (Math.abs(this.currentCentsDifferenceFromNote) <= this.hitDetectionCentsTolerance) {
                     // Note that we don't register a miss here, only a hit. A miss is irrelevant since we can make a hit at any time while the note plays.
                     this.currentNote.bHit = true;
                     // console.log("Hit note: " + this.currentNoteIndex);
