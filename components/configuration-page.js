@@ -71,7 +71,8 @@ class ConfigurationPage {
             (e) => {
                 e.preventDefault();
                 // Update userdata to the new value.
-                app.userdata.data.activeProfile.config.listenToMidi = e.currentTarget.checked;
+                console.log(e);
+                app.userdata.data.activeProfile.config.listenToMidi = e.currentTarget.checked.toString();
             },
             false
         );
@@ -113,7 +114,7 @@ class ConfigurationPage {
             (e) => {
                 e.preventDefault();
                 // Update userdata to the new value.
-                app.userdata.data.activeProfile.config.instruments["bass-guitar"].orderStringsThickAtBottom = e.currentTarget.checked;
+                app.userdata.data.activeProfile.config.instruments["bass-guitar"].orderStringsThickAtBottom = e.currentTarget.checked.toString();
             },
             false
         );
