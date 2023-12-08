@@ -27,10 +27,11 @@ class MyApp {
 		/* Events */
 
         window.addEventListener(
-            "userdata-updated-data",
+            "userdata-loaded-data-from-file",
             async (e) => {
                 e.preventDefault();
-
+                // This event is expected to run only once, so we can build the app here without having to clean up.
+          
                 console.log("got valid userdata:");
                 console.log(app.userdata);
 
@@ -39,35 +40,18 @@ class MyApp {
                 this.loadUserdata.element.remove();
                 this.loadUserdata = null;
 
-                // Create the configuration page.
+                // Create the app pages which rely on the new data.
                 this.configurationPage = new ConfigurationPage();
                 this.configurationPage.create(this.element);
+                this.songList = new SongList();
+                await this.songList.create(this.element);
 
-                this.configurationPage.eInputSubmit.addEventListener(
-                    "click",
-                    async (e) => {
-                        e.preventDefault();
-            
-                        if (!this.userdata.isValid()) {
-                            console.error("Invalid userdata");
-                            return;
-                        }
-                        
-                        if (this.songList) {
-                            this.songList.element.remove();
-                        }
-                        this.songList = new SongList();
-                        await this.songList.create(this.element);
-                        this.navigation.registerNavigation("Song List", "Song List", 1, this.eSongListWrap);
-                        this.navigation.navigateTo("Song List");
-                    },
-                    false
-                );
-
+                // Update navigation.
                 this.navigation.registerNavigation("Configuration", "Configuration", 0, this.eConfigurationPageWrap);
+                this.navigation.registerNavigation("Song List", "Song List", 1, this.eSongListWrap);
                 this.navigation.navigateTo("Configuration");
-            },
-            false
+            }, 
+            {once : true}
         );
 
         window.addEventListener(
@@ -118,13 +102,6 @@ class MyApp {
                     this.processingContent = null;
                 }
         
-                this.navigation.unregisterNavigation("Song List");
-                if (this.songList) {
-                    this.songList.element.remove();
-                }
-                this.songList = new SongList();
-                this.songList.create(this.element);
-                this.navigation.registerNavigation("Song List", "Song List", 1, this.eSongListWrap);
                 this.navigation.navigateTo("Song List");
             },
             false
@@ -151,16 +128,11 @@ class MyApp {
         console.log("Starting song: " + songData.title);
 
         this.processingContent = new ProcessingContent();
-        const bOrderStringsThickAtBottom = this.configurationPage.eInputBassGuitarOrderStringsThickAtBottom.checked;
-        const bColorStrings = this.configurationPage.eInputBassGuitarColorStrings.checked;
-		this.processingContent.create(this.element, bOrderStringsThickAtBottom, bColorStrings);
+		this.processingContent.create(this.element);
         this.navigation.registerNavigation("Processing", "Now Playing", 2, this.eProcessingContentWrap);
         this.navigation.navigateTo("Processing");
 
-        const stringMidiOffsets = this.configurationPage.eInputSelectBassGuitarTuning.value.split(",");
-        const bListenToMidi = this.configurationPage.eInputListenToMidi.checked;
-
-        await this.audioProcessor.startSong(songData, inMidiTrackIndex, stringMidiOffsets, bListenToMidi);
+        await this.audioProcessor.startSong(songData, inMidiTrackIndex);
     }
 
     stopGame() {

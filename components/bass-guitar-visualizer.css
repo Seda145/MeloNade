@@ -58,7 +58,7 @@
 	display: flex;
 	flex: 1;
 	align-items: center;
-	/* Still choppy */
+	/* Transition makes it easier on the eyes, not enough seems to be choppy. */
 	transition: transform 0.2s cubic-bezier(0,1.11,1,1);
 }
 
@@ -74,19 +74,23 @@
 	overflow: hidden;
 }
 
-.bass-guitar-visualizer .note-bar[data-string-number="1"].color-string .note {
+.bass-guitar-visualizer.color-string .note-bar[data-string-number="1"] .note,
+.bass-guitar-visualizer.color-string .note-bar[data-string-number="1"] .note > span {
 	border-color: #d32626;
 }
 
-.bass-guitar-visualizer .note-bar[data-string-number="2"].color-string .note {
+.bass-guitar-visualizer.color-string .note-bar[data-string-number="2"] .note,
+.bass-guitar-visualizer.color-string .note-bar[data-string-number="2"] .note > span {
 	border-color: #dbdb10;
 }
 
-.bass-guitar-visualizer .note-bar[data-string-number="3"].color-string .note {
+.bass-guitar-visualizer.color-string .note-bar[data-string-number="3"] .note,
+.bass-guitar-visualizer.color-string .note-bar[data-string-number="3"] .note > span {
 	border-color: #1c7cf9;
 }
 
-.bass-guitar-visualizer .note-bar[data-string-number="4"].color-string .note {
+.bass-guitar-visualizer.color-string .note-bar[data-string-number="4"] .note,
+.bass-guitar-visualizer.color-string .note-bar[data-string-number="4"] .note > span {
 	border-color: #ff8f00;
 }
 

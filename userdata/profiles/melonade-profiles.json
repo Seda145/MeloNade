@@ -7,10 +7,13 @@
       }
     },
     "config": {
+      "listenToMidi": "false",
       "currentInstrument": "bass-guitar",
       "instruments": {
         "bass-guitar": {
-          "tuning": "28,33,38,43"
+          "tuning": "28,33,38,43",
+          "visualizer": "vertical",
+          "orderStringsThickAtBottom": "true"
         }
       }
     }

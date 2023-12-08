@@ -25,8 +25,6 @@ class AudioProcessor {
 		this.audio = null;
 		this.midi = null;
         this.midiTrackIndex = 0;
-		this.instrumentMidiOffsets = [];
-		this.bListenToMidi = true;
         this.currentNote = null;
         this.currentNoteIndex = 0;
         this.countMissedNotes = 0;
@@ -39,7 +37,7 @@ class AudioProcessor {
         this.currentCentsDifferenceFromNote = 0;
 	}
 
-	async startSong(inSongData, inMidiTrackIndex, inInstrumentMidiOffsets, bInListenToMidi) {
+	async startSong(inSongData, inMidiTrackIndex) {
         // First stop if required.
 		this.stopSong();
 
@@ -74,8 +72,6 @@ class AudioProcessor {
             this.source = this.audioContext.createMediaStreamSource(stream);
 			this.source.connect(this.analyserNode);
 
-            this.instrumentMidiOffsets = inInstrumentMidiOffsets;
-            this.bListenToMidi = bInListenToMidi;
             this.currentNote = null;
             this.currentNoteIndex = 0;
             this.countMissedNotes = 0;
@@ -251,7 +247,7 @@ class AudioProcessor {
             }
         }
 
-        if (this.bListenToMidi && this.currentNote != null && !this.currentNote.playedByOscillator) {
+        if (app.userdata.data.activeProfile.config.listenToMidi == "true" && this.currentNote != null && !this.currentNote.playedByOscillator) {
             // https://medium.com/swinginc/playing-with-midi-in-javascript-b6999f2913c3
             const midiFrequency = MidiUtils.midiNumberToFrequency(this.currentNote.midi);
             // console.log("Note frequency: " + midiFrequency);

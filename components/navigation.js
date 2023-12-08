@@ -63,6 +63,7 @@ class Navigation {
 		console.log("Navigation to: " + inId);
 
 		// Hide currently active panel and update tab class.
+		const oldId = this.activePanelId;
 		if (this.activePanelId != null) {
 			let activePanel = this.panels[this.activePanelId];
 			if (activePanel) {
@@ -95,6 +96,13 @@ class Navigation {
 				return;
 			}
 		}
+
+		let navigatedEvent = new Event('navigation-navigated', { bubbles: false });
+		navigatedEvent.navigationObject = this;
+		navigatedEvent.navigatedFrom = oldId;
+		navigatedEvent.navigatedTo = this.activePanelId;
+		// console.log(navigatedEvent);
+		window.dispatchEvent(navigatedEvent);
 	}
 
 	create(inScopeElement) {

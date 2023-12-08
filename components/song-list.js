@@ -4,7 +4,34 @@ class SongList {
 	async create(inScopeElement) {
 		/* Elements */
 		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="song-list"]'), this.getHTMLTemplate());
-       
+  
+		/* Events */
+
+        window.addEventListener(
+            "navigation-navigated",
+            async (e) => {
+                e.preventDefault();
+
+                if (e.navigatedTo != "Song List") {
+                    // Irrelevant event.
+                    return;
+                }
+                console.log("Song List responds to navigation event, to update its song entries.");
+
+                // Todo
+                // I would rather respond to a change in userdata so we know the song list has to be updated to relevant values.
+                // It would require getter / setters on the Userdata or some implementation of observer pattern.
+                await this.regenerateSongEntries();
+            },
+            false
+        );
+
+        /* Setup */
+
+        this.regenerateSongEntries();
+    }
+
+    async regenerateSongEntries() {
         if (!app.userdata.isValid()) {
             console.error("Can't generate song list. app.userdata is invalid.");
             return;

@@ -104,12 +104,12 @@ class Userdata {
 
         // Valid, so overwrite the actual data property.
         this.data = newData;
-        const updatedDataEvent = new Event('userdata-updated-data', { bubbles: false });
-        window.dispatchEvent(updatedDataEvent);
+        const loadedDataFromFileEvent = new Event('userdata-loaded-data-from-file', { bubbles: false });
+        window.dispatchEvent(loadedDataFromFileEvent);
     }
 
     isValid() {
-        // If we set this.data to anything else than null, it passed validation there.
+        // If we set this.data to anything else than null, it passed validation from file already.
         return this.data != null;
     }
 }

@@ -6,9 +6,9 @@ class ConfigurationPage {
 		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="configuration-page"]'), this.getHTMLTemplate());
         // Elements - ConfigurationPage
 		this.eWrapConfiguration = this.element.querySelector('[data-wrap="configuration"]');
-        this.eInputSubmit = this.eWrapConfiguration.querySelector(".input-submit");
 		this.eInputSaveProfiles = this.eWrapConfiguration.querySelector('.input-save-profiles');
         this.eInputListenToMidi = this.eWrapConfiguration.querySelector('.input-listen-to-midi');
+        this.eInputListenToMidi.checked = app.userdata.data.activeProfile.config.listenToMidi == "true";
         // Elements - ConfigurationPage - SelectInstrument
         this.eInputSelectInstrument = this.eWrapConfiguration.querySelector('.input-select-instrument');
         this.eInputSelectInstrument.value = app.userdata.data.activeProfile.config.currentInstrument;
@@ -18,12 +18,32 @@ class ConfigurationPage {
         this.eConfigBassGuitar = this.eWrapConfiguration.querySelector('.config-bass-guitar');
         this.eInputSelectBassGuitarTuning = this.eWrapConfiguration.querySelector('.input-select-bass-guitar-tuning');
         this.eInputSelectBassGuitarTuning.value = app.userdata.data.activeProfile.config.instruments["bass-guitar"].tuning;
+        this.eInputSelectBassGuitarVisualizer = this.eWrapConfiguration.querySelector('.input-select-bass-guitar-visualizer');
+        this.eInputSelectBassGuitarVisualizer.value = app.userdata.data.activeProfile.config.instruments["bass-guitar"].visualizer;
         this.eInputBassGuitarOrderStringsThickAtBottom = this.eWrapConfiguration.querySelector('.input-bass-guitar-order-strings-thick-at-bottom');
-        this.eInputBassGuitarColorStrings = this.eWrapConfiguration.querySelector('.input-bass-guitar-color-strings');
+        this.eInputBassGuitarOrderStringsThickAtBottom.checked = app.userdata.data.activeProfile.config.instruments["bass-guitar"].orderStringsThickAtBottom == "true";
 
         /* State */
 
         /* Events */
+
+        window.addEventListener(
+			"audio-processor-start-song",
+			(e) => {
+				e.preventDefault();
+				this.eWrapConfiguration.disabled = "true";
+			},
+			false
+		);
+
+		window.addEventListener(
+			"audio-processor-stop-song",
+			(e) => {
+				e.preventDefault();
+				this.eWrapConfiguration.removeAttribute("disabled");
+			},
+			false
+		);
 
         this.eInputSaveProfiles.addEventListener(
             "click",
@@ -42,6 +62,16 @@ class ConfigurationPage {
                 link.href = blobUrl;
                 link.click();
                 link.remove();
+            },
+            false
+        );
+
+        this.eInputListenToMidi.addEventListener(
+            "change",
+            (e) => {
+                e.preventDefault();
+                // Update userdata to the new value.
+                app.userdata.data.activeProfile.config.listenToMidi = e.currentTarget.checked;
             },
             false
         );
@@ -68,10 +98,29 @@ class ConfigurationPage {
             false
         );
 
+        this.eInputSelectBassGuitarVisualizer.addEventListener(
+            "change",
+            (e) => {
+                e.preventDefault();
+                // Update userdata to the new value.
+                app.userdata.data.activeProfile.config.instruments["bass-guitar"].visualizer = e.currentTarget.value;
+            },
+            false
+        );
+
+        this.eInputBassGuitarOrderStringsThickAtBottom.addEventListener(
+            "change",
+            (e) => {
+                e.preventDefault();
+                // Update userdata to the new value.
+                app.userdata.data.activeProfile.config.instruments["bass-guitar"].orderStringsThickAtBottom = e.currentTarget.checked;
+            },
+            false
+        );
+
         /* Setup */
         this.updateConfigInstrumentPanels();
     }
-
 
     updateConfigInstrumentPanels() {
         this.eConfigInstrumentPanels.forEach((inElemX) => {
@@ -137,20 +186,19 @@ class ConfigurationPage {
                     </label>
 
                     <label>
-                        <span>Order the strings by thickest at the bottom:</span>
-                        <input class="input-bass-guitar-order-strings-thick-at-bottom" type="checkbox" checked/>
+                        <span>Select a visualizer:</span>
+                        <select class="input-select-bass-guitar-visualizer" name="input-select-bass-guitar-visualizer">
+                            <option value="vertical">Vertical</option>
+                            <option value="horizontal">Horizontal</option>
+                        </select>
                     </label>
 
                     <label>
-                        <span>Color strings:</span>
-                        <input class="input-bass-guitar-color-strings" type="checkbox"/>
+                        <span>Order the strings by thickest at the bottom:</span>
+                        <input class="input-bass-guitar-order-strings-thick-at-bottom" type="checkbox" checked/>
                     </label>
                 </div>
                 
-                <hr>
-
-                <button class="input-submit block" type="button">Play</button> 
-
                 <hr>
 
                 <button class="input-save-profiles block" type="button">Save progress</button> 
