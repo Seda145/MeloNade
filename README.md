@@ -20,20 +20,19 @@ Instructions:
 
 2. Select a "userdata" folder. This folder contains all your songs and your profile data. (an example userdata folder is provided).
 
-![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/7d7fe1c0-4d71-4bd7-b512-decbef62c942)
-![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/b14dfbe8-4a86-4c95-94e3-c18e7df3f935)
+![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/52a2d2b4-4e9d-4660-a6fc-fe590e117a0b) >>>  ![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/b14dfbe8-4a86-4c95-94e3-c18e7df3f935)
 
 ---
 
 3.  You are now on the configuration page. You can configure your experience and save your configuration + song progress here.
    
-![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/517a2d75-8f7c-4477-ae92-632abda84cb6)
+![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/be7ee20a-f199-4593-8436-5e085ff69478)
 
 ---
 
-4. Hit the play button and select a song on the song list. The listed songs match your current configuration, such as choice of instrument. The matching midi track containing this information should automatically be detected.
+4. Continue to the Song List and select a song. The listed songs come from your userdata folder and match your current configuration, such as choice of instrument. 
 
-![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/7329294d-ee3b-4b6a-9523-5322ecfab82e)
+![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/3c202f87-5842-4e3c-8045-99eeb6fd5edb)
 
 ---
 
@@ -47,18 +46,18 @@ Instructions:
 
 6. Give permission for access to your microphone, so your connected music instrument will be detected. 
    
-![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/a56f15f4-3a7d-43a3-940c-196532e02a71)
+![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/4d03bded-1ceb-4d57-842a-25e4b9177855)
 
 ---
 
 7. The music will play, Notes are automatically generated on a fretboard for your selected tuning. You can play at the correct timing (midi), which will increase or decrease your score.
-   
-![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/1ee7aa41-897a-45d8-a1db-11d4215e75ad)
+There are currently two visualizers, a horizontal and a vertical one:
 
-8. Try out the horizontal and the new vertical visualizer ;).
+![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/54b7751d-9674-47be-b3b6-1e4a1d77d3a3)
 
-![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/9c720a68-3d19-416b-be54-ea191d702495)
+---
 
+![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/b22732d1-e363-47cd-bc36-8972c94b9c02)
 
 ---
 
