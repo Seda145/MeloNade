@@ -1,11 +1,16 @@
 /**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
 
 .bass-guitar-visualizer-vertical {
-	background-color: black;
+	background-color: #0000005c;
 	display: flex;
 	flex: 1;
 	flex-direction: column;
 	overflow: hidden;
+	filter: drop-shadow(0 9px 2px #6d1c3370);
+	/* box-shadow: 0px 0px 10px #8b2f2f inset; */
+	box-shadow: 0px 0px 13px #0f0f0f inset;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
 }
 
 .bass-guitar-visualizer-vertical .horizontal-wrap {
@@ -17,7 +22,7 @@
 .bass-guitar-visualizer-vertical .tuning-wrap {
 	display: flex;
 	flex-direction: column;
-	height: 150px;
+	height: 125px;
 	align-self: flex-end;
 	background-color: #090909;
 	position: absolute;
@@ -55,7 +60,7 @@
 
 .bass-guitar-visualizer-vertical .notes-wrap {
 	display: flex;
-	height: calc(80vh - 315px);
+	height: calc(100vh - 585px);
 	overflow: hidden;
 	flex: 1;
 }
@@ -120,12 +125,12 @@
 .bass-guitar-visualizer-vertical .strings-wrap {
 	display: flex;
 	flex: 1;
-	height: 150px;
+	height: 125px;
 	flex-direction: column;
 	background-image: repeating-linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) calc(100% - 5px), #fff 100%), 
 		linear-gradient(90deg, #666 0%, #666 calc((100% / 25) - 1px), rgba(0, 0, 0, 0) calc(100% / 25));
 	background-size: calc(100% / 25);
-	border: thin solid #666;
+	border: thin solid #999;
 }
 
 .bass-guitar-visualizer-vertical .string-line {

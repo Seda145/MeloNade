@@ -1,12 +1,12 @@
 /**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
 
 .rms-detection {
-	width: 100%;
-	background-color: black;
 	display: flex;
+	flex-direction: row;
 	align-items: center;
-	padding: 15px;
 	font-size: 18px;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 .rms-detection .bar-wrap {
@@ -19,7 +19,7 @@
 }
 
 .rms-detection .bar {
-	background-image: linear-gradient(90deg, green 70%, orange 85%, red 100%);
+	background-image: linear-gradient(90deg, #00b558 70%, orange 85%, red 100%);
 	height: 100%;
 	transition: width 0.1s linear;
 	background-attachment: fixed;

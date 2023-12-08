@@ -39,12 +39,16 @@ class Oscilloscope {
 
 		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
 
-		this.eCanvasCtx.fillStyle = "rgb(0, 0, 0)";
+		// this.eCanvasCtx.fillStyle = "rgb(0, 0, 0)";
+		this.eCanvasCtx.fillStyle = " #735757";
 		this.eCanvasCtx.fillRect(0, 0, this.eCanvas.width, this.eCanvas.height);
 
-		this.eCanvasCtx.lineWidth = 2;
+		this.eCanvasCtx.lineWidth = 3;
 		// this.eCanvasCtx.strokeStyle = "rgb(0, 119, 230)";
-		this.eCanvasCtx.strokeStyle = "#666";
+		// this.eCanvasCtx.strokeStyle = "#666";
+		// this.eCanvasCtx.strokeStyle = "#85da5f";
+		// this.eCanvasCtx.strokeStyle = "#fff";
+		this.eCanvasCtx.strokeStyle = "#00b558";
 
 		this.eCanvasCtx.beginPath();
 
@@ -76,7 +80,7 @@ class Oscilloscope {
         const html = (inString) => { return inString };
         return (html`
  
-<div class="main-wrap oscilloscope fieldstyle">
+<div class="oscilloscope">
     <!-- Canvas resolution needs to be specified like width and height here. -->
     <canvas class="oscilloscope-canvas"  width="1920px" height="150px"></canvas>
 </div>

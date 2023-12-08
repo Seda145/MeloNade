@@ -42,7 +42,7 @@ class Navigation {
 				return;
 			}
 
-			let newTab = UIUtils.createElement('<span class="tab" style="order:' + inTabOrderIndex + ';" data-contentid="' + inId + '">' + inTabTitle + '</span>');
+			let newTab = UIUtils.createElement('<span class="tab button" style="order:' + inTabOrderIndex + ';" data-contentid="' + inId + '">' + inTabTitle + '</span>');
 			this.eTabs.appendChild(newTab);
 	
 			newTab.addEventListener(
@@ -121,7 +121,7 @@ class Navigation {
         return (html`
     
 <div class="navigation">
-    <div class="tabs main-wrap"></div>
+    <div class="tabs"></div>
 </div>
 
 

@@ -2,7 +2,11 @@
 
 .score-counter {
     display: flex;
-    background: black;
+    flex-direction: row;
+    padding: 15px;
+    background: linear-gradient(#250e0ff7 80%, #21050e);
+    border: thin solid #1a1515;
+    border-bottom-width: 0px;
 }
 
 .score-counter .counter-wrap {
@@ -14,8 +18,11 @@
 
 .score-counter .counter {
     text-align: center;
-    padding: 10px;
-    background: black;
     font-size: 18px;
+    padding: 10px;
+    border-radius: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    border: thin solid #666;
 }
 

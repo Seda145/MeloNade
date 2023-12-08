@@ -35,7 +35,7 @@ class ProcessingContent {
         const html = (inString) => { return inString };
         return (html`
  
-<div class="processing-content main-wrap">
+<div class="processing-content page container">
     <div data-component="score-counter"></div>
     <div data-component="bass-guitar-visualizer"></div>
     <div data-component="bass-guitar-visualizer-vertical"></div>

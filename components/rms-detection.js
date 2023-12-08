@@ -55,7 +55,7 @@ class RMSDetection {
         const html = (inString) => { return inString };
         return (html`
  
-<div class="main-wrap rms-detection fieldstyle">
+<div class="rms-detection">
 	<span>Input Volume:&nbsp;</span>
 	<span class="bar-wrap">
 		<span class="bar"></span>

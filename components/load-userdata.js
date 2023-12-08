@@ -4,8 +4,7 @@ class LoadUserdata {
 	create(inScopeElement) {
 		/* Elements */
 		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="load-userdata"]'), this.getHTMLTemplate());
-        this.eWrapUploadUserdata = this.element.querySelector('[data-wrap="upload-userdata"]');
-		this.eInputUserdataFolder = this.eWrapUploadUserdata.querySelector('.input-userdata-folder');
+		this.eInputUserdataFolder = this.element.querySelector('.input-userdata-folder');
         /* State */
 
         /* Events */
@@ -26,18 +25,13 @@ class LoadUserdata {
         const html = (inString) => { return inString };
         return (html`
  
-<div class="load-userdata main-wrap">
-    <div class="row">
-        <div class="col-12">
-            <fieldset data-wrap="upload-userdata" class="fieldstyle">
-                <legend>Upload MeloNade userdata folder</legend>
-
-                <label>
-                    <span>Upload MeloNade userdata folder</span>
-                    <input class="input-userdata-folder" type="file" webkitdirectory="true"/>
-                </label>
-            </fieldset>
-        </div>
+<div class="load-userdata page container">
+    <div class="load-userdata-section">
+        <h1>Welcome to MeloNade</h1>
+        <label>
+            <span>Please select your MeloNade userdata folder:</span>
+            <input class="input-userdata-folder" type="file" webkitdirectory="true"/>
+        </label>
     </div>
 </div>
 

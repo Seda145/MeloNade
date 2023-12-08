@@ -71,7 +71,6 @@ class ConfigurationPage {
             (e) => {
                 e.preventDefault();
                 // Update userdata to the new value.
-                console.log(e);
                 app.userdata.data.activeProfile.config.listenToMidi = e.currentTarget.checked.toString();
             },
             false
@@ -140,10 +139,10 @@ class ConfigurationPage {
         // return (html`
         return (`
  
-<div class="configuration-page main-wrap">
+<div class="configuration-page page container">
     <div class="row">
         <div class="col-12">
-            <fieldset data-wrap="configuration" class="fieldstyle">
+            <fieldset data-wrap="configuration">
                 <legend>Configuration</legend>
                 
                 <label>
@@ -202,7 +201,7 @@ class ConfigurationPage {
                 
                 <hr>
 
-                <button class="input-save-profiles block" type="button">Save progress</button> 
+                <button class="input-save-profiles button block" type="button">Save progress</button> 
 
             </fieldset>
         </div>

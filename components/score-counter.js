@@ -34,7 +34,7 @@ class ScoreCounter {
         const html = (inString) => { return inString };
         return (html`
  
-<div class="main-wrap score-counter fieldstyle">
+<div class="score-counter">
     <span class="counter-wrap">
         <span>Streak:</span>
         <span class="counter streak"></span>

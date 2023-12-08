@@ -102,7 +102,7 @@ class PitchDetection {
         const html = (inString) => { return inString };
         return (html`
  
-<div class="main-wrap pitch-detection fieldstyle">
+<div class="pitch-detection">
     <div class="bar negative">
         <div class="fill"></div>
     </div>

@@ -180,7 +180,7 @@ class BassGuitarVisualizer {
         return (html`
 
  
-<div class="bass-guitar-visualizer color-string main-wrap fieldstyle">
+<div class="bass-guitar-visualizer color-string">
     <div class="tuning-wrap"></div>
 
     <div class="note-visualizer">

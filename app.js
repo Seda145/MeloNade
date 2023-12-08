@@ -6,7 +6,7 @@ class MyApp {
         this.startedGame = false;
 	}
 
-	create(inScopeElement) {
+	async create(inScopeElement) {
 		/* Elements */
 		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="app"]'), this.getHTMLTemplate());
         this.eLoadUserdataWrap = this.element.querySelector('[data-component="load-userdata"]');
@@ -19,8 +19,11 @@ class MyApp {
 		this.loadUserdata = new LoadUserdata();
 		this.loadUserdata.create(this.element);
 
+        this.backgroundLighting = new BackgroundLighting();
+        this.backgroundLighting.create(this.element);
+
 		this.navigation = new Navigation();
-		this.navigation.create(this.element);
+		await this.navigation.create(this.element);
 		this.navigation.registerNavigation("Load Userdata", null, 0, this.eLoadUserdataWrap);
 		this.navigation.navigateTo("Load Userdata");
 
@@ -158,6 +161,8 @@ class MyApp {
 		<div data-component="processing-content" class="hide"></div>
 		<div data-component="navigation"></div>
     </main>
+
+    <div data-component="background-lighting"></div>
 
     <footer></footer>
 </div>

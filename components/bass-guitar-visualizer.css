@@ -5,6 +5,8 @@
 	background-color: black;
 	display: flex;
 	flex-direction: row;
+	margin-bottom: 50px;
+	border: thin solid #333;
 }
 
 .bass-guitar-visualizer .tuning-wrap {
@@ -64,7 +66,6 @@
 
 .bass-guitar-visualizer .note {
 	position: absolute;
-	border-bottom: medium solid rgb(0, 119, 230);
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
 	background-color: #153342;
@@ -74,22 +75,18 @@
 	overflow: hidden;
 }
 
-.bass-guitar-visualizer.color-string .note-bar[data-string-number="1"] .note,
 .bass-guitar-visualizer.color-string .note-bar[data-string-number="1"] .note > span {
 	border-color: #d32626;
 }
 
-.bass-guitar-visualizer.color-string .note-bar[data-string-number="2"] .note,
 .bass-guitar-visualizer.color-string .note-bar[data-string-number="2"] .note > span {
 	border-color: #dbdb10;
 }
 
-.bass-guitar-visualizer.color-string .note-bar[data-string-number="3"] .note,
 .bass-guitar-visualizer.color-string .note-bar[data-string-number="3"] .note > span {
 	border-color: #1c7cf9;
 }
 
-.bass-guitar-visualizer.color-string .note-bar[data-string-number="4"] .note,
 .bass-guitar-visualizer.color-string .note-bar[data-string-number="4"] .note > span {
 	border-color: #ff8f00;
 }

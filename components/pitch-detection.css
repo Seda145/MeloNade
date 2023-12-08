@@ -2,28 +2,27 @@
 
 .pitch-detection {
 	display: flex;
-	height: 150px;
-	position: relative;
-	container-type: size;
-	overflow: hidden;
+	flex-direction: row;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 .pitch-detection .bar {
 	height: 5px;
-	margin: auto;
 	background-color: #666;
 	flex: 1;
 	display: flex;
+	align-self: center;
 }
 
-  
 .pitch-detection .bar.negative {
 	flex-direction: row-reverse;
 }
 
 .pitch-detection .bar .fill {
 	height: 5px;
-	background-color: #85da5f;
+	/* background-color: #85da5f; */
+	background-color: #00b558;
 	width: 0%;
 	transition: width 0.8s linear;
 }
@@ -31,15 +30,14 @@
 .pitch-detection .target {
 	background-color: #191717;
 	border-radius: 100%;
-	margin: auto;
-	width: 100px;
-	height: 100px;
+	width: 60px;
+	height: 60px;
 	border: medium solid #666;
 	display: flex;
 }
 
 .pitch-detection .target.accurate {
-	border-color: #85da5f;
+	border-color: #00b558;
 	transition: border-color 0.5s ease;
 }
 

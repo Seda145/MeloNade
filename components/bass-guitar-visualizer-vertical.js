@@ -165,7 +165,7 @@ class BassGuitarVisualizerVertical {
         const html = (inString) => { return inString };
         return (html`
  
-<div class="bass-guitar-visualizer-vertical color-string main-wrap fieldstyle">
+<div class="bass-guitar-visualizer-vertical color-string">
     <div class="horizontal-wrap">
 		<div class="play-area">
 			<div class="vertical-wrap">

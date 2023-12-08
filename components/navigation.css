@@ -1,46 +1,12 @@
 /**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
 
 .navigation {
-	position: fixed;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background-color: #040504;
-	border-top: thin solid gray;
-	filter: drop-shadow(0px -4px 4px #226f8d);
 	display: flex;
-	flex-direction: column;
-	padding-left: 15px;
-	padding-right: 15px;
+	padding: 15px;
 }
 
 .navigation .tabs {
 	display: flex;
-	width: 100%;
-}
-
-.navigation .tab {
-	display: inline-block;
-	padding: 5px 10px;
-	background-color: #384757;
-	color: white;
-	font-size: 14px;
-	border-radius: 4px;
-	margin: 10px 7px;
-	margin-left: 0;
 	flex: 1;
-	min-height: 40px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.navigation .tab:hover {
-	cursor: pointer;
-	opacity: 0.8;
-	transition: opacity 0.2s;
-}
-
-.navigation .tab.active {
-	background-color: #226f8d;
+	gap: 10px;
 }
