@@ -55,6 +55,10 @@ Instructions:
    
 ![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/1ee7aa41-897a-45d8-a1db-11d4215e75ad)
 
+8. Try out the horizontal and the new vertical visualizer ;).
+
+![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/9c720a68-3d19-416b-be54-ea191d702495)
+
 
 ---
 
