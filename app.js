@@ -83,7 +83,7 @@ class MyApp {
 <div id="app-wrap">
     <header></header>
 
-    <main class="main-wrap container">
+    <main class="main-wrap container flex-direction-colum">
         <div data-component="load-userdata" class="hide"></div>
         <div data-component="configuration-page" class="hide"></div>
         <div data-component="song-list" class="hide"></div>

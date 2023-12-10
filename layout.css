@@ -19,9 +19,6 @@ button {
 .block {
 	display: block;
 }
-main {
-  flex-direction: column;
-}
 .main-wrap {
   max-width: 1920px;
   margin: auto;
@@ -29,7 +26,23 @@ main {
 .container {
   padding: 15px;
 }
+.flex-direction-column {
+  display: flex;
+  flex-direction: column;
+}
+.flex-direction-column-reverse {
+  display: flex;
+  flex-direction: column-reverse;
+}
+.flex-direction-row {
+  display: flex;
+  flex-direction: row;
+}
+.align-items-center {
+  align-items: center;
+}
 .flex-direction-row-reverse {
+  display: flex;
   flex-direction: row-reverse;
 }
 .row {
