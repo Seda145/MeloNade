@@ -1,13 +1,40 @@
 /**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
 
 .background-lighting {
+
+}
+
+.background-lighting .static-background {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	z-index: -3;
+	background-image: linear-gradient(0deg, rgb(1, 0, 0), rgb(28, 10, 10), rgb(43, 22, 22));
+}
+
+.background-lighting .stage-background {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	z-index: -2;
+	/* Note that values are controlled in js, base colors and opacity should be synced. */
+	opacity: 0;
+	transition: opacity 2s ease;
+}
+
+.stage-spots {
 	position: absolute;
 	top: 0;
 	left: 0;
 	bottom: 0;
 	right: 0;
 	z-index: -1;
-	/* background-image: linear-gradient(217deg, rgba(255,0,0,.8), rgba(255,0,0,0) 70.71%), linear-gradient(127deg, rgba(0,255,0,.8), rgba(0,255,0,0) 70.71%), linear-gradient(336deg, rgba(0,0,255,.8), rgba(0,0,255,0) 70.71%); */
-  	/* background-image: linear-gradient(0deg, #3f87a6, #ebf8e1, #f69d3c); */
-	background-image: linear-gradient(0deg, #010000, #1c0a0a, #2b1616);
+	/* Note that values are controlled in js, base colors and opacity should be synced. */
+	opacity: 0;
+	transition: opacity 2s ease;
+	mask-composite: intersect;
 }

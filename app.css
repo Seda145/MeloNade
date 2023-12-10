@@ -9,7 +9,7 @@ body {
 }
 
 .page {
-	background-color: #0000005c;
+	background-color: #00000080;
 	height: calc(100vh - 120px);
 	overflow: auto;
 	border-radius: 10px;

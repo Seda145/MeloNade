@@ -127,6 +127,7 @@ class AudioProcessor {
                 sum += val * val;
             }
             this.currentRMS = Math.sqrt(sum / this.bufferLength);
+            // console.log(this.currentRMS);
 		}
 
         // autocorrelate pitch.

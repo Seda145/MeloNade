@@ -28,5 +28,31 @@ class UIUtils {
         inParentElement.appendChild(newElem);
 		return newElem;
 	}
+
+	static getCssRGBAsObject(inRGBString) {
+		const [r, g, b] = inRGBString.replace('rgb(', '').replace(')', '') .split(',').map(str => Number(str));
+		return { r, g, b};
+	}
+
+	static getRGBObjectAsCss(inRGBObject) {
+		return `rgb(${Math.round(inRGBObject.r)}, ${Math.round(inRGBObject.g)}, ${Math.round(inRGBObject.b)})`;
+	}
+
+	static interpolateRGBObjects(inColorA, inColorB, inAlpha) {
+		const colorVal = (prop) => {
+			return Math.round(MathUtils.lerp(inColorA[prop], inColorB[prop], inAlpha));
+		};
+		return {
+			r: colorVal('r'),
+			g: colorVal('g'),
+			b: colorVal('b'),
+		}
+	}
+
+	static interpolateRGBAsObjects(inColorA, inColorB, inAlpha) {
+		const objA = UIUtils.getCssRGBAsObject(inColorA);
+		const objB = UIUtils.getCssRGBAsObject(inColorB);
+		return UIUtils.interpolateRGBObjects(objA, objB, inAlpha);
+	}
 }
 

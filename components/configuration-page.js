@@ -9,6 +9,8 @@ class ConfigurationPage {
 		this.eInputSaveProfiles = this.eWrapConfiguration.querySelector('.input-save-profiles');
         this.eInputListenToMidi = this.eWrapConfiguration.querySelector('.input-listen-to-midi');
         this.eInputListenToMidi.checked = app.userdata.data.activeProfile.config.listenToMidi == "true";
+        this.eInputEnableLightEffects = this.eWrapConfiguration.querySelector('.input-enable-light-effects');
+        this.eInputEnableLightEffects.checked = app.userdata.data.activeProfile.config.enableLightEffects == "true";
         // Elements - ConfigurationPage - SelectInstrument
         this.eInputSelectInstrument = this.eWrapConfiguration.querySelector('.input-select-instrument');
         this.eInputSelectInstrument.value = app.userdata.data.activeProfile.config.currentInstrument;
@@ -72,6 +74,16 @@ class ConfigurationPage {
                 e.preventDefault();
                 // Update userdata to the new value.
                 app.userdata.data.activeProfile.config.listenToMidi = e.currentTarget.checked.toString();
+            },
+            false
+        );
+
+        this.eInputEnableLightEffects.addEventListener(
+            "change",
+            (e) => {
+                e.preventDefault();
+                // Update userdata to the new value.
+                app.userdata.data.activeProfile.config.enableLightEffects = e.currentTarget.checked.toString();
             },
             false
         );
@@ -146,11 +158,14 @@ class ConfigurationPage {
                 <legend>Configuration</legend>
                 
                 <label>
-                    <span>ListenToMidi:</span>
+                    <span>Listen to midi:</span>
                     <input class="input-listen-to-midi" type="checkbox"/>
                 </label>
 
-                <hr>
+                <label>
+                    <span>Enable light effects:</span>
+                    <input class="input-enable-light-effects" type="checkbox"/>
+                </label>
 
                 <label>
                     <span>Select an instrument:</span>

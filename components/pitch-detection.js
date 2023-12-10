@@ -45,7 +45,7 @@ class PitchDetection {
         const centsOffPitch = app.audioProcessor.currentCentsDifferenceFromNote;
         // clamp to a value of 0 to 100 to use as percentage.
         const absCentsOffPitch = Math.abs(centsOffPitch);
-        const absCentsOffPercentage = (absCentsOffPitch < 0 ? 0 : absCentsOffPitch > 100 ? 100 : absCentsOffPitch);
+        const absCentsOffPercentage = MathUtils.clamp(absCentsOffPitch, 0, 100);
         // console.log(centsOffPitch);
 
         if (centsOffPitch < 0) {
