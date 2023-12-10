@@ -17,10 +17,16 @@ class SongListEntry {
         }
 		this.element = UIUtils.createElement(this.getHTMLTemplate());
         this.eNowPlaying = this.element.querySelector('.now-playing');
+        this.eFinished = this.element.querySelector('.finished');
         if (this.songTitle == app.audioProcessor.songTitle) {
-            this.eNowPlaying.classList.remove("hide");
+            if (app.audioProcessor.isPlaying) {
+                this.eNowPlaying.classList.remove("hide");
+            }
+            else {
+                this.eFinished.classList.remove("hide");
+            }
         }
-        
+
         /* Events */
 
 		this.acEventListener = new AbortController();
@@ -44,6 +50,7 @@ class SongListEntry {
  <div class="song-list-entry" data-midi-track-index="${this.midiTrackIndex}" data-song-title="${this.songTitle}">
     <span class="title">${this.songTitle}</span>
     <span class="now-playing hide">Now Playing</span>
+    <span class="finished hide">Finished</span>
     <span class="completed-percentage">Completed: ${this.hitTotalPercentage}%</span>
     <img class="album-image" src="${this.albumImageUrl}">
  </div>
@@ -57,9 +64,13 @@ class SongListEntry {
         if (this.songTitle == app.audioProcessor.songTitle) {
             this.eNowPlaying.classList.remove("hide");
         }
+        this.eFinished.classList.add("hide");
 	}
 
 	actOnAudioProcessorStopSong(e) {
+        if (this.songTitle == app.audioProcessor.songTitle) {
+            this.eFinished.classList.remove("hide");
+        }
         this.eNowPlaying.classList.add("hide");
 	}
 }
