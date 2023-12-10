@@ -1,17 +1,28 @@
 /**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
 
 class PitchDetection {
-    start() {
-		this.draw();
-	}
+    create(inScopeElement) {
+		/* Elements */
+		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="pitch-detection"]'), this.getHTMLTemplate());
+        this.eInputPitchDetectionTarget = this.element.querySelector('.target');
+        this.eInputPitchDetectionTargetLetter = this.element.querySelector('.target-letter');
+        this.eBarNegativeFill = this.element.querySelector('.bar.negative .fill');
+        this.eBarPositiveFill = this.element.querySelector('.bar.positive .fill');
 
-    stop() {
-		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
-	}
+		/* Events */
+
+		this.acEventListener = new AbortController();
+        window.addEventListener("audio-processor-start-song", this.actOnAudioProcessorStartSong.bind(this), { signal: this.acEventListener.signal });
+        window.addEventListener("audio-processor-stop-song", this.actOnAudioProcessorStopSong.bind(this), { signal: this.acEventListener.signal });
+    }
+
+    prepareRemoval() {
+        this.acEventListener.abort();
+        this.element.remove();
+        console.log("Prepared removal of self");
+    }
 
 	draw() {
-        this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
-
         if (app.audioProcessor.currentRMS < app.audioProcessor.minRelevantRMS) {
             // If the RMS value is too low, we have nothing new to show.
             return;
@@ -69,33 +80,8 @@ class PitchDetection {
         else {
             this.eInputPitchDetectionTarget.classList.remove("accurate");
         }
-    }
-
-	create(inScopeElement) {
-		/* Elements */
-		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="pitch-detection"]'), this.getHTMLTemplate());
-        this.eInputPitchDetectionTarget = this.element.querySelector('.target');
-        this.eInputPitchDetectionTargetLetter = this.element.querySelector('.target-letter');
-        this.eBarNegativeFill = this.element.querySelector('.bar.negative .fill');
-        this.eBarPositiveFill = this.element.querySelector('.bar.positive .fill');
-
-        window.addEventListener(
-			"audio-processor-start-song",
-			(e) => {
-				e.preventDefault();
-				this.start();
-			},
-			false
-		);
-
-		window.addEventListener(
-			"audio-processor-stop-song",
-			(e) => {
-				e.preventDefault();
-				this.stop();
-			},
-			false
-		);
+		
+		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
     }
 
     getHTMLTemplate() {
@@ -119,4 +105,14 @@ class PitchDetection {
 
         `);
     }
+    
+	/* Events */
+
+	actOnAudioProcessorStartSong(e) {
+		this.draw();
+	}
+
+	actOnAudioProcessorStopSong(e) {
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
+	}
 }

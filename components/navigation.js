@@ -3,14 +3,30 @@
 class Navigation {
 	constructor() {
 		this.element = null;
-		this.eTabs = null;
-		this.panels = {};
-		this.tabs = {};
+		this.eTabWrap = null;
+		this.ePanels = {};
+		this.eTabs = {};
 		this.activePanelId = null;
 	}
 
+	create(inScopeElement) {
+		/* Elements */
+		if (inScopeElement == null) { 
+			// Allow this, we don't need the tabs to navigate.
+			// Navigation can be set up to be done without user interaction.
+			return;
+		}
+		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="navigation"]'), this.getHTMLTemplate());
+		this.eTabWrap = this.element.querySelector(".tab-wrap");
+    }
+
+	prepareRemoval() {
+        this.element.remove();
+		console.log("Prepared removal of self");
+    }
+
 	unregisterNavigation(inId) {
-		if (inId == null || !this.panels[inId]) {
+		if (inId == null || !this.ePanels[inId]) {
 			// Not registered.
 			return;
 		}
@@ -19,13 +35,13 @@ class Navigation {
 			this.navigateTo(null);
 		}
 
-		let tab = this.tabs[inId];
+		let tab = this.eTabs[inId];
 		if (tab) {
 			tab.remove();
 		}
 
-		delete this.panels[inId];
-		delete this.tabs[inId];
+		delete this.ePanels[inId];
+		delete this.eTabs[inId];
 
 		console.log("Unregistered navigation for: " + inId);
 	}
@@ -34,16 +50,16 @@ class Navigation {
 		// Clean up any present registration first.
 		this.unregisterNavigation(inId);
 
-		this.panels[inId] = inElement;
+		this.ePanels[inId] = inElement;
 
 		if (inTabTitle != null) {
-			if (this.eTabs == null) {
+			if (this.eTabWrap == null) {
 				console.error("Navigation has been set up without html, so we can't add tabs.");
 				return;
 			}
 
 			let newTab = UIUtils.createElement('<span class="tab button" style="order:' + inTabOrderIndex + ';" data-contentid="' + inId + '">' + inTabTitle + '</span>');
-			this.eTabs.appendChild(newTab);
+			this.eTabWrap.appendChild(newTab);
 	
 			newTab.addEventListener(
 				"click",
@@ -53,7 +69,7 @@ class Navigation {
 			);
 
 			// Store a reference to the tab.
-			this.tabs[inId] = newTab;
+			this.eTabs[inId] = newTab;
 		}
 
 		console.log("Registered navigation at ID: " + inId);
@@ -65,11 +81,11 @@ class Navigation {
 		// Hide currently active panel and update tab class.
 		const oldId = this.activePanelId;
 		if (this.activePanelId != null) {
-			let activePanel = this.panels[this.activePanelId];
+			let activePanel = this.ePanels[this.activePanelId];
 			if (activePanel) {
 				UIUtils.updateVisibility(activePanel, false);
 
-				let activeTab = this.tabs[this.activePanelId];
+				let activeTab = this.eTabs[this.activePanelId];
 				if (activeTab) {
 					activeTab.classList.remove("active");
 				}
@@ -81,12 +97,12 @@ class Navigation {
 
 		// Show new panel and update tab class.
 		if (inId != null) {
-			let newPanel = this.panels[inId];
+			let newPanel = this.ePanels[inId];
 			if (newPanel) {
 				UIUtils.updateVisibility(newPanel, true);
 				this.activePanelId = inId;
 
-				let newTab = this.tabs[this.activePanelId];
+				let newTab = this.eTabs[this.activePanelId];
 				if (newTab) {
 					newTab.classList.add("active");
 				}
@@ -105,23 +121,12 @@ class Navigation {
 		window.dispatchEvent(navigatedEvent);
 	}
 
-	create(inScopeElement) {
-		/* Elements */
-		if (inScopeElement == null) { 
-			// Allow this, we don't need the tabs to navigate.
-			// Navigation can be set up to be done without user interaction.
-			return;
-		}
-		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="navigation"]'), this.getHTMLTemplate());
-		this.eTabs = this.element.querySelector(".tabs");
-    }
-
     getHTMLTemplate() {
         const html = (inString) => { return inString };
         return (html`
     
 <div class="navigation">
-    <div class="tabs"></div>
+    <div class="tab-wrap"></div>
 </div>
 
 

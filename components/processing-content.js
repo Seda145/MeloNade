@@ -31,6 +31,27 @@ class ProcessingContent {
         }
     }
 
+    prepareRemoval() {
+        this.oscilloscope.prepareRemoval();
+        this.oscilloscope = null;
+        this.pitchDetection.prepareRemoval();
+        this.pitchDetection = null;
+        this.rmsDetection.prepareRemoval();
+        this.rmsDetection = null;
+        this.scoreCounter.prepareRemoval();
+        this.scoreCounter = null;
+        if (this.bassGuitarVisualizerVertical) {
+            this.bassGuitarVisualizerVertical.prepareRemoval();
+            this.bassGuitarVisualizerVertical = null;
+        }
+        if (this.bassGuitarVisualizer) {
+            this.bassGuitarVisualizer.prepareRemoval();
+            this.bassGuitarVisualizer = null;
+        }
+        this.element.remove();
+        console.log("Prepared removal of self");
+    }
+
     getHTMLTemplate() {
         const html = (inString) => { return inString };
         return (html`

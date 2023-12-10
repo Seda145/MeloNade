@@ -20,6 +20,10 @@ class LoadUserdata {
 
 	}
 
+    prepareRemoval() {
+        this.element.remove();
+        console.log("Prepared removal of self");
+    }
 
     getHTMLTemplate() {
         const html = (inString) => { return inString };

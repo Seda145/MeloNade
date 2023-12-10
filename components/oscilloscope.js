@@ -7,38 +7,20 @@ class Oscilloscope {
 		this.eCanvas = this.element.querySelector(".oscilloscope-canvas");
 		this.eCanvasCtx = this.eCanvas.getContext("2d");
 
-		window.addEventListener(
-			"audio-processor-start-song",
-			(e) => {
-				e.preventDefault();
-				this.start();
-			},
-			false
-		);
+		/* Events */
 
-		window.addEventListener(
-			"audio-processor-stop-song",
-			(e) => {
-				e.preventDefault();
-				this.stop();
-			},
-			false
-		);
+		this.acEventListener = new AbortController();
+		window.addEventListener("audio-processor-start-song", this.actOnAudioProcessorStartSong.bind(this), { signal: this.acEventListener.signal });
+		window.addEventListener("audio-processor-stop-song", this.actOnAudioProcessorStopSong.bind(this), { signal: this.acEventListener.signal });
     }
-	
-	start() {
-		this.draw();
-	}
 
-    stop() {
-		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
-	}
+	prepareRemoval() {
+		this.acEventListener.abort();
+        this.element.remove();
+		console.log("Prepared removal of self");
+    }
 
 	draw() {
-		// Draw an oscilloscope of the current audio source.
-
-		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
-
 		// this.eCanvasCtx.fillStyle = "rgb(0, 0, 0)";
 		this.eCanvasCtx.fillStyle = " #735757";
 		this.eCanvasCtx.fillRect(0, 0, this.eCanvas.width, this.eCanvas.height);
@@ -74,6 +56,8 @@ class Oscilloscope {
 
 		this.eCanvasCtx.lineTo(this.eCanvas.width, this.eCanvas.height / 2);
 		this.eCanvasCtx.stroke();
+		
+		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
 	}
 
     getHTMLTemplate() {
@@ -88,4 +72,14 @@ class Oscilloscope {
 
         `);
     }
+
+	/* Events */
+
+	actOnAudioProcessorStartSong(e) {
+		this.draw();
+	}
+
+	actOnAudioProcessorStopSong(e) {
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
+	}
 }

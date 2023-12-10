@@ -1,34 +1,20 @@
 /**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
 
 class SongList {
-	async create(inScopeElement) {
+	create(inScopeElement) {
 		/* Elements */
 		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="song-list"]'), this.getHTMLTemplate());
-  
-		/* Events */
+		
+        /* Events */
 
-        window.addEventListener(
-            "navigation-navigated",
-            async (e) => {
-                e.preventDefault();
+		this.acEventListener = new AbortController();
+        window.addEventListener("navigation-navigated", this.actOnNavigationNavigtated.bind(this), { signal: this.acEventListener.signal });
+    }
 
-                if (e.navigatedTo != "Song List") {
-                    // Irrelevant event.
-                    return;
-                }
-                console.log("Song List responds to navigation event, to update its song entries.");
-
-                // Todo
-                // I would rather respond to a change in userdata so we know the song list has to be updated to relevant values.
-                // It would require getter / setters on the Userdata or some implementation of observer pattern.
-                await this.regenerateSongEntries();
-            },
-            false
-        );
-
-        /* Setup */
-
-        this.regenerateSongEntries();
+    prepareRemoval() {
+        this.acEventListener.abort();
+        this.element.remove();
+        console.log("Prepared removal of self");
     }
 
     async regenerateSongEntries() {
@@ -38,6 +24,10 @@ class SongList {
         }
 
         // Generate song data
+
+        if (!this.element) {
+            return;
+        }
 
         this.element.innerHTML = "";
 
@@ -94,4 +84,20 @@ class SongList {
 
         `);
     }
+
+    /* Events */
+
+    actOnNavigationNavigtated(e) {
+        if (e.navigatedTo != "Song List") {
+            // Irrelevant event.
+            return;
+        }
+        console.log("Song List responds to navigation event, to update its song entries.");
+
+        // Todo
+        // I would rather respond to a change in userdata so we know the song list has to be updated to relevant values.
+        // It would require getter / setters on the Userdata or some implementation of observer pattern.
+        this.regenerateSongEntries();
+    }
+
 }

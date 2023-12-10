@@ -29,23 +29,9 @@ class ConfigurationPage {
 
         /* Events */
 
-        window.addEventListener(
-			"audio-processor-start-song",
-			(e) => {
-				e.preventDefault();
-				this.eWrapConfiguration.disabled = "true";
-			},
-			false
-		);
-
-		window.addEventListener(
-			"audio-processor-stop-song",
-			(e) => {
-				e.preventDefault();
-				this.eWrapConfiguration.removeAttribute("disabled");
-			},
-			false
-		);
+        this.acEventListener = new AbortController();
+        window.addEventListener("audio-processor-start-song", this.actOnAudioProcessorStartSong.bind(this), { signal: this.acEventListener.signal });
+        window.addEventListener("audio-processor-stop-song", this.actOnAudioProcessorStopSong.bind(this), { signal: this.acEventListener.signal });
 
         this.eInputSaveProfiles.addEventListener(
             "click",
@@ -132,6 +118,12 @@ class ConfigurationPage {
 
         /* Setup */
         this.updateConfigInstrumentPanels();
+    }
+
+    prepareRemoval() {
+        this.acEventListener.abort();
+        this.element.remove();
+        console.log("Prepared removal of self");
     }
 
     updateConfigInstrumentPanels() {
@@ -224,5 +216,15 @@ class ConfigurationPage {
 </div>
 
         `);
+    }
+
+    /* Events */
+
+    actOnAudioProcessorStartSong(e) {
+        this.eWrapConfiguration.disabled = "true";
+    }
+
+    actOnAudioProcessorStopSong(e) {
+        this.eWrapConfiguration.removeAttribute("disabled");
     }
 }

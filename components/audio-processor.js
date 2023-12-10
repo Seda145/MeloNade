@@ -47,50 +47,52 @@ class AudioProcessor {
         this.midi = await Midi.fromUrl(URL.createObjectURL(inSongData.midi));
         this.midiTrackIndex = inMidiTrackIndex;
 
-		if (!this.songTitle || !this.audio || !this.midi || !this.midi.tracks) {
-			console.error("Invalid song data.");
-			return;
-		}
-
-        console.log("Midi as object:");
-        console.log(this.midi);
-
-		console.log("The index of the midi track that will be used is: " + this.midiTrackIndex);
-
-        // https://webaudio.github.io/web-audio-api/
-		navigator.mediaDevices.getUserMedia({ video: false, audio: true })
-		.then((stream) => {
-            console.log("Starting audio");
-
-            this.analyserNode = this.audioContext.createAnalyser();
-            this.analyserNode.fftSize = 2048;
-            this.bufferLength = this.analyserNode.fftSize;
-            this.audioBuffer = new Float32Array(this.bufferLength);
-            this.corrolatedSignal = new Float32Array(this.analyserNode.fftSize);
-            this.localMaxima = new Array(4);
-
-            this.source = this.audioContext.createMediaStreamSource(stream);
-			this.source.connect(this.analyserNode);
-
-            this.currentNote = null;
-            this.currentNoteIndex = 0;
-            this.countMissedNotes = 0;
-            this.countHitNotes = 0;
-            this.countHitAccuracy = 0;
-            this.countHitTotalPercentage = 0;
-            this.countHitStreak = 0;
+        this.audio.addEventListener("loadeddata", () => {
+            if (!this.songTitle || !this.audio || !this.midi || !this.midi.tracks) {
+                console.error("Invalid song data.");
+                return;
+            }
     
-            this.audio.play();
-            this.isPlaying = true;
-            this.ProcessMIDIWithAudioSyncInterval = setInterval(() => { this.ProcessMIDIWithAudioSync() }, this.intervalResolution);
+            console.log("Midi as object:");
+            console.log(this.midi);
     
-            const startSongEvent = new Event('audio-processor-start-song', { bubbles: false });
-            window.dispatchEvent(startSongEvent);
-		}).catch((err) => {
-			console.error(`${err.name}: ${err.message}`);
-			console.error("Could not find a microphone.");
-		});
-	}
+            console.log("The index of the midi track that will be used is: " + this.midiTrackIndex);
+    
+            // https://webaudio.github.io/web-audio-api/
+            navigator.mediaDevices.getUserMedia({ video: false, audio: true })
+            .then((stream) => {
+                console.log("Starting audio");
+    
+                this.analyserNode = this.audioContext.createAnalyser();
+                this.analyserNode.fftSize = 2048;
+                this.bufferLength = this.analyserNode.fftSize;
+                this.audioBuffer = new Float32Array(this.bufferLength);
+                this.corrolatedSignal = new Float32Array(this.analyserNode.fftSize);
+                this.localMaxima = new Array(4);
+    
+                this.source = this.audioContext.createMediaStreamSource(stream);
+                this.source.connect(this.analyserNode);
+    
+                this.currentNote = null;
+                this.currentNoteIndex = 0;
+                this.countMissedNotes = 0;
+                this.countHitNotes = 0;
+                this.countHitAccuracy = 0;
+                this.countHitTotalPercentage = 0;
+                this.countHitStreak = 0;
+        
+                this.audio.play();
+                this.isPlaying = true;
+                this.ProcessMIDIWithAudioSyncInterval = setInterval(() => { this.ProcessMIDIWithAudioSync() }, this.intervalResolution);
+        
+                const startSongEvent = new Event('audio-processor-start-song', { bubbles: false });
+                window.dispatchEvent(startSongEvent);
+            }).catch((err) => {
+                console.error(`${err.name}: ${err.message}`);
+                console.error("Could not find a microphone.");
+            });
+        });
+    }
 
 	stopSong() {
 		if (!this.isPlaying) {

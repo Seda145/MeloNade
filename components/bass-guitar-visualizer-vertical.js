@@ -13,43 +13,84 @@ class BassGuitarVisualizerVertical {
         /* State */
 		this.movePixelsPerSecond = 300;
 
-        window.addEventListener(
-			"audio-processor-start-song",
-			(e) => {
-				e.preventDefault();
-				this.start();
-			},
-			false
-		);
+    	/* Events */
 
-		window.addEventListener(
-			"audio-processor-stop-song",
-			(e) => {
-				e.preventDefault();
-				this.stop();
-			},
-			false
-		);
-
-		window.addEventListener(
-			"audio-processor-hit-note",
-			(e) => {
-				e.preventDefault();
-				// console.log("response to hit note:");
-				// console.log(e.note);
-
-				let eCurrentNote = this.eNotesWrap.querySelector('.note[data-note-index="' + e.noteIndex + '"]');
-				if (!eCurrentNote) {
-					console.error("no matching note element found for processed note with index: " + e.noteIndex);
-					return;
-				} 
-				eCurrentNote.classList.add("hit");
-			},
-			false
-		);
+		this.acEventListener = new AbortController();
+		window.addEventListener("audio-processor-start-song", this.actOnAudioProcessorStartSong.bind(this), { signal: this.acEventListener.signal });
+		window.addEventListener("audio-processor-stop-song", this.actOnAudioProcessorStopSong.bind(this), { signal: this.acEventListener.signal });
+		window.addEventListener("audio-processor-hit-note", this.actOnAudioProcessorHitNote.bind(this), { signal: this.acEventListener.signal });
 	}
+
+	prepareRemoval() {
+		this.acEventListener.abort();
+        this.element.remove();
+		console.log("Prepared removal of self");
+    }
 	
-    start() {
+	draw() {
+		if (!app.audioProcessor.audio) {
+			console.error("audioProcessor.audio is invalid.");
+			return;
+		}
+		// console.log("refreshing visualizer.");
+		// Move the absolute position of all notes from start to end, based on current play time of the audio.
+		const currentAudioTime = app.audioProcessor.audio.currentTime;
+		const noteBarPosition = currentAudioTime * this.movePixelsPerSecond;
+		// TODO this is choppy movement?
+		this.eNoteBar.style.transform = 'translatey('+ Math.round(noteBarPosition) + 'px)';
+
+		// Planning to do some form of dynamic "zooming" on the fretboard where we are playing, Instead of showing the full fretboard at all times (making notes miniature). 
+		// For now this is used to fit the fretboard to other resolutions.
+		const scaleFactor = this.eHorizontalWrap.clientWidth / this.eVerticalWrap.clientWidth;
+		this.eHorizontalWrap.style.transform = 'scale(' + scaleFactor + ')';
+		// console.log(scaleFactor);
+
+		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
+	}
+
+    getHTMLTemplate() {
+        const html = (inString) => { return inString };
+        return (html`
+ 
+<div class="bass-guitar-visualizer-vertical color-string">
+    <div class="horizontal-wrap">
+		<div class="play-area">
+			<div class="vertical-wrap">
+				<div class="note-visualizer">
+					<div class="notes-wrap">
+						<div class="note-bar"></div>
+					</div>
+				</div>
+				
+				<div class="strings-section">
+					<div class="strings-wrap"></div>
+					<div class="strings-inlays">
+						<span class="string-inlay"></span>
+						<span class="string-inlay"></span>
+						<span class="string-inlay"></span>
+						<span class="string-inlay"></span>
+						<span class="string-inlay"></span>
+						<span class="string-inlay"></span>
+						<span class="string-inlay"></span>
+						<span class="string-inlay"></span>
+						<span class="string-inlay"></span>
+						<span class="string-inlay"></span>
+						<span class="string-inlay"></span>
+					</div>
+				</div>
+			</div>        	
+		</div>
+
+    	<div class="tuning-wrap"></div>
+    </div>
+</div>
+
+        `);
+    }
+
+    /* Events */
+
+	actOnAudioProcessorStartSong(e) {
 		console.log("restarting visualizer.");
 		
 		const fretboardWidth = 1920;
@@ -134,70 +175,21 @@ class BassGuitarVisualizerVertical {
 		// Start 'playing' visuals.
 		this.draw();
 	}
-	
-	stop() {
+
+	actOnAudioProcessorStopSong(e) {
 		console.log("stopping visualizer.");
 		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
 	}
 
-	draw() {
-		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
+	actOnAudioProcessorHitNote(e) {
+		// console.log("response to hit note:");
+		// console.log(e.note);
 
-		if (!app.audioProcessor.audio) {
-			console.error("audioProcessor.audio is invalid.");
+		let eCurrentNote = this.eNotesWrap.querySelector('.note[data-note-index="' + e.noteIndex + '"]');
+		if (!eCurrentNote) {
+			console.error("no matching note element found for processed note with index: " + e.noteIndex);
 			return;
-		}
-		// console.log("refreshing visualizer.");
-		// Move the absolute position of all notes from start to end, based on current play time of the audio.
-		const currentAudioTime = app.audioProcessor.audio.currentTime;
-		const noteBarPosition = currentAudioTime * this.movePixelsPerSecond;
-		// TODO this is choppy movement?
-		this.eNoteBar.style.transform = 'translatey('+ Math.round(noteBarPosition) + 'px)';
-
-		// Planning to do some form of dynamic "zooming" on the fretboard where we are playing, Instead of showing the full fretboard at all times (making notes miniature). 
-		// For now this is used to fit the fretboard to other resolutions.
-		const scaleFactor = this.eHorizontalWrap.clientWidth / this.eVerticalWrap.clientWidth;
-		this.eHorizontalWrap.style.transform = 'scale(' + scaleFactor + ')';
-		// console.log(scaleFactor);
+		} 
+		eCurrentNote.classList.add("hit");
 	}
-
-    getHTMLTemplate() {
-        const html = (inString) => { return inString };
-        return (html`
- 
-<div class="bass-guitar-visualizer-vertical color-string">
-    <div class="horizontal-wrap">
-		<div class="play-area">
-			<div class="vertical-wrap">
-				<div class="note-visualizer">
-					<div class="notes-wrap">
-						<div class="note-bar"></div>
-					</div>
-				</div>
-				
-				<div class="strings-section">
-					<div class="strings-wrap"></div>
-					<div class="strings-inlays">
-						<span class="string-inlay"></span>
-						<span class="string-inlay"></span>
-						<span class="string-inlay"></span>
-						<span class="string-inlay"></span>
-						<span class="string-inlay"></span>
-						<span class="string-inlay"></span>
-						<span class="string-inlay"></span>
-						<span class="string-inlay"></span>
-						<span class="string-inlay"></span>
-						<span class="string-inlay"></span>
-						<span class="string-inlay"></span>
-					</div>
-				</div>
-			</div>        	
-		</div>
-
-    	<div class="tuning-wrap"></div>
-    </div>
-</div>
-
-        `);
-    }
 }

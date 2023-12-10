@@ -18,6 +18,11 @@ class SongListEntry {
 		this.element = UIUtils.createElement(this.getHTMLTemplate());
     }
 
+    prepareRemoval() {
+        this.element.remove();
+        console.log("Prepared removal of self");
+    }
+
     getHTMLTemplate() {
         // TODO autoformat this how? the html tag function is used by lit-html to highlight html. With it active there is no autoformat of the string itself.
         // const html = (inStrings, inSongTitle, inAlbumImageUrl) => { return `${inStrings[0]}${inSongTitle}${inStrings[1]}${this.hitTotalPercentage}${inStrings[2]}${inAlbumImageUrl}${inStrings[3]}`; };

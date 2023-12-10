@@ -7,36 +7,20 @@ class RMSDetection {
 		this.eBar = this.element.querySelector('.bar');
 		this.eMinRMS = this.element.querySelector('.min-rms');
 
-        window.addEventListener(
-			"audio-processor-start-song",
-			(e) => {
-				e.preventDefault();
-				this.start();
-			},
-			false
-		);
+		/* Events */
 
-		window.addEventListener(
-			"audio-processor-stop-song",
-			(e) => {
-				e.preventDefault();
-				this.stop();
-			},
-			false
-		);
+		this.acEventListener = new AbortController();
+		window.addEventListener("audio-processor-start-song", this.actOnAudioProcessorStartSong.bind(this), { signal: this.acEventListener.signal });
+		window.addEventListener("audio-processor-stop-song", this.actOnAudioProcessorStopSong.bind(this), { signal: this.acEventListener.signal });
+    }
+
+	prepareRemoval() {
+		this.acEventListener.abort();
+        this.element.remove();
+		console.log("Prepared removal of self");
     }
 	
-    start() {
-		this.draw();
-	}
-
-    stop() {
-		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
-	}
-
 	draw() {
-		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
-
         // RMS to Decibels:
 		// const decibels = 20 * Math.log(app.audioProcessor.currentRMS) / Math.log(10);
 		// Decibels to RMS:
@@ -49,6 +33,8 @@ class RMSDetection {
 
 		this.eBar.style.width = Math.round(app.audioProcessor.currentRMS * 100) + "%";
 		this.eMinRMS.style.transform = "translateX(" + Math.round(app.audioProcessor.minRelevantRMS * 100) + "cqw)";
+
+		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
     }
 
     getHTMLTemplate() {
@@ -66,4 +52,14 @@ class RMSDetection {
 
         `);
     }
+
+	/* Events */
+
+	actOnAudioProcessorStartSong(e) {
+		this.draw();
+	}
+
+	actOnAudioProcessorStopSong(e) {
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
+	}
 }

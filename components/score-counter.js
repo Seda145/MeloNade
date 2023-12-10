@@ -8,19 +8,22 @@ class ScoreCounter {
         this.eCounterHit = this.element.querySelector(".hit");
         this.eCounterMissed = this.element.querySelector(".missed");
         this.eCounterHitAccuracy = this.element.querySelector(".hit-accuracy");
+		
         /* Events */
+
+		this.acEventListener = new AbortController();
         ["audio-processor-start-song", "audio-processor-hit-note", "audio-processor-missed-note"].forEach((eventX) => {
-            window.addEventListener(eventX,
-                (e) => {
-                    e.preventDefault();
-                    this.updateCountElements();
-                },
-                false
-            )
+            window.addEventListener(eventX, this.updateCountElements.bind(this), { signal: this.acEventListener.signal });
         });
 
         /* Setup */
         this.updateCountElements();
+    }
+
+    prepareRemoval() {
+        this.acEventListener.abort();
+        this.element.remove();
+        console.log("Prepared removal of self");
     }
 
     updateCountElements() {

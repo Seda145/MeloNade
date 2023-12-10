@@ -57,50 +57,47 @@ class BackgroundLighting {
 		this.audioAlpha = 0;
 		this.normalizedAudioAlpha = 0;
 		this.curAlphaStage = 0;
-		this.interpolatedAlphaStageData = null;
+		this.interpolatedAlphaStageData = this.alphaStages[0];
 
-        window.addEventListener(
-			"audio-processor-start-song",
-			(e) => {
-				e.preventDefault();
-				this.start();
-			},
-			false
-		);
+		/* Events */
 
-		window.addEventListener(
-			"audio-processor-stop-song",
-			(e) => {
-				e.preventDefault();
-				this.stop();
-			},
-			false
-		);
-    }
+		this.acEventListener = new AbortController();
+		window.addEventListener("audio-processor-start-song", this.actOnAudioProcessorStartSong.bind(this), { signal: this.acEventListener.signal });
+		window.addEventListener("audio-processor-stop-song", this.actOnAudioProcessorStopSong.bind(this), { signal: this.acEventListener.signal });
+	}
 	
-    start() {
-		if (app.userdata.data.activeProfile.config.enableLightEffects == "true") {
-			this.draw();
-		}
-	}
+	prepareRemoval() {
+		this.acEventListener.abort();
+        this.element.remove();
+		console.log("Prepared removal of self");
+    }
 
-    stop() {
-		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
-		// Once the audio stops, the background will still be visible. It should be reset to default values now that the draw method no longer runs.
-		this.stopStageBackground();
-		this.stopStageSpots();
-	}
-
-	draw() {
-		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
-		this.interpolateAlphaData();
+	async draw() {
+		await this.interpolateAlphaData();
 		this.drawStageBackground();
 		this.drawStageSpots();
+		
+		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
     }
 
-	interpolateAlphaData() {
-		this.audioAlpha = app.audioProcessor.audio.currentTime / app.audioProcessor.audio.duration;
+	async interpolateAlphaData() {
+		if (!app.audioProcessor || !app.audioProcessor.audio) {
+			return;
+		}
+		{
+			// Somehow the currentTime and duration properties can be undefined when audio is not.
+			// This happens a few frames when the audio starts playing, so we can't interpolate then.
+			const newAudioAlpha = app.audioProcessor.audio.currentTime / app.audioProcessor.audio.duration;
+			if (isNaN(newAudioAlpha)) {
+				console.error("audio alpha is not a number. This should not happen, is the audio loaded?");
+				return;
+			}
+
+			this.audioAlpha = newAudioAlpha;
+		}
+
 		this.curAlphaStage = Math.max(0, Math.floor(this.alphaStages.length * this.audioAlpha));
+
 		// console.log("current stage: " + this.curAlphaStage);
 
 		// We normalize the alpha of the current position of the audio, to the start of the current stage and the start of the next stage. 
@@ -185,4 +182,19 @@ class BackgroundLighting {
 
         `);
     }
+
+	/* Events */
+
+	actOnAudioProcessorStartSong(e) {
+		if (app.userdata.data.activeProfile.config.enableLightEffects == "true") {
+			this.draw();
+		}
+	}
+
+	actOnAudioProcessorStopSong(e) {
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
+		// Once the audio stops, the background will still be visible. It should be reset to default values now that the draw method no longer runs.
+		this.stopStageBackground();
+		this.stopStageSpots();
+	}
 }
