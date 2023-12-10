@@ -16,9 +16,20 @@ class SongListEntry {
             this.albumImageUrl = URL.createObjectURL(app.userdata.data.songs[this.songTitle].albumImage);
         }
 		this.element = UIUtils.createElement(this.getHTMLTemplate());
+        this.eNowPlaying = this.element.querySelector('.now-playing');
+        if (this.songTitle == app.audioProcessor.songTitle) {
+            this.eNowPlaying.classList.remove("hide");
+        }
+        
+        /* Events */
+
+		this.acEventListener = new AbortController();
+		window.addEventListener("audio-processor-start-song", this.actOnAudioProcessorStartSong.bind(this), { signal: this.acEventListener.signal });
+		window.addEventListener("audio-processor-stop-song", this.actOnAudioProcessorStopSong.bind(this), { signal: this.acEventListener.signal });
     }
 
     prepareRemoval() {
+        this.acEventListener.abort();
         this.element.remove();
         console.log("Prepared removal of self");
     }
@@ -30,8 +41,25 @@ class SongListEntry {
         // return (html`
         return (`
  
- <div class="song-list-entry" data-midi-track-index="${this.midiTrackIndex}" data-song-title="${this.songTitle}"><span class="title">${this.songTitle}</span><span class="completed-percentage">Completed: ${this.hitTotalPercentage}%</span><img class="album-image" src="${this.albumImageUrl}"></div>
+ <div class="song-list-entry" data-midi-track-index="${this.midiTrackIndex}" data-song-title="${this.songTitle}">
+    <span class="title">${this.songTitle}</span>
+    <span class="now-playing hide">Now Playing</span>
+    <span class="completed-percentage">Completed: ${this.hitTotalPercentage}%</span>
+    <img class="album-image" src="${this.albumImageUrl}">
+ </div>
 
         `);
     }
+
+    /* Events */
+
+	actOnAudioProcessorStartSong(e) {
+        if (this.songTitle == app.audioProcessor.songTitle) {
+            this.eNowPlaying.classList.remove("hide");
+        }
+	}
+
+	actOnAudioProcessorStopSong(e) {
+        this.eNowPlaying.classList.add("hide");
+	}
 }

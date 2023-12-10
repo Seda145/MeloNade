@@ -8,6 +8,7 @@
     display: flex;
     align-items: center;
     user-select: none;
+    gap: 25px;
 }
 
 .song-list-entry:hover {
