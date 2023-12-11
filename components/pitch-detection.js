@@ -25,6 +25,7 @@ class PitchDetection {
 	draw() {
         if (app.audioProcessor.currentRMS < app.audioProcessor.minRelevantRMS) {
             // If the RMS value is too low, we have nothing new to show.
+            this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
             return;
         }
 
