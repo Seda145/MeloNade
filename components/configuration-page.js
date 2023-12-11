@@ -9,6 +9,8 @@ class ConfigurationPage {
 		this.eInputSaveProfiles = this.eWrapConfiguration.querySelector('.input-save-profiles');
         this.eInputListenToMidi = this.eWrapConfiguration.querySelector('.input-listen-to-midi');
         this.eInputListenToMidi.checked = app.userdata.data.activeProfile.config.listenToMidi == "true";
+        this.eInputAudioVolume = this.eWrapConfiguration.querySelector('.input-audio-volume');
+        this.eInputAudioVolume.value = app.userdata.data.activeProfile.config.audioVolume;
         this.eInputEnableLightEffects = this.eWrapConfiguration.querySelector('.input-enable-light-effects');
         this.eInputEnableLightEffects.checked = app.userdata.data.activeProfile.config.enableLightEffects == "true";
         // Elements - ConfigurationPage - SelectInstrument
@@ -60,6 +62,16 @@ class ConfigurationPage {
                 e.preventDefault();
                 // Update userdata to the new value.
                 app.userdata.data.activeProfile.config.listenToMidi = e.currentTarget.checked.toString();
+            },
+            false
+        );
+
+        this.eInputAudioVolume.addEventListener(
+            "change",
+            (e) => {
+                e.preventDefault();
+                // Update userdata to the new value.
+                app.userdata.data.activeProfile.config.audioVolume = e.currentTarget.value.toString();
             },
             false
         );
@@ -152,6 +164,11 @@ class ConfigurationPage {
                 <label>
                     <span>Listen to midi:</span>
                     <input class="input-listen-to-midi" type="checkbox"/>
+                </label>
+
+                <label>
+                    <span>Audio volume:</span>
+                    <input class="input-audio-volume" type="range"  min="0" max="1" step="0.1" />
                 </label>
 
                 <label>

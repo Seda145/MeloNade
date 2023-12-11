@@ -11,6 +11,7 @@ class MyApp {
 		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="app"]'), this.getHTMLTemplate());
         this.eLoadUserdataWrap = this.element.querySelector('[data-component="load-userdata"]');
         this.eConfigurationPageWrap = this.element.querySelector('[data-component="configuration-page"]');
+        this.eTonePageWrap = this.element.querySelector('[data-component="tone-page"]');
         this.eSongListWrap = this.element.querySelector('[data-component="song-list"]');
         this.eProcessingContentWrap = this.element.querySelector('[data-component="processing-content"]');
 
@@ -29,7 +30,6 @@ class MyApp {
 
 		/* Events */
 
-        // this.handleOnUserdataLoadedDataFromFile = { handleEvent: this.actOnUserdataLoadedDataFromFile, once : true };
         window.addEventListener("userdata-loaded-data-from-file", this.actOnUserdataLoadedDataFromFile.bind(this), {once : true});
         window.addEventListener("song-list-chose-song", this.actOnSongListChoseSong.bind(this));
         window.addEventListener("audio-processor-start-song", this.actOnAudioProcessorStartSong.bind(this));
@@ -71,9 +71,39 @@ class MyApp {
         if (!this.startedGame) {
             return;
         }
+        this.startedGame = false;
+
+        // First off, we can update the userdata with the data gathered in the audioProcessor.
+        // If the audioProcessor was playing a song, we can still access the data.
+        if (this.audioProcessor.songTitle != null) {
+            console.log("Writing song stats to user profile:");
+
+            // Update total hit percentage if it is a highscore.
+            // Check if we have song stats stored, or if we have to create it.
+            const newHitTotalPercentage = this.audioProcessor.countHitTotalPercentage;
+            if (this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle]) {
+                const oldHitTotalPercentage = this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle].hitTotalPercentage;
+                if (newHitTotalPercentage > oldHitTotalPercentage) {
+                    this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle].hitTotalPercentage = newHitTotalPercentage;
+                } 
+            }
+            else {
+                this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle] = {};
+                this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle].hitTotalPercentage = newHitTotalPercentage;
+            }
+
+            console.log(this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle]);
+        }
+
+        // Remove any panels we don't need anymore and regenerate the song list so it shows updated userdata.
+
+        this.navigation.unregisterNavigation("Processing");
+        this.processingContent.prepareRemoval();
+        this.processingContent = null;
+
+        this.navigation.navigateTo("Song List");
 
         this.audioProcessor.stopSong();
-        this.startedGame = false;
     }
 
     getHTMLTemplate() {
@@ -86,6 +116,7 @@ class MyApp {
     <main class="main-wrap container flex-direction-colum">
         <div data-component="load-userdata" class="hide"></div>
         <div data-component="configuration-page" class="hide"></div>
+        <div data-component="tone-page" class="hide"></div>
         <div data-component="song-list" class="hide"></div>
 		<div data-component="processing-content" class="hide"></div>
 		<div data-component="navigation"></div>
@@ -119,8 +150,12 @@ class MyApp {
         this.songList.create(this.element);
         this.songList.regenerateSongEntries();
 
+        this.tonePage = new TonePage();
+        this.tonePage.create(this.element);
+
         // Update navigation.
         this.navigation.registerNavigation("Configuration", "Configuration", 0, this.eConfigurationPageWrap);
+        // this.navigation.registerNavigation("Tones", "Tones", 1, this.eTonePageWrap);
         this.navigation.registerNavigation("Song List", "Song List", 1, this.eSongListWrap);
         this.navigation.navigateTo("Configuration");
     }
@@ -134,38 +169,8 @@ class MyApp {
     }
 
     actOnAudioProcessorStopSong (e) {
-        // First off, we can update the userdata with the data gathered in the audioProcessor.
-        // If the audioProcessor was playing a song, we can still access the data.
-        if (this.audioProcessor.songTitle != null) {
-            console.log("Writing song stats to user profile:");
-
-            // Update total hit percentage if it is a highscore.
-            // Check if we have song stats stored, or if we have to create it.
-            const newHitTotalPercentage = this.audioProcessor.countHitTotalPercentage;
-            if (this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle]) {
-                const oldHitTotalPercentage = this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle].hitTotalPercentage;
-                if (newHitTotalPercentage > oldHitTotalPercentage) {
-                    this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle].hitTotalPercentage = newHitTotalPercentage;
-                } 
-            }
-            else {
-                this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle] = {};
-                this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle].hitTotalPercentage = newHitTotalPercentage;
-            }
-
-
-            console.log(this.userdata.data.activeProfile.songStats[this.audioProcessor.songTitle]);
-        }
-
-        // Remove any panels we don't need anymore and regenerate the song list so it shows updated userdata.
-
-        this.navigation.unregisterNavigation("Processing");
-        this.processingContent.prepareRemoval();
-        this.processingContent = null;
-
-        this.navigation.navigateTo("Song List");
+        this.stopGame();
     }
-
 }
 
 

@@ -52,6 +52,8 @@ class AudioProcessor {
                 console.error("Invalid song data.");
                 return;
             }
+
+            this.audio.volume = parseFloat(app.userdata.data.activeProfile.config.audioVolume);
     
             console.log("Midi as object:");
             console.log(this.midi);
@@ -72,7 +74,7 @@ class AudioProcessor {
     
                 this.source = this.audioContext.createMediaStreamSource(stream);
                 this.source.connect(this.analyserNode);
-    
+
                 this.currentNote = null;
                 this.currentNoteIndex = 0;
                 this.countMissedNotes = 0;
@@ -90,6 +92,7 @@ class AudioProcessor {
             }).catch((err) => {
                 console.error(`${err.name}: ${err.message}`);
                 console.error("Could not find a microphone.");
+                alert("Something went wrong starting the audio, is your microphone enabled?");
             });
         });
     }

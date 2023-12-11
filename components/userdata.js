@@ -37,6 +37,7 @@ class Userdata {
             if (pathStructure[1] === "songs") {
                 if (pathStructure.length < 4) {
                     // The path is expected to be built of 4 components ("*data folder*/songs/*song title*/*song files*"). 
+                    alert("Couldn't find songs in the userdata.");
                     console.error("The structure of a song path is expected to be (*data folder*/songs/*song title*/*song files*): " + path);
                     return;
                 } 
@@ -66,6 +67,7 @@ class Userdata {
             // Attempt to parse as profiles file.
             else if (pathStructure[1] == "profiles") {
                 if (pathStructure.length != 3 || pathStructure[2] != "melonade-profiles.json") {
+                    alert("Couldn't find profiles in the userdata.");
                     console.error("The structure of a path to the profiles file is expected to be (*data folder*/profiles/melonade-profiles.json): " + path);
                     return;
                 } 
@@ -93,11 +95,13 @@ class Userdata {
         }
 
         if (newData.profiles == null) {
+            alert("Could not retrieve profiles from the userdata.");
             console.error("Failed to retrieve profiles from file.");
             return;
         }
 
         if (!newData.activeProfile) {
+            alert("The userdata does not contain an active profile.");
             console.error("Failed to retrieve an active profile.");
             return;
         }
