@@ -15,13 +15,16 @@ class AudioProcessor {
 		this.audioContext = new AudioContext();
 		this.intervalResolution = 50;
 		this.analyserNode = null;
-		this.audioBuffer = null;
+		this.micGainNode = null;
+		this.micAudioBuffer = null;
 		this.corrolatedSignal = null;
 		this.localMaxima = null;
 		this.minRelevantRMS = 0.015;
 		this.currentRMS = 0;
 		this.autocorrolatedPitch = 0;
+        this.bUpdatedAutocorrelatedPitch = false;
         this.songTitle = null;
+        this.micSource = null;
 		this.audio = null;
 		this.midi = null;
         this.midiTrackIndex = 0;
@@ -37,98 +40,59 @@ class AudioProcessor {
         this.currentCentsDifferenceFromNote = 0;
 	}
 
-	async startSong(inSongData, inMidiTrackIndex) {
-        // First stop if required.
-		this.stopSong();
+    async requestMicDevice() {
+        if (this.micAudioBuffer != null) {
+            // Don't ask twice?
+            return;
+        }
 
-        this.songTitle = inSongData.title;
-        this.audio = new Audio(URL.createObjectURL(inSongData.audio));
-        // https://github.com/Tonejs/Midi
-        this.midi = await Midi.fromUrl(URL.createObjectURL(inSongData.midi));
-        this.midiTrackIndex = inMidiTrackIndex;
+        // https://webaudio.github.io/web-audio-api/
+        navigator.mediaDevices.getUserMedia({ 
+            video: false, 
+            audio: true,
+            echoCancellation: false,
+            autoGainControl: false,
+            noiseSuppression: false,
+            latency: 0,
+            channelCount: 1
 
-        this.audio.addEventListener("loadeddata", () => {
-            if (!this.songTitle || !this.audio || !this.midi || !this.midi.tracks) {
-                console.error("Invalid song data.");
-                return;
-            }
+        })
+        .then((stream) => {
+            console.log("Starting audio");
 
-            this.audio.volume = parseFloat(app.userdata.data.activeProfile.config.audioVolume);
-    
-            console.log("Midi as object:");
-            console.log(this.midi);
-    
-            console.log("The index of the midi track that will be used is: " + this.midiTrackIndex);
-    
-            // https://webaudio.github.io/web-audio-api/
-            navigator.mediaDevices.getUserMedia({ video: false, audio: true })
-            .then((stream) => {
-                console.log("Starting audio");
-    
-                this.analyserNode = this.audioContext.createAnalyser();
-                this.analyserNode.fftSize = 2048;
-                this.bufferLength = this.analyserNode.fftSize;
-                this.audioBuffer = new Float32Array(this.bufferLength);
-                this.corrolatedSignal = new Float32Array(this.analyserNode.fftSize);
-                this.localMaxima = new Array(4);
-    
-                this.source = this.audioContext.createMediaStreamSource(stream);
-                this.source.connect(this.analyserNode);
+            this.analyserNode = this.audioContext.createAnalyser();
+            this.analyserNode.fftSize = 2048;
+            this.bufferLength = this.analyserNode.fftSize;
+            this.micAudioBuffer = new Float32Array(this.bufferLength);
+            this.corrolatedSignal = new Float32Array(this.analyserNode.fftSize);
+            this.localMaxima = new Array(4);
+            // Chain: Microphone > Gain > Analyser
+            this.micGainNode = this.audioContext.createGain();
+            this.micSource = this.audioContext.createMediaStreamSource(stream);
+            this.micSource.connect(this.micGainNode);
+            this.micGainNode.connect(this.analyserNode);
 
-                this.currentNote = null;
-                this.currentNoteIndex = 0;
-                this.countMissedNotes = 0;
-                this.countHitNotes = 0;
-                this.countHitAccuracy = 0;
-                this.countHitTotalPercentage = 0;
-                this.countHitStreak = 0;
-        
-                this.audio.play();
-                this.isPlaying = true;
-                this.ProcessMIDIWithAudioSyncInterval = setInterval(() => { this.ProcessMIDIWithAudioSync() }, this.intervalResolution);
-        
-                const startSongEvent = new Event('audio-processor-start-song', { bubbles: false });
-                window.dispatchEvent(startSongEvent);
-            }).catch((err) => {
-                console.error(`${err.name}: ${err.message}`);
-                console.error("Could not find a microphone.");
-                alert("Something went wrong starting the audio, is your microphone enabled?");
-            });
+            setInterval(() => { this.analyseMic() }, this.intervalResolution);
+            // Calculate initial buffer values.
+            this.analyseMic();
+
+            let connectedMicEvent = new Event('audioprocessor-connected-mic', { bubbles: false });
+            window.dispatchEvent(connectedMicEvent);
+        }).catch((err) => {
+            console.error(`${err.name}: ${err.message}`);
+            console.error("Could not find a microphone.");
+            alert("Something went wrong starting the audio, is your microphone enabled?");
         });
     }
 
-	stopSong() {
-		if (!this.isPlaying) {
-			return;
-		}
-		console.log("Stopping audio");
-		if (this.audio) {
-			this.audio.pause();
-		}
-		clearInterval(this.ProcessMIDIWithAudioSyncInterval);
-		this.isPlaying = false;
-		const stopSongEvent = new Event('audio-processor-stop-song', { bubbles: false });
-		window.dispatchEvent(stopSongEvent);
-	}
-
-	ProcessMIDIWithAudioSync() {
-        const currentTime = this.audio.currentTime;
-        if (currentTime == this.audio.duration) {
-            // Reached the end.
-            console.log("Reached end of song. Stopping.");
-            this.stopSong();
-        }
-        const timeAsTick = this.midi.header.secondsToTicks(currentTime);
-        // Collect current audio data.
-        this.analyserNode.getFloatTimeDomainData(this.audioBuffer);
-        // console.log("Current play time: " + currentTime + ". timeAsTick: " + timeAsTick);
-        // console.log(this.midi.tracks[this.midiTrackIndex].notes);
+    analyseMic() {
+        this.analyserNode.getFloatTimeDomainData(this.micAudioBuffer);
 
         // Update RMS value (volume).
         {
             let sum = 0;
             for (let i = 0; i < this.bufferLength; i++) {
-                const val = this.audioBuffer[i];
+                const val = this.micAudioBuffer[i];
                 sum += val * val;
             }
             this.currentRMS = Math.sqrt(sum / this.bufferLength);
@@ -136,7 +100,7 @@ class AudioProcessor {
 		}
 
         // autocorrelate pitch.
-        let bUpdatedAutocorrelatedPitch = false;
+        this.bUpdatedAutocorrelatedPitch = false;
         if (this.currentRMS > this.minRelevantRMS) {
             // https://github.com/cwilso/PitchDetect/blob/main/js/pitchdetect.js
             // This method is borrowed from the above library, which has the MIT license.
@@ -165,7 +129,7 @@ class AudioProcessor {
             */
 
             // Implements the ACF2+ algorithm
-            let bufferCopy = this.audioBuffer;
+            let bufferCopy = this.micAudioBuffer;
         
             let r1 = 0;
             let r2 = this.bufferLength - 1;
@@ -218,13 +182,88 @@ class AudioProcessor {
         
             if (T0 != -1) {
                 this.autocorrolatedPitch = this.audioContext.sampleRate / T0;
-                bUpdatedAutocorrelatedPitch = true;
+                this.bUpdatedAutocorrelatedPitch = true;
             }
             else {
                 // console.warn("Pitch not properly set. (rms too low?)");
             }
         }
+    }
 
+	async startSong(inSongData, inMidiTrackIndex) {
+        // First stop if required.
+		this.stopSong();
+
+        // If we don't have one already.
+        await this.requestMicDevice();
+
+        if (this.micAudioBuffer == null) {
+            alert("Microphone data could not be retrieved.");
+            return;
+        }
+
+        this.songTitle = inSongData.title;
+        this.audio = new Audio(URL.createObjectURL(inSongData.audio));
+        // https://github.com/Tonejs/Midi
+        this.midi = await Midi.fromUrl(URL.createObjectURL(inSongData.midi));
+        this.midiTrackIndex = inMidiTrackIndex;
+
+        this.audio.addEventListener("loadeddata", () => {
+            if (!this.songTitle || !this.audio || !this.midi || !this.midi.tracks) {
+                console.error("Invalid song data.");
+                return;
+            }
+
+            this.audio.volume = parseFloat(app.userdata.data.activeProfile.config.audioVolume);
+    
+            console.log("Midi as object:");
+            console.log(this.midi);
+            console.log("The index of the midi track that will be used is: " + this.midiTrackIndex);
+
+            this.currentNote = null;
+            this.currentNoteIndex = 0;
+            this.countMissedNotes = 0;
+            this.countHitNotes = 0;
+            this.countHitAccuracy = 0;
+            this.countHitTotalPercentage = 0;
+            this.countHitStreak = 0;
+    
+            this.audio.play();
+            this.isPlaying = true;
+            this.ProcessMIDIWithAudioSyncInterval = setInterval(() => { this.ProcessMIDIWithAudioSync() }, this.intervalResolution);
+    
+            const startSongEvent = new Event('audio-processor-start-song', { bubbles: false });
+            window.dispatchEvent(startSongEvent);
+        });
+    }
+
+	stopSong() {
+		if (!this.isPlaying) {
+			return;
+		}
+		console.log("Stopping audio");
+		if (this.audio) {
+			this.audio.pause();
+		}
+		clearInterval(this.ProcessMIDIWithAudioSyncInterval);
+		this.isPlaying = false;
+		const stopSongEvent = new Event('audio-processor-stop-song', { bubbles: false });
+		window.dispatchEvent(stopSongEvent);
+	}
+
+	ProcessMIDIWithAudioSync() {
+        const currentTime = this.audio.currentTime;
+        if (currentTime == this.audio.duration) {
+            // Reached the end.
+            console.log("Reached end of song. Stopping.");
+            this.stopSong();
+        }
+        const timeAsTick = this.midi.header.secondsToTicks(currentTime);
+        // Collect current audio data.
+        // console.log("Current play time: " + currentTime + ". timeAsTick: " + timeAsTick);
+        // console.log(this.midi.tracks[this.midiTrackIndex].notes);
+
+ 
         // Find the midi data at the current time of the audio file that is playing.
 		// Since clocks are not accurate the current MIDI tick should be synced to audio playtime.
 		// To get a position in midi ticks from playback seconds, we can use methods in the midi header class.
@@ -287,7 +326,6 @@ class AudioProcessor {
             }
             this.oscillator = this.audioContext.createOscillator();
             this.oscillator.type = "sine";
-            // this.oscillator.gain = 0.5;
             // console.log(this.oscillator);
             this.oscillator.connect(this.audioContext.destination);
             this.oscillator.frequency.setTargetAtTime(midiFrequency, this.audioContext.currentTime, 0);
@@ -297,7 +335,7 @@ class AudioProcessor {
         }
 
         // Process the MIDI data against the current audio data (microphone), to see if we find matching frequencies (like playing guitar along to music).
-        if (bUpdatedAutocorrelatedPitch && this.currentNote != null) {
+        if (this.bUpdatedAutocorrelatedPitch && this.currentNote != null) {
             this.currentCentsDifferenceFromNote = MidiUtils.centsOffFromPitch(this.autocorrolatedPitch, this.currentNote.midi);
 
             // console.log(this.currentNote);

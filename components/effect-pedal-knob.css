@@ -1,0 +1,86 @@
+/**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
+
+.effect-pedal-knob {
+    display: flex;
+    flex: 1;
+    user-select: none;
+}
+
+.effect-pedal-knob .knob-wrap {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+}
+
+.effect-pedal-knob .knob-info {
+    display: flex;
+    align-items: center;
+}
+
+.effect-pedal-knob .knob-info > span {
+    filter: drop-shadow(1px 1px 0px #333);
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.effect-pedal-knob .knob {
+    position: relative;
+    display: flex;
+    /* js needs a height and width to work with to calculate an accurate rotation value when the mouse drags the knob. */
+    width: 40px;
+    height: 40px;
+}
+
+.effect-pedal-knob .knob .top {
+    border-radius: 100%;
+    background-color: white;
+    border: thin solid #5e5e5e;
+    width: 40px;
+    height: 35px;
+    position: absolute;
+    top: 0px;
+    box-shadow: 0px 0px 4px #161616 inset;
+    background-image: linear-gradient(180deg, #fff 0%, #fff 50%, #dedede 100%);
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+}
+
+.effect-pedal-knob .knob .middle {
+    height: 10px;
+    width: 40px;
+    top: 20px;
+    position: absolute;
+    border-left: thin solid #434343;
+    border-right: thin solid #434343;
+    background-image: linear-gradient(90deg, #666 0%, #dedede 4%, #dedede 96%, #666 100%);
+}
+
+.effect-pedal-knob .knob .bottom {
+    border-radius: 100%;
+    width: 40px;
+    height: 35px;
+    position: absolute;
+    top: 10px;
+    border: thin solid #434343;
+    box-shadow: 0px 0px 2px #383838 inset;
+    background-image: linear-gradient(90deg, #666 0%, #dedede 4%, #dedede 96%, #666 100%);
+}
+
+.effect-pedal-knob .knob .value-indicator {
+    width: 4px;
+    height: 38%;
+    background-color: #333;
+    border-radius: 4px;
+    margin-top: 6%;
+    /* 0 deg is up, -150deg is the 0% value, 150deg is the 100% value. */
+    transform: rotateZ(-150deg);
+    transform-origin: bottom;
+}
+
+.effect-pedal-knob .knob:hover {
+    cursor: grab;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}

@@ -1,0 +1,141 @@
+/**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
+
+.effect-pedal {
+    min-height: 300px;
+    min-width: 175px;
+    padding: 5px;
+    display: flex;
+    border-radius: 10px;
+    user-select: none;
+}
+
+.effect-pedal .pedal-inner {
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.effect-pedal .info-panel {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 4px;
+    border: thin solid #bdbdbd;
+}
+
+.effect-pedal .info-panel span {
+    filter: drop-shadow(1px 1px 0px #333);
+    font-size: 13px;
+    padding: 5px;
+}
+
+.effect-pedal .knob-panel {
+    margin-top: 5px;
+    padding: 5px;
+    flex: 1;
+    display: flex;
+    gap: 10px;
+}
+
+.effect-pedal .knob-panel [data-component="effect-pedal-knob"] {
+    display: flex;
+    flex: 1;
+}
+
+.effect-pedal .power-panel {
+    height: 75px;
+    display: flex;
+    flex-direction: column;
+}
+
+.effect-pedal .power-switch-wrap {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+}
+
+.effect-pedal .power-switch {
+    background-color: #0c0c0c;
+    flex: 1;
+    display: flex;
+    border-radius: 4px;
+    border: thin solid #cec6c6;
+    background-image: repeating-linear-gradient(180deg, #0c0c0c 0%, #292525 5%, #292525 20%, #0c0c0c 25%);
+    box-shadow: 0px 4px 0px #2a3426;
+    transition: all 0.2s ease;
+}
+
+.effect-pedal .power-switch:hover {
+    cursor: pointer;
+    background-image: repeating-linear-gradient(180deg, #2b2b2b 0%, #656262 5%, #656262 20%, #2b2b2b 25%);
+}
+
+.effect-pedal .power-light {
+    height: 15px;
+    width: 15px;
+    border-radius: 100%;
+    align-self: center;
+    margin: 5px;
+    background: radial-gradient(#4f4747 5%, #151515 100%);
+    border: thin solid #090909;
+}
+
+/* Active pedal */
+
+.effect-pedal.active .power-switch {
+    transform: translatey(4px) rotatex(-5deg);
+    box-shadow: 0px 0px 0px #2a3426;
+}
+
+.effect-pedal.active .power-light {
+    background: radial-gradient(#f1c000 5%, #a70000 100%);
+    border: thin solid #954a4a;
+}
+
+/* Theme White */
+
+.effect-pedal.white {
+    box-shadow: 0px 25px 0px #2b2b2b;
+    background-image: linear-gradient(180deg, #ffffff 15%, #bbbbbb 100%);
+}
+
+.effect-pedal.white .pedal-inner {
+    box-shadow: 0px 0px 10px #bbbbbb;
+}
+
+.effect-pedal.white .info-panel {
+    background-color: #111111;
+}
+
+/* Theme Green */
+
+.effect-pedal.green {
+    box-shadow: 0px 25px 0px #1e3812;
+    background-image: linear-gradient(180deg, #6eb74c 15%, #37751c 100%);
+}
+
+.effect-pedal.green .pedal-inner {
+    box-shadow: 0px 0px 10px #86cf65;
+}
+
+.effect-pedal.green .info-panel {
+    background-color: #3e7b31;
+}
+
+/* Theme Red */
+
+.effect-pedal.red {
+    box-shadow: 0px 25px 0px #2d020a;
+    background-image: linear-gradient(180deg, #b50e3d 15%, #51020d 100%);
+}
+
+.effect-pedal.red .pedal-inner {
+    box-shadow: 0px 0px 10px #9e223f;
+}
+
+.effect-pedal.red .info-panel {
+    background-color: #772521;
+}

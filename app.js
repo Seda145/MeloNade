@@ -146,6 +146,9 @@ class MyApp {
         // Create the app pages which rely on the new data.
         this.configurationPage = new ConfigurationPage();
         this.configurationPage.create(this.element);
+
+        this.audioProcessor.requestMicDevice();
+
         this.songList = new SongList();
         this.songList.create(this.element);
         this.songList.regenerateSongEntries();
@@ -155,7 +158,7 @@ class MyApp {
 
         // Update navigation.
         this.navigation.registerNavigation("Configuration", "Configuration", 0, this.eConfigurationPageWrap);
-        // this.navigation.registerNavigation("Tones", "Tones", 1, this.eTonePageWrap);
+        this.navigation.registerNavigation("Tones", "Tones", 1, this.eTonePageWrap);
         this.navigation.registerNavigation("Song List", "Song List", 1, this.eSongListWrap);
         this.navigation.navigateTo("Configuration");
     }

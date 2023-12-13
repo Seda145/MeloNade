@@ -10,8 +10,10 @@ class Oscilloscope {
 		/* Events */
 
 		this.acEventListener = new AbortController();
-		window.addEventListener("audio-processor-start-song", this.actOnAudioProcessorStartSong.bind(this), { signal: this.acEventListener.signal });
-		window.addEventListener("audio-processor-stop-song", this.actOnAudioProcessorStopSong.bind(this), { signal: this.acEventListener.signal });
+        window.addEventListener("audioprocessor-connected-mic", this.actOnAudioProcessorConnectedMic.bind(this), { signal: this.acEventListener.signal });
+		if (app.audioProcessor.micAudioBuffer != null) {
+			this.actOnAudioProcessorConnectedMic();
+		}
     }
 
 	prepareRemoval() {
@@ -38,8 +40,8 @@ class Oscilloscope {
 			const sliceWidth = (this.eCanvas.width * 1.0) / app.audioProcessor.bufferLength;
 			let x = 0;
 			for (let i = 0; i < app.audioProcessor.bufferLength; i++) {
-				// const v = app.audioProcessor.audioBuffer[i] * 200.0;
-				const v = app.audioProcessor.audioBuffer[i] * 200.0;
+				// const v = app.audioProcessor.micAudioBuffer[i] * 200.0;
+				const v = app.audioProcessor.micAudioBuffer[i] * 200.0;
 				// const y = (v * this.eCanvas.height) / 2;
 				const y = this.eCanvas.height / 2 + v;
 
@@ -75,11 +77,7 @@ class Oscilloscope {
 
 	/* Events */
 
-	actOnAudioProcessorStartSong(e) {
+	actOnAudioProcessorConnectedMic(e) {
 		this.draw();
-	}
-
-	actOnAudioProcessorStopSong(e) {
-		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
 	}
 }

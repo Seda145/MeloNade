@@ -10,8 +10,10 @@ class RMSDetection {
 		/* Events */
 
 		this.acEventListener = new AbortController();
-		window.addEventListener("audio-processor-start-song", this.actOnAudioProcessorStartSong.bind(this), { signal: this.acEventListener.signal });
-		window.addEventListener("audio-processor-stop-song", this.actOnAudioProcessorStopSong.bind(this), { signal: this.acEventListener.signal });
+		window.addEventListener("audioprocessor-connected-mic", this.actOnAudioProcessorConnectedMic.bind(this), { signal: this.acEventListener.signal });
+        if (app.audioProcessor.micAudioBuffer != null) {
+			this.actOnAudioProcessorConnectedMic();
+		}
     }
 
 	prepareRemoval() {
@@ -55,11 +57,7 @@ class RMSDetection {
 
 	/* Events */
 
-	actOnAudioProcessorStartSong(e) {
+	actOnAudioProcessorConnectedMic(e) {
 		this.draw();
-	}
-
-	actOnAudioProcessorStopSong(e) {
-		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
 	}
 }
