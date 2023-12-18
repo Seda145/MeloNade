@@ -5,7 +5,6 @@ class BackgroundLighting {
 		/* Elements */
 		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="background-lighting"]'), this.getHTMLTemplate());
 		this.eStageBackground = this.element.querySelector('.stage-background');
-		this.eStageSpots = this.element.querySelector('.stage-spots');
 		/* State */
 		this.initialStageColorBottom = 'rgb(1, 0, 0)';
 		this.initialStageColorCenter = 'rgb(28, 10, 10)';
@@ -13,44 +12,38 @@ class BackgroundLighting {
 		this.alphaStages = [
 			{
 				color: 'rgb(80, 25, 25)',
-				spotIntensityA: 1.85,
-				spotIntensityB: 2.1,
-				spotWhiteAddition: 60,
+				spotIntensityA: 1.6,
+				spotWhiteAddition: 10,
 				spotAngle: 100
 			},
 			{
 				color: 'rgb(105, 10, 30)',
-				spotIntensityA: 1.75,
-				spotIntensityB: 2.1,
-				spotWhiteAddition: 70,
+				spotIntensityA: 1.7,
+				spotWhiteAddition: 20,
 				spotAngle: 110
 			},
 			{
 				color: 'rgb(90, 20, 25)',
-				spotIntensityA: 1.9,
-				spotIntensityB: 2.1,
-				spotWhiteAddition: 70,
+				spotIntensityA: 1.8,
+				spotWhiteAddition: 15,
 				spotAngle: 90
 			},
 			{
 				color: 'rgb(18, 4, 32)',
-				spotIntensityA: 1.75,
-				spotIntensityB: 2.0,
-				spotWhiteAddition: 60,
+				spotIntensityA: 1.55,
+				spotWhiteAddition: 10,
 				spotAngle: 105
 			},
 			{
 				color: 'rgb(105, 10, 30)',
-				spotIntensityA: 1.75,
-				spotIntensityB: 2.1,
-				spotWhiteAddition: 70,
+				spotIntensityA: 1.65,
+				spotWhiteAddition: 0,
 				spotAngle: 110
 			},
 			{
 				color: this.initialStageColorCenter,
 				spotIntensityA: 1.75,
-				spotIntensityB: 2.0,
-				spotWhiteAddition: 110,
+				spotWhiteAddition: 30,
 				spotAngle: 100
 			}
 		];
@@ -74,8 +67,7 @@ class BackgroundLighting {
 
 	async draw() {
 		await this.interpolateAlphaData();
-		this.drawStageBackground();
-		this.drawStageSpots();
+		this.drawStage();
 		
 		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
     }
@@ -111,7 +103,6 @@ class BackgroundLighting {
 		let newData = {};
 		newData.color = UIUtils.getRGBObjectAsCss(UIUtils.interpolateRGBAsObjects(curData.color, nextData.color, this.normalizedAudioAlpha));
 		newData.spotIntensityA = MathUtils.lerp(curData.spotIntensityA, nextData.spotIntensityA, this.normalizedAudioAlpha);
-		newData.spotIntensityB = MathUtils.lerp(curData.spotIntensityB, nextData.spotIntensityB, this.normalizedAudioAlpha);
 		newData.spotWhiteAddition = MathUtils.lerp(curData.spotWhiteAddition, nextData.spotWhiteAddition, this.normalizedAudioAlpha);
 		newData.spotAngle = MathUtils.lerp(curData.spotAngle, nextData.spotAngle, this.normalizedAudioAlpha);
 		this.interpolatedAlphaStageData = newData;
@@ -122,30 +113,13 @@ class BackgroundLighting {
 		return this.alphaStages[MathUtils.clamp(inAlphaStage, 0, this.alphaStages.length -1)];
 	}
 
-	stopStageBackground() {
+	stopStage() {
 		this.eStageBackground.style.opacity = 0;
 	}
 
-	drawStageBackground() {
+	drawStage() {
 		// Calculate the center color, which is the main "ambience" of the room.
 		this.eStageBackground.style.opacity = 1;
-		this.eStageBackground.style.backgroundImage = `
-			linear-gradient(0deg, ${this.initialStageColorBottom} 10%, ${this.interpolatedAlphaStageData.color} 40%, ${this.interpolatedAlphaStageData.color} 50%, ${this.initialStageColorTop} 100%)		
-		`;
-	}
-
-	stopStageSpots() {
-		this.eStageSpots.style.opacity = 0;
-	}
-
-	drawStageSpots() {
-		this.eStageSpots.style.opacity = 1;
-
-		// Vertical spot beams gradient, then fading beams gradient to the bottom.
-		this.eStageSpots.style.maskImage = `
-			repeating-linear-gradient(${this.interpolatedAlphaStageData.spotAngle}deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.4), 15%, rgba(0, 0, 0, 0) 25%, rgba(0, 0, 0, 0) 30%), 
-			linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, .9) 45%, rgba(0, 0, 0, 0.05) 80%)
-		`;
 
 		let spotColorAObj = UIUtils.getCssRGBAsObject(this.interpolatedAlphaStageData.color);
 		// Alter color or intensity a bit on the light.
@@ -153,19 +127,14 @@ class BackgroundLighting {
 		spotColorAObj.g = Math.min(255, spotColorAObj.g * this.interpolatedAlphaStageData.spotIntensityA + this.interpolatedAlphaStageData.spotWhiteAddition);
 		spotColorAObj.b = Math.min(255, spotColorAObj.b * this.interpolatedAlphaStageData.spotIntensityA + this.interpolatedAlphaStageData.spotWhiteAddition);
 
-		let spotColorBObj = UIUtils.getCssRGBAsObject(this.interpolatedAlphaStageData.color);
-		// Alter color or intensity a bit on the light.
-		spotColorBObj.r = Math.min(255, spotColorBObj.r * this.interpolatedAlphaStageData.spotIntensityB + this.interpolatedAlphaStageData.spotWhiteAddition);
-		spotColorBObj.g = Math.min(255, spotColorBObj.g * this.interpolatedAlphaStageData.spotIntensityB + this.interpolatedAlphaStageData.spotWhiteAddition);
-		spotColorBObj.b = Math.min(255, spotColorBObj.b * this.interpolatedAlphaStageData.spotIntensityB + this.interpolatedAlphaStageData.spotWhiteAddition);
-
 		const spotColorA = UIUtils.getRGBObjectAsCss(spotColorAObj);
-		const spotColorB = UIUtils.getRGBObjectAsCss(spotColorBObj);
 		// console.log(spotColorA);
 
-		// Light beam horizontal strength variation and color.
-		this.eStageSpots.style.backgroundImage = `
-			linear-gradient(100deg, ${spotColorA}, ${spotColorB})
+		// 1. Base stage color. 2. Repeating vertical light beams, 3. fade to bottom.
+		this.eStageBackground.style.backgroundImage = `
+			linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 45%, ${this.initialStageColorBottom} 80%),
+			repeating-linear-gradient(${this.interpolatedAlphaStageData.spotAngle}deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 5%, ${spotColorA} 15%, rgba(0, 0, 0, 0) 25%, rgba(0, 0, 0, 0) 30%), 
+			linear-gradient(0deg, ${this.initialStageColorBottom} 10%, ${this.interpolatedAlphaStageData.color} 40%, ${this.interpolatedAlphaStageData.color} 50%, ${this.initialStageColorTop} 100%)
 		`;
 	}
 
@@ -176,7 +145,6 @@ class BackgroundLighting {
 <div class="background-lighting">
 	<div class="static-background"></div>
 	<div class="stage-background"></div>
-	<div class="stage-spots"></div>
 </div>
 
 
@@ -194,7 +162,6 @@ class BackgroundLighting {
 	actOnAudioProcessorStopSong(e) {
 		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
 		// Once the audio stops, the background will still be visible. It should be reset to default values now that the draw method no longer runs.
-		this.stopStageBackground();
-		this.stopStageSpots();
+		this.stopStage();
 	}
 }

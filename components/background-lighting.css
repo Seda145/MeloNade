@@ -25,16 +25,3 @@
 	opacity: 0;
 	transition: opacity 2s ease;
 }
-
-.background-lighting .stage-spots {
-	position: absolute;
-	top: 0;
-	left: 0;
-	bottom: 0;
-	right: 0;
-	z-index: -1;
-	/* Note that values are controlled in js, base colors and opacity should be synced. */
-	opacity: 0;
-	transition: opacity 2s ease;
-	mask-composite: intersect;
-}
