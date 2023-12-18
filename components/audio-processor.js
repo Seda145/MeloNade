@@ -25,6 +25,8 @@ class AudioProcessor {
         this.bUpdatedAutocorrelatedPitch = false;
         this.songTitle = null;
         this.micSource = null;
+        this.playAudioDelayMS = 3000;
+        this.bIsDelayingPlayAudio = false;
 		this.audio = null;
 		this.midi = null;
         this.midiTrackIndex = 0;
@@ -227,10 +229,21 @@ class AudioProcessor {
             this.countHitAccuracy = 0;
             this.countHitTotalPercentage = 0;
             this.countHitStreak = 0;
-    
-            this.audio.play();
+
             this.isPlaying = true;
-            this.ProcessMIDIWithAudioSyncInterval = setInterval(() => { this.ProcessMIDIWithAudioSync() }, this.intervalResolution);
+            this.bIsDelayingPlayAudio = true;
+            console.log("Audio play is delayed with ms: " + this.playAudioDelayMS);
+            clearTimeout(this.PlayAudioDelayTimeout);
+            this.PlayAudioDelayTimeout = setTimeout(() => { 
+                if (this.isPlaying) {
+                    // If we still want to play after the timeout, do so.
+                    this.audio.play();
+                    this.ProcessMIDIWithAudioSyncInterval = setInterval(() => { this.ProcessMIDIWithAudioSync() }, this.intervalResolution);
+                    console.log("Audio playing after planned delay.");
+                }
+                // Always reset this.
+                this.bIsDelayingPlayAudio = false;
+            }, this.playAudioDelayMS);
     
             const startSongEvent = new Event('audio-processor-start-song', { bubbles: false });
             window.dispatchEvent(startSongEvent);
@@ -263,13 +276,11 @@ class AudioProcessor {
         // console.log("Current play time: " + currentTime + ". timeAsTick: " + timeAsTick);
         // console.log(this.midi.tracks[this.midiTrackIndex].notes);
 
- 
         // Find the midi data at the current time of the audio file that is playing.
 		// Since clocks are not accurate the current MIDI tick should be synced to audio playtime.
 		// To get a position in midi ticks from playback seconds, we can use methods in the midi header class.
 		// console.log(midi.header.secondsToTicks(2));
 		// TODO: Optimize this somehow. Perhaps reformat the data to be keyed to time.	
-		// TODO: Assumed is the MIDI comes with 1 track only.	
         // TODO: Current note is processed, not a chord. detect lowest frequency note and skip chord? do chord comparison?
         {
             // We track the current midi note index, which needs to be matched to the audio playback by time.

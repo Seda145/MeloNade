@@ -28,12 +28,12 @@ class EffectPedalKnob {
         );
 
         this.acEventListener = new AbortController();
-        // Would rather not bind this to window but if bound to the knob even'ts only fire while hovering over the knob.
+        // Would rather not bind this to window, but if bound to the knob events only fire while hovering over the knob.
 		window.addEventListener("mouseup", this.actOnMouseUp.bind(this), { signal: this.acEventListener.signal });
 		window.addEventListener("mousemove", this.actOnMouseMove.bind(this), { signal: this.acEventListener.signal });
 
         // Update the widgets to the default state.
-        this.setKnobValue(this.knobValue)
+        this.setKnobValue(this.knobValue);
     }
 
     prepareRemoval() {
@@ -122,10 +122,12 @@ class EffectPedalKnob {
         // console.log("dragging");
         // console.log(e);
 
-        // Get the knob position
+        // Get the center of the knob on its position (css dependent).
         const knobSizeOffset = { x: this.eKnob.getBoundingClientRect().width / 2, y: this.eKnob.getBoundingClientRect().height / 2 };
         const knobPos = { x: this.eKnob.getBoundingClientRect().left + knobSizeOffset.x, y: this.eKnob.getBoundingClientRect().top + knobSizeOffset.y}; 
+        // Get the cursor position.
         const cursPos = { x: e.clientX, y: e.clientY};
+        // The vector from the knob center to the cursor position.
         let targetVector = { x: cursPos.x - knobPos.x, y: cursPos.y - knobPos.y };
 
         // down 0 / -0, left -0.5, top 1 / -1, right 0.5.
