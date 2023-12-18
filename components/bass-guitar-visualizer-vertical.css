@@ -67,7 +67,7 @@
 
 .bass-guitar-visualizer-vertical .note-bar {
 	/* Transition makes it easier on the eyes, not enough seems to be choppy. */
-	transition: transform 0.25s linear;
+	transition: transform 0.15s linear;
 	will-change: transform;
 	width: 100%;
 	position: absolute;
