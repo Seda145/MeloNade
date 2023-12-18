@@ -37,7 +37,7 @@ class BassGuitarVisualizer {
 		// TODO this is choppy movement?
 		// this.eNotesWrap.style.left = -noteBarPosition + 'px';
 		this.eNoteBars.forEach((inElemX) => {
-			inElemX.style.transform = 'translatex(' + -noteBarPosition + 'px)';
+			inElemX.style.transform = 'translatex(' + Math.round(-noteBarPosition) + 'px)';
 		});
 
 		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });

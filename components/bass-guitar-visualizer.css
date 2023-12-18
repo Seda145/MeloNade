@@ -61,7 +61,8 @@
 	flex: 1;
 	align-items: center;
 	/* Transition makes it easier on the eyes, not enough seems to be choppy. */
-	transition: transform 0.2s cubic-bezier(0,1.11,1,1);
+	transition: transform 0.25s linear;
+	will-change: transform;
 }
 
 .bass-guitar-visualizer .note {

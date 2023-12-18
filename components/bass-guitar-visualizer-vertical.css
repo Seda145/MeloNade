@@ -67,7 +67,8 @@
 
 .bass-guitar-visualizer-vertical .note-bar {
 	/* Transition makes it easier on the eyes, not enough seems to be choppy. */
-	transition: transform 0.2s cubic-bezier(0,1.11,1,1);
+	transition: transform 0.25s linear;
+	will-change: transform;
 	width: 100%;
 	position: absolute;
 	bottom: 0px;
@@ -86,9 +87,9 @@
 }
 
 .bass-guitar-visualizer-vertical .note > span {
-	font-size: 18px;
+	font-size: 24px;
 	padding: 5px;
-	border: medium solid rgb(0, 119, 230);
+	border: 5px solid rgb(0, 119, 230);
 	background-color: black;
 	border-radius: 10px;
 	width: 100%;
