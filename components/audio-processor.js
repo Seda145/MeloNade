@@ -73,7 +73,7 @@ class AudioProcessor {
             this.micSource = this.audioContext.createMediaStreamSource(stream);
             this.micSource.connect(this.micGainNode);
             this.micGainNode.connect(this.analyserNode);
-            if (app.userdata.data.activeProfile.config.listenToInput) {
+            if (app.userdata.data.activeProfile.config.listenToInput == "true") {
                 // Eventually I want some kind of effect pedal audio node chain of which this.micGainNode is part as pre amp, then link that chain to destination.
                 this.micGainNode.connect(this.audioContext.destination);
                 console.log("Connected mic gain to audioContext destination (mic playback).");
