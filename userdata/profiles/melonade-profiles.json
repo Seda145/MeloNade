@@ -8,6 +8,7 @@
     },
     "config": {
       "listenToMidi": "false",
+      "listenToInput": "true",
       "audioVolume": "1",
       "enableLightEffects": "true",
       "currentInstrument": "bass-guitar",

@@ -9,6 +9,8 @@ class ConfigurationPage {
 		this.eInputSaveProfiles = this.eWrapConfiguration.querySelector('.input-save-profiles');
         this.eInputListenToMidi = this.eWrapConfiguration.querySelector('.input-listen-to-midi');
         this.eInputListenToMidi.checked = app.userdata.data.activeProfile.config.listenToMidi == "true";
+        this.eInputListenToInput = this.eWrapConfiguration.querySelector('.input-listen-to-input');
+        this.eInputListenToInput.checked = app.userdata.data.activeProfile.config.listenToInput == "true";
         this.eInputAudioVolume = this.eWrapConfiguration.querySelector('.input-audio-volume');
         this.eInputAudioVolume.value = app.userdata.data.activeProfile.config.audioVolume;
         this.eInputEnableLightEffects = this.eWrapConfiguration.querySelector('.input-enable-light-effects');
@@ -60,8 +62,26 @@ class ConfigurationPage {
             "change",
             (e) => {
                 e.preventDefault();
-                // Update userdata to the new value.
                 app.userdata.data.activeProfile.config.listenToMidi = e.currentTarget.checked.toString();
+            },
+            false
+        );
+
+        this.eInputListenToInput.addEventListener(
+            "change",
+            (e) => {
+                e.preventDefault();
+                app.userdata.data.activeProfile.config.listenToInput = e.currentTarget.checked.toString();
+
+                // TODO this must move. Eventually I want some kind of effect pedal audio node chain of which this.micGainNode is part as pre amp, then link that chain to destination.
+                if (e.currentTarget.checked) {
+                    app.audioProcessor.micGainNode.connect(app.audioProcessor.audioContext.destination);
+                    console.log("Connected mic gain to audioContext destination (mic playback).");
+                }
+                else {
+                    app.audioProcessor.micGainNode.disconnect(app.audioProcessor.audioContext.destination);
+                    console.log("Disconnected mic gain from audioContext destination (mic playback).");
+                }
             },
             false
         );
@@ -70,7 +90,6 @@ class ConfigurationPage {
             "change",
             (e) => {
                 e.preventDefault();
-                // Update userdata to the new value.
                 app.userdata.data.activeProfile.config.audioVolume = e.currentTarget.value.toString();
             },
             false
@@ -80,7 +99,6 @@ class ConfigurationPage {
             "change",
             (e) => {
                 e.preventDefault();
-                // Update userdata to the new value.
                 app.userdata.data.activeProfile.config.enableLightEffects = e.currentTarget.checked.toString();
             },
             false
@@ -90,7 +108,6 @@ class ConfigurationPage {
             "change",
             (e) => {
                 e.preventDefault();
-                // Update userdata to the new value.
                 app.userdata.data.activeProfile.config.currentInstrument = e.currentTarget.value;
                 // With a new instrument selected, only config widgets related to that instrument should be shown.
                 this.updateConfigInstrumentPanels();
@@ -102,7 +119,6 @@ class ConfigurationPage {
             "change",
             (e) => {
                 e.preventDefault();
-                // Update userdata to the new value.
                 app.userdata.data.activeProfile.config.instruments["bass-guitar"].tuning = e.currentTarget.value;
             },
             false
@@ -112,7 +128,6 @@ class ConfigurationPage {
             "change",
             (e) => {
                 e.preventDefault();
-                // Update userdata to the new value.
                 app.userdata.data.activeProfile.config.instruments["bass-guitar"].visualizer = e.currentTarget.value;
             },
             false
@@ -122,7 +137,6 @@ class ConfigurationPage {
             "change",
             (e) => {
                 e.preventDefault();
-                // Update userdata to the new value.
                 app.userdata.data.activeProfile.config.instruments["bass-guitar"].orderStringsThickAtBottom = e.currentTarget.checked.toString();
             },
             false
@@ -164,6 +178,11 @@ class ConfigurationPage {
                 <label>
                     <span>Listen to midi:</span>
                     <input class="input-listen-to-midi" type="checkbox"/>
+                </label>
+
+                <label>
+                    <span>Listen to input:</span>
+                    <input class="input-listen-to-input" type="checkbox"/>
                 </label>
 
                 <label>

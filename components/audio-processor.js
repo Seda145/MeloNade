@@ -73,8 +73,11 @@ class AudioProcessor {
             this.micSource = this.audioContext.createMediaStreamSource(stream);
             this.micSource.connect(this.micGainNode);
             this.micGainNode.connect(this.analyserNode);
-            // Eventually I want some kind of effect pedal audio node chain of which this.micGainNode is part as pre amp, then link that chain to destination.
-            this.micGainNode.connect(this.audioContext.destination);
+            if (app.userdata.data.activeProfile.config.listenToInput) {
+                // Eventually I want some kind of effect pedal audio node chain of which this.micGainNode is part as pre amp, then link that chain to destination.
+                this.micGainNode.connect(this.audioContext.destination);
+                console.log("Connected mic gain to audioContext destination (mic playback).");
+            }
 
             setInterval(() => { this.analyseMic() }, this.intervalResolution);
             // Calculate initial buffer values.
