@@ -51,13 +51,13 @@ class AudioProcessor {
         // https://webaudio.github.io/web-audio-api/
         navigator.mediaDevices.getUserMedia({ 
             video: false, 
-            audio: true,
-            echoCancellation: false,
-            autoGainControl: false,
-            noiseSuppression: false,
-            latency: 0,
-            channelCount: 1
-
+            audio: {
+                echoCancellation: { ideal: false },
+                autoGainControl: { ideal: false },
+                noiseSuppression: { ideal: false },
+                latency: { ideal: 0 },
+                channelCount: { ideal: 1 }
+            }
         })
         .then((stream) => {
             console.log("Starting audio");
@@ -73,6 +73,8 @@ class AudioProcessor {
             this.micSource = this.audioContext.createMediaStreamSource(stream);
             this.micSource.connect(this.micGainNode);
             this.micGainNode.connect(this.analyserNode);
+            // Eventually I want some kind of effect pedal audio node chain of which this.micGainNode is part as pre amp, then link that chain to destination.
+            this.micGainNode.connect(this.audioContext.destination);
 
             setInterval(() => { this.analyseMic() }, this.intervalResolution);
             // Calculate initial buffer values.
