@@ -24,7 +24,7 @@
 	/* background-color: #85da5f; */
 	background-color: #00b558;
 	width: 0%;
-	transition: width 0.8s linear;
+	transition: width 0.2s linear;
 }
 
 .pitch-detection .target {

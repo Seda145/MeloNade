@@ -55,8 +55,7 @@ class PitchDetection {
             this.eInputPitchDetectionTargetLetter.innerHTML = noteLetter;
         }
 
-
-        const centsOffPitch = app.audioProcessor.currentCentsDifferenceFromNote;
+        const centsOffPitch = MidiUtils.centsOffFromPitch(pitch, midiNumber);
         // clamp to a value of 0 to 100 to use as percentage.
         const absCentsOffPitch = Math.abs(centsOffPitch);
         const absCentsOffPercentage = MathUtils.clamp(absCentsOffPitch, 0, 100);
