@@ -7,7 +7,7 @@ class EffectPedalGain {
 		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="effect-pedal-gain"]'), this.getHTMLTemplate());
         this.element.classList.add(inThemeClass);
         this.ePedalName = this.element.querySelector('.pedal-name');
-        this.ePedalName.innerHTML = this.pedalName;
+        this.ePedalName.textContent = this.pedalName;
         this.ePowerSwitch = this.element.querySelector('.power-switch');
 
         this.bIsEffectActive = false;

@@ -60,7 +60,7 @@
 
 .bass-guitar-visualizer-vertical .notes-wrap {
 	display: flex;
-	height: calc(100vh - 585px);
+	height: calc(100vh - 635px);
 	overflow: hidden;
 	flex: 1;
 }

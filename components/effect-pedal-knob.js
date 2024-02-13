@@ -11,7 +11,7 @@ class EffectPedalKnob {
 
 		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="effect-pedal-knob"]'), this.getHTMLTemplate());
         this.eKnobName = this.element.querySelector('.knob-name');
-        this.eKnobName.setInnerHTML = this.knobName;
+        this.eKnobName.textContent = this.knobName;
         this.eKnob = this.element.querySelector('.knob');
         this.eValueIndicator = this.element.querySelector('.value-indicator');
 

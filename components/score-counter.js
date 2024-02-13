@@ -27,10 +27,10 @@ class ScoreCounter {
     }
 
     updateCountElements() {
-        this.eCounterStreak.innerHTML = app.audioProcessor.countHitStreak;
-        this.eCounterHit.innerHTML = app.audioProcessor.countHitNotes;
-        this.eCounterMissed.innerHTML = app.audioProcessor.countMissedNotes;
-        this.eCounterHitAccuracy.innerHTML = app.audioProcessor.countHitAccuracy;
+        this.eCounterStreak.textContent = app.audioProcessor.countHitStreak;
+        this.eCounterHit.textContent = app.audioProcessor.countHitNotes;
+        this.eCounterMissed.textContent = app.audioProcessor.countMissedNotes;
+        this.eCounterHitAccuracy.textContent = app.audioProcessor.countHitAccuracy;
     }
 
     getHTMLTemplate() {

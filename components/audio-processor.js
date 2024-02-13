@@ -255,6 +255,17 @@ class AudioProcessor {
         });
     }
 
+    // pauseSong() {
+        // todo differentiate between playing and additional pause state. Provide a context for the UI so it doesn't mindlessly use toggle buttons for play / pause.
+		// if (!this.isPlaying) {
+		// 	return;
+		// }
+		// console.log("Pausing audio");
+		// if (this.audio) {
+		// 	this.audio.pause();
+		// }        
+    // }
+
 	stopSong() {
 		if (!this.isPlaying) {
 			return;

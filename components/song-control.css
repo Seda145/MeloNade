@@ -1,0 +1,89 @@
+/**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
+
+.song-control {
+	display: flex;
+	height: 75px;
+}
+
+.song-control .control-wrap {
+	display: flex;
+	flex: 1;
+	background-color: #0000005c;
+	padding-left: 15px;
+	padding-right: 15px;
+	gap: 15px;
+}
+
+.song-control .display {
+	flex: 1;
+	display: flex;
+	align-items: center;
+}
+
+.song-control .display .now-playing,
+.song-control .display .now-playing-song {
+	font-size: 17px;
+	color: #fff;
+}
+
+.song-control .display .now-playing {
+	margin-right: 10px;
+}
+
+.song-control .display .now-playing-song {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	color: #ccc;
+}
+
+.song-control .buttons {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.song-control .buttons .button {
+	border-radius: 100%;
+	border: medium solid grey;
+	width: 50px;
+	height: 50px;
+	background-color: #111;
+}
+
+
+.song-control .button.play {
+	
+}
+
+.song-control .buttons .button.play::after {
+	content: "";
+	width: 0;
+	height: 0;
+	border-top: 7px solid transparent;
+	border-left: 10px solid #fff;
+	border-bottom: 7px solid transparent;
+	margin-right: -3px;
+}
+
+.song-control .buttons .button.pause::before {
+	content: "";
+	width: 4px;
+	height: 12px;
+	background-color: white;
+	margin-right: 4px;
+}
+
+.song-control .buttons .button.pause::after {
+	content: "";
+	width: 4px;
+	height: 12px;
+	background-color: white;
+}
+
+.song-control .buttons .button.stop::after {
+	content: "";
+	width: 12px;
+	height: 12px;
+	background-color: white;
+}

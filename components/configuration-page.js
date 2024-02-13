@@ -244,7 +244,7 @@ class ConfigurationPage {
                 
                 <hr>
 
-                <button class="input-save-profiles button block" type="button">Save progress</button> 
+                <button class="input-save-profiles button button-style-1" type="button">Save progress</button> 
 
             </fieldset>
         </div>

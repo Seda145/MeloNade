@@ -5,6 +5,9 @@ class ProcessingContent {
         /* Elements */
         this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="processing-content"]'), this.getHTMLTemplate());
 
+        this.songControl = new SongControl();
+        this.songControl.create(this.element);
+
         this.oscilloscope = new Oscilloscope();
         this.oscilloscope.create(this.element);
 
@@ -32,6 +35,8 @@ class ProcessingContent {
     }
 
     prepareRemoval() {
+        this.songControl.prepareRemoval();
+        this.songControl = null;
         this.oscilloscope.prepareRemoval();
         this.oscilloscope = null;
         this.pitchDetection.prepareRemoval();
@@ -57,6 +62,7 @@ class ProcessingContent {
         return (html`
  
 <div class="processing-content page container">
+    <div data-component="song-control"></div>
     <div data-component="score-counter"></div>
     <div data-component="bass-guitar-visualizer"></div>
     <div data-component="bass-guitar-visualizer-vertical"></div>
