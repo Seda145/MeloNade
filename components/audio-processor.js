@@ -245,6 +245,8 @@ class AudioProcessor {
                     this.audio.play();
                     this.ProcessMIDIWithAudioSyncInterval = setInterval(() => { this.ProcessMIDIWithAudioSync() }, this.intervalResolution);
                     console.log("Audio playing after planned delay.");
+                    const playAfterStartDelayEvent = new Event('audio-processor-play-after-start-delay', { bubbles: false });
+                    window.dispatchEvent(playAfterStartDelayEvent);
                 }
                 // Always reset this.
                 this.bIsDelayingPlayAudio = false;
@@ -255,16 +257,25 @@ class AudioProcessor {
         });
     }
 
-    // pauseSong() {
-        // todo differentiate between playing and additional pause state. Provide a context for the UI so it doesn't mindlessly use toggle buttons for play / pause.
-		// if (!this.isPlaying) {
-		// 	return;
-		// }
-		// console.log("Pausing audio");
-		// if (this.audio) {
-		// 	this.audio.pause();
-		// }        
-    // }
+    pauseSong() {
+		if (!this.isPlaying || !this.audio) {
+			return;
+		}
+        // Note that a song initially starts after this.PlayAudioDelayTimeout in this.startSong(). 
+        // To keep things simple this pausing through user interaction is just avoided during the timeout period.
+        // Otherwise the timeout would simply start the song after a pause request.
+        // Probably not a todo.
+	    console.log("Pausing audio");
+		this.audio.pause();
+    }
+
+    unpauseSong() {
+		if (!this.isPlaying || !this.audio) {
+			return;
+		}
+		console.log("Unpausing audio");
+		this.audio.play();
+    }
 
 	stopSong() {
 		if (!this.isPlaying) {
