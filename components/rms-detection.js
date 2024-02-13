@@ -44,7 +44,7 @@ class RMSDetection {
         return (html`
  
 <div class="rms-detection">
-	<span>Input Volume:&nbsp;</span>
+	<span class="text-input-volume">Input Volume:&nbsp;</span>
 	<span class="bar-wrap">
 		<span class="bar"></span>
 		<span class="min-rms"></span>

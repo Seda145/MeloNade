@@ -9,10 +9,11 @@
 
 .pitch-detection .bar {
 	height: 5px;
-	background-color: #666;
+	background-color: #444;
 	flex: 1;
 	display: flex;
 	align-self: center;
+	border-radius: 8px;
 }
 
 .pitch-detection .bar.negative {
@@ -30,9 +31,9 @@
 .pitch-detection .target {
 	background-color: #191717;
 	border-radius: 100%;
-	width: 60px;
-	height: 60px;
-	border: medium solid #666;
+	width: 40px;
+	height: 40px;
+	border: medium solid #444;
 	display: flex;
 }
 
@@ -44,7 +45,7 @@
 .pitch-detection .target-letter {
 	margin: auto;
 	color: white;
-	font-size: 20px;
+	font-size: 18px;
 }
 
 .pitch-detection .current-pos {

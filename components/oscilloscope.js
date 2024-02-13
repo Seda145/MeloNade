@@ -5,7 +5,7 @@ class Oscilloscope {
 		/* Elements */
 		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="oscilloscope"]'), this.getHTMLTemplate());
 		this.eCanvas = this.element.querySelector(".oscilloscope-canvas");
-		this.eCanvasCtx = this.eCanvas.getContext("2d");
+		this.canvasCtx = this.eCanvas.getContext("2d");
 
 		/* Events */
 
@@ -23,18 +23,19 @@ class Oscilloscope {
     }
 
 	draw() {
-		// this.eCanvasCtx.fillStyle = "rgb(0, 0, 0)";
-		this.eCanvasCtx.fillStyle = " #735757";
-		this.eCanvasCtx.fillRect(0, 0, this.eCanvas.width, this.eCanvas.height);
+		// I've been thinking about changing the rms detection widget from a bar to a simple background light behind the oscillator. Mind food for later.
+		// Simplifying the UI reduces the need for explanations as literal text like "input volume" if it feels right.
+		// Would need to use clearRect so that the background can be set to transparent without drawing on top of previous frames.
+		// this.canvasCtx.clearRect(0, 0, this.eCanvas.width, this.eCanvas.height);
+		// this.canvasCtx.fillStyle = "rgb(0, 0, 0)";
+		this.canvasCtx.fillStyle = "#735757";
+		// this.canvasCtx.fillStyle = "rgba(0, 0, 0, 0)";
+		this.canvasCtx.fillRect(0, 0, this.eCanvas.width, this.eCanvas.height);
 
-		this.eCanvasCtx.lineWidth = 3;
-		// this.eCanvasCtx.strokeStyle = "rgb(0, 119, 230)";
-		// this.eCanvasCtx.strokeStyle = "#666";
-		// this.eCanvasCtx.strokeStyle = "#85da5f";
-		// this.eCanvasCtx.strokeStyle = "#fff";
-		this.eCanvasCtx.strokeStyle = "#00b558";
+		this.canvasCtx.lineWidth = 3;
+		this.canvasCtx.strokeStyle = "#00b558";
 
-		this.eCanvasCtx.beginPath();
+		this.canvasCtx.beginPath();
 
 		{
 			const sliceWidth = (this.eCanvas.width * 1.0) / app.audioProcessor.bufferLength;
@@ -46,18 +47,18 @@ class Oscilloscope {
 				const y = this.eCanvas.height / 2 + v;
 
 				if (i === 0) {
-					this.eCanvasCtx.moveTo(x, y);
+					this.canvasCtx.moveTo(x, y);
 				} 
 				else {
-					this.eCanvasCtx.lineTo(x, y);
+					this.canvasCtx.lineTo(x, y);
 				}
 
 				x += sliceWidth;
 			}
 		}
 
-		this.eCanvasCtx.lineTo(this.eCanvas.width, this.eCanvas.height / 2);
-		this.eCanvasCtx.stroke();
+		this.canvasCtx.lineTo(this.eCanvas.width, this.eCanvas.height / 2);
+		this.canvasCtx.stroke();
 		
 		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
 	}

@@ -65,9 +65,11 @@ class ProcessingContent {
     <div data-component="score-counter"></div>
     <div data-component="bass-guitar-visualizer"></div>
     <div data-component="bass-guitar-visualizer-vertical"></div>
-    <div data-component="oscilloscope"></div>
-    <div data-component="pitch-detection"></div>
-    <div data-component="rms-detection"></div>
+    <div class="audio-input-wrap">
+        <div data-component="oscilloscope"></div>
+        <div data-component="rms-detection"></div>
+        <div data-component="pitch-detection"></div>
+    </div>
     <div data-component="song-control"></div>
 </div>
 
