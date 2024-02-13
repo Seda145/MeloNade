@@ -86,6 +86,8 @@ class SongControl {
         // During that timeout the pause / play button would have no effect.
         // It's probably better to just hide or disable it during the delay than to add further complexity.
         this.eButtonTogglePlay.classList.add("hide");
+        // For additional (animation) styling in response to starting a new song:
+        this.element.classList.add("started-song");
     }
 
     actOnAudioProcessorPlayAfterStartDelay(e) {
@@ -95,5 +97,6 @@ class SongControl {
     actOnAudioProcessorStopSong(e) {
         this.eButtonTogglePlay.classList.add("hide");
         this.eNowPlayingSong.textContent = "-";
+        this.element.classList.remove("started-song");
     }    
 }
