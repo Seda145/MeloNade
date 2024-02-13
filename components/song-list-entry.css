@@ -13,7 +13,11 @@
 
 .song-list-entry:hover {
     cursor: pointer;
-    background-color: rgba(255, 255, 255, 0.25);
+}
+
+.song-list-entry:hover,
+.song-list-entry.now-playing {
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 .song-list-entry > span {
@@ -27,6 +31,16 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.song-list-entry .text-now-playing,
+.song-list-entry .text-finished {
+    display: none;
+}
+
+.song-list-entry.now-playing .text-now-playing,
+.song-list-entry.finished .text-finished {
+    display: inline;
 }
 
 .song-list-entry .album-image {

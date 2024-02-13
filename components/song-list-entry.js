@@ -16,14 +16,13 @@ class SongListEntry {
             this.albumImageUrl = URL.createObjectURL(app.userdata.data.songs[this.songTitle].albumImage);
         }
 		this.element = UIUtils.createElement(this.getHTMLTemplate());
-        this.eNowPlaying = this.element.querySelector('.now-playing');
-        this.eFinished = this.element.querySelector('.finished');
+        
         if (this.songTitle == app.audioProcessor.songTitle) {
             if (app.audioProcessor.isPlaying) {
-                this.eNowPlaying.classList.remove("hide");
+                this.element.classList.add("now-playing");
             }
             else {
-                this.eFinished.classList.remove("hide");
+                this.element.classList.add("finished");
             }
         }
 
@@ -49,8 +48,8 @@ class SongListEntry {
  
  <div class="song-list-entry" data-midi-track-index="${this.midiTrackIndex}" data-song-title="${this.songTitle}">
     <span class="title">${this.songTitle}</span>
-    <span class="now-playing hide">Now Playing</span>
-    <span class="finished hide">Finished</span>
+    <span class="text-now-playing">Now Playing</span>
+    <span class="text-finished">Finished</span>
     <span class="completed-percentage">Completed: ${this.hitTotalPercentage}%</span>
     <img class="album-image" src="${this.albumImageUrl}">
  </div>
@@ -62,15 +61,15 @@ class SongListEntry {
 
 	actOnAudioProcessorStartSong(e) {
         if (this.songTitle == app.audioProcessor.songTitle) {
-            this.eNowPlaying.classList.remove("hide");
+            this.element.classList.add("now-playing");
         }
-        this.eFinished.classList.add("hide");
+        this.element.classList.remove("finished");
 	}
 
 	actOnAudioProcessorStopSong(e) {
         if (this.songTitle == app.audioProcessor.songTitle) {
-            this.eFinished.classList.remove("hide");
+            this.element.classList.add("finished");
         }
-        this.eNowPlaying.classList.add("hide");
+        this.element.classList.remove("now-playing");
 	}
 }
