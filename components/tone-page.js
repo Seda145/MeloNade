@@ -7,17 +7,16 @@ class TonePage {
         this.GainEffectPedalGain = new EffectPedalGain();
         this.GainEffectPedalGain.create(this.element, "Signal Booster", "white");
 
-        this.pitchDetection = new PitchDetection();
-        this.pitchDetection.create(this.element);
-
-        this.rmsDetection = new RMSDetection();
-        this.rmsDetection.create(this.element);
+        this.audioInputVisualizer = new AudioInputVisualizer();
+		this.audioInputVisualizer.create(this.element);
     }
 
     prepareRemoval() {
-        this.element.remove();
         this.GainEffectPedalGain.prepareRemoval();
         this.GainEffectPedalGain = null;
+        this.audioInputVisualizer.prepareRemoval();
+        this.audioInputVisualizer = null;
+        this.element.remove();
         console.log("Prepared removal of self");
     }
 
@@ -32,8 +31,7 @@ class TonePage {
         <div data-component="effect-pedal-gain"></div>
     </div>
 
-    <div data-component="pitch-detection"></div>
-    <div data-component="rms-detection"></div>
+    <div data-component="audio-input-visualizer"></div>
 </div>
 
         `);

@@ -1,0 +1,26 @@
+/**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
+
+
+/* Additional styling to visually group subcomponents. */
+
+.audio-input-visualizer {
+	position: relative;
+} 
+
+.audio-input-visualizer .pitch-detection {
+	position: absolute;
+	bottom: -15px;
+	width: 250px;
+	left: calc(50% - 125px);
+} 
+
+.audio-input-visualizer .rms-detection {
+	position: absolute;
+	bottom: -6px;
+	width: 250px;
+	left: calc(50% - 125px);
+}
+
+.audio-input-visualizer .rms-detection .text-input-volume {
+	display: none;
+}

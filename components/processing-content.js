@@ -8,14 +8,8 @@ class ProcessingContent {
         this.songControl = new SongControl();
         this.songControl.create(this.element);
 
-        this.oscilloscope = new Oscilloscope();
-        this.oscilloscope.create(this.element);
-
-        this.pitchDetection = new PitchDetection();
-        this.pitchDetection.create(this.element);
-
-        this.rmsDetection = new RMSDetection();
-        this.rmsDetection.create(this.element);
+        this.audioInputVisualizer = new AudioInputVisualizer();
+		this.audioInputVisualizer.create(this.element);
 
         this.scoreCounter = new ScoreCounter();
         this.scoreCounter.create(this.element);
@@ -37,12 +31,10 @@ class ProcessingContent {
     prepareRemoval() {
         this.songControl.prepareRemoval();
         this.songControl = null;
-        this.oscilloscope.prepareRemoval();
-        this.oscilloscope = null;
-        this.pitchDetection.prepareRemoval();
-        this.pitchDetection = null;
-        this.rmsDetection.prepareRemoval();
-        this.rmsDetection = null;
+
+        this.audioInputVisualizer.prepareRemoval();
+        this.audioInputVisualizer = null;
+
         this.scoreCounter.prepareRemoval();
         this.scoreCounter = null;
         if (this.bassGuitarVisualizerVertical) {
@@ -65,11 +57,7 @@ class ProcessingContent {
     <div data-component="score-counter"></div>
     <div data-component="bass-guitar-visualizer"></div>
     <div data-component="bass-guitar-visualizer-vertical"></div>
-    <div class="audio-input-wrap">
-        <div data-component="oscilloscope"></div>
-        <div data-component="rms-detection"></div>
-        <div data-component="pitch-detection"></div>
-    </div>
+    <div data-component="audio-input-visualizer"></div>
     <div data-component="song-control"></div>
 </div>
 

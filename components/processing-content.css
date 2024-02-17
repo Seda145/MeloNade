@@ -14,32 +14,6 @@
 	flex: 1;
 }
 
-
 [data-component="bass-guitar-visualizer"] {
 	flex-direction: column;
-}
-
-
-/* Styling to bring different components together, such as visually grouping the input volume / pitch / oscilloscope. */
-
-.processing-content .audio-input-wrap {
-	position: relative;
-} 
-
-.processing-content .audio-input-wrap .pitch-detection {
-	position: absolute;
-	bottom: -15px;
-	width: 250px;
-	left: calc(50% - 125px);
-} 
-
-.processing-content .audio-input-wrap .rms-detection {
-	position: absolute;
-	bottom: -6px;
-	width: 250px;
-	left: calc(50% - 125px);
-}
-
-.processing-content .audio-input-wrap .rms-detection .text-input-volume {
-	display: none;
 }
