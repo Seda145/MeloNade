@@ -2,6 +2,21 @@
 
 .processing-content {
 	flex-direction: column;
+	display: flex;
+}
+
+
+/* Use all available space to keep layout similarities when using different visualizers */
+
+[data-component="bass-guitar-visualizer"]:not(:empty),
+[data-component="bass-guitar-visualizer-vertical"]:not(:empty) {
+	display: flex;
+	flex: 1;
+}
+
+
+[data-component="bass-guitar-visualizer"] {
+	flex-direction: column;
 }
 
 

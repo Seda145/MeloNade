@@ -49,6 +49,7 @@
 
 .bass-guitar-visualizer-vertical .vertical-wrap {
 	display: flex;
+	flex: 1;
 	flex-direction: column;
 }
 
@@ -60,7 +61,6 @@
 
 .bass-guitar-visualizer-vertical .notes-wrap {
 	display: flex;
-	height: calc(100vh - 540px);
 	overflow: hidden;
 	flex: 1;
 }
