@@ -1,0 +1,37 @@
+/**! GNU Affero General Public License v3.0. See LICENSE.md. Copyright 2023 Roy Wierer (Seda145). **/
+
+.configuration-page fieldset {
+    padding: 10px;
+    margin-bottom: 30px;
+}
+
+.configuration-page fieldset legend {
+    margin-left: -15px;
+}
+
+.configuration-page fieldset label {
+    display: block;
+}
+
+.configuration-page fieldset label > span {
+    width: 300px;
+    max-width: 100%;
+    display: inline-block;
+    padding-right: 15px;
+}
+
+.configuration-page .input-save-profiles {
+    width: 285px;
+    max-width: 100%;
+}
+
+
+@media only screen and (max-width: 768px) {
+    .configuration-page fieldset label > span {
+        display: block;
+    }
+
+    .configuration-page .input-save-profiles {
+        width: 100%;
+    }
+}

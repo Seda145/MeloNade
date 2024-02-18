@@ -131,7 +131,6 @@ input[type=file] {
 
 .button-style-1 {
 	padding: 5px 10px;
-	background-image: linear-gradient(0deg, #481719, #220509, #6a1c2b);
 	color: white;
 	font-size: 14px;
 	border-radius: 4px;
@@ -141,8 +140,12 @@ input[type=file] {
 	min-height: 40px;
 }
 
-.button-style-1.active,
-.button-style-1:active {
+.button-style-1:not(:disabled) {
+	background-image: linear-gradient(0deg, #481719, #220509, #6a1c2b);
+}
+
+.button-style-1.active:not(:disabled),
+.button-style-1:active:not(:disabled) {
 	background-image: linear-gradient(0deg, #b91847, #661818, #390d06);
 }
 

@@ -5,28 +5,28 @@ class ConfigurationPage {
 		/* Elements */
 		this.element = UIUtils.setInnerHTML(inScopeElement.querySelector('[data-component="configuration-page"]'), this.getHTMLTemplate());
         // Elements - ConfigurationPage
-		this.eWrapConfiguration = this.element.querySelector('[data-wrap="configuration"]');
-		this.eInputSaveProfiles = this.eWrapConfiguration.querySelector('.input-save-profiles');
-        this.eInputListenToMidi = this.eWrapConfiguration.querySelector('.input-listen-to-midi');
+        this.eFieldsets = this.element.querySelectorAll("fieldset");
+		this.eInputSaveProfiles = this.element.querySelector('.input-save-profiles');
+        this.eInputListenToMidi = this.element.querySelector('.input-listen-to-midi');
         this.eInputListenToMidi.checked = app.userdata.data.activeProfile.config.listenToMidi == "true";
-        this.eInputListenToInput = this.eWrapConfiguration.querySelector('.input-listen-to-input');
+        this.eInputListenToInput = this.element.querySelector('.input-listen-to-input');
         this.eInputListenToInput.checked = app.userdata.data.activeProfile.config.listenToInput == "true";
-        this.eInputAudioVolume = this.eWrapConfiguration.querySelector('.input-audio-volume');
+        this.eInputAudioVolume = this.element.querySelector('.input-audio-volume');
         this.eInputAudioVolume.value = app.userdata.data.activeProfile.config.audioVolume;
-        this.eInputEnableLightEffects = this.eWrapConfiguration.querySelector('.input-enable-light-effects');
+        this.eInputEnableLightEffects = this.element.querySelector('.input-enable-light-effects');
         this.eInputEnableLightEffects.checked = app.userdata.data.activeProfile.config.enableLightEffects == "true";
         // Elements - ConfigurationPage - SelectInstrument
-        this.eInputSelectInstrument = this.eWrapConfiguration.querySelector('.input-select-instrument');
+        this.eInputSelectInstrument = this.element.querySelector('.input-select-instrument');
         this.eInputSelectInstrument.value = app.userdata.data.activeProfile.config.currentInstrument;
         // Elements - ConfigurationPage - ConfigInstruments
-        this.eConfigInstrumentPanels = this.eWrapConfiguration.querySelectorAll('.config-instrument-panel');
+        this.eConfigInstrumentPanels = this.element.querySelectorAll('.config-instrument-panel');
         // Elements - ConfigurationPage - ConfigBassGuitar
-        this.eConfigBassGuitar = this.eWrapConfiguration.querySelector('.config-bass-guitar');
-        this.eInputSelectBassGuitarTuning = this.eWrapConfiguration.querySelector('.input-select-bass-guitar-tuning');
+        this.eConfigBassGuitar = this.element.querySelector('.config-bass-guitar');
+        this.eInputSelectBassGuitarTuning = this.element.querySelector('.input-select-bass-guitar-tuning');
         this.eInputSelectBassGuitarTuning.value = app.userdata.data.activeProfile.config.instruments["bass-guitar"].tuning;
-        this.eInputSelectBassGuitarVisualizer = this.eWrapConfiguration.querySelector('.input-select-bass-guitar-visualizer');
+        this.eInputSelectBassGuitarVisualizer = this.element.querySelector('.input-select-bass-guitar-visualizer');
         this.eInputSelectBassGuitarVisualizer.value = app.userdata.data.activeProfile.config.instruments["bass-guitar"].visualizer;
-        this.eInputBassGuitarOrderStringsThickAtBottom = this.eWrapConfiguration.querySelector('.input-bass-guitar-order-strings-thick-at-bottom');
+        this.eInputBassGuitarOrderStringsThickAtBottom = this.element.querySelector('.input-bass-guitar-order-strings-thick-at-bottom');
         this.eInputBassGuitarOrderStringsThickAtBottom.checked = app.userdata.data.activeProfile.config.instruments["bass-guitar"].orderStringsThickAtBottom == "true";
 
         /* State */
@@ -172,9 +172,9 @@ class ConfigurationPage {
 <div class="configuration-page page container">
     <div class="row">
         <div class="col-12">
-            <fieldset data-wrap="configuration">
-                <legend>Configuration</legend>
-                
+            <fieldset>
+                <legend>Audio</legend>
+
                 <label>
                     <span>Listen to midi:</span>
                     <input class="input-listen-to-midi" type="checkbox"/>
@@ -189,11 +189,32 @@ class ConfigurationPage {
                     <span>Audio volume:</span>
                     <input class="input-audio-volume" type="range"  min="0" max="1" step="0.1" />
                 </label>
+            </fieldset>
+
+            <fieldset>
+                <legend>Graphics</legend>
 
                 <label>
                     <span>Enable light effects:</span>
                     <input class="input-enable-light-effects" type="checkbox"/>
                 </label>
+
+                <label>
+                    <span>Select a visualizer:</span>
+                    <select class="input-select-bass-guitar-visualizer" name="input-select-bass-guitar-visualizer">
+                        <option value="vertical">Vertical</option>
+                        <option value="horizontal">Horizontal</option>
+                    </select>
+                </label>
+
+                <label>
+                    <span>Show the thickest string at the bottom:</span>
+                    <input class="input-bass-guitar-order-strings-thick-at-bottom" type="checkbox" checked/>
+                </label>
+            </fieldset>
+
+            <fieldset>
+                <legend>My instrument</legend>
 
                 <label>
                     <span>Select an instrument:</span>
@@ -227,25 +248,13 @@ class ConfigurationPage {
                             <option value="21,28,33,40">A E A E (Open A)</option>
                         </select>
                     </label>
-
-                    <label>
-                        <span>Select a visualizer:</span>
-                        <select class="input-select-bass-guitar-visualizer" name="input-select-bass-guitar-visualizer">
-                            <option value="vertical">Vertical</option>
-                            <option value="horizontal">Horizontal</option>
-                        </select>
-                    </label>
-
-                    <label>
-                        <span>Order the strings by thickest at the bottom:</span>
-                        <input class="input-bass-guitar-order-strings-thick-at-bottom" type="checkbox" checked/>
-                    </label>
                 </div>
-                
-                <hr>
+            </fieldset>
+
+            <fieldset>
+                <legend>My data</legend>
 
                 <button class="input-save-profiles button button-style-1" type="button">Save progress</button> 
-
             </fieldset>
         </div>
     </div>
@@ -257,10 +266,14 @@ class ConfigurationPage {
     /* Events */
 
     actOnAudioProcessorStartSong(e) {
-        this.eWrapConfiguration.disabled = "true";
+        this.eFieldsets.forEach((inElemX) => {
+            inElemX.disabled = "true";
+        });
     }
 
     actOnAudioProcessorStopSong(e) {
-        this.eWrapConfiguration.removeAttribute("disabled");
+        this.eFieldsets.forEach((inElemX) => {
+            inElemX.removeAttribute("disabled");
+        });
     }
 }
