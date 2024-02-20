@@ -32,7 +32,7 @@ Instructions:
 
 4.  You are now on the configuration page. You can configure your experience and save your configuration + song progress here.
    
-![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/be7ee20a-f199-4593-8436-5e085ff69478)
+![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/85d63ae8-4b6c-4841-ae74-7d2bf2887e55)
 
 ---
 
@@ -46,24 +46,27 @@ Instructions:
 
 ![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/15d409bf-33df-444f-94ba-f9138dd46356)
 
-![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/10a45509-96c2-4141-bd04-9fb5d5b27c95)
+Your input signal, along with the detected pitch and input volume will be shown further on. There is a small white indicator on the input volume bar which shows the minimum strength of the signal required for processing.
+
+![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/75e60e9c-c361-4985-a9f0-1396f9e816df)
+
 
 ---
 
 7. There is a new page, the "Tones page". Here you can modify the input / output signal of your instrument through effect pedals. This is a new feature. Currently I have implemented a gain boost pedal.
 
-![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/c7cbb6c8-4b13-4366-b93e-1ad81b5f909d)
+![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/73039484-82fe-4839-a58e-e0498b452719)
+
 
 ---
 
-8. The music will play, Notes are automatically generated on a fretboard for your selected tuning. You can play at the correct timing (midi), which will increase or decrease your score.
-There are currently two visualizers, a horizontal and a vertical one:
+8. The music will play, Notes are automatically generated on a fretboard for your selected tuning and chosen instrument, matching to the midi data. You can play at the correct midi timing, which will increase or decrease your score.
+There are currently two visualizers, a horizontal and a vertical one. You can use your browser zoom function (CTRL + mouse scroll) to resize the visualizers.
 
-![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/54b7751d-9674-47be-b3b6-1e4a1d77d3a3)
+![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/98e90dd6-521e-4bde-b7a0-2e46bbce1698)
 
----
 
-![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/b22732d1-e363-47cd-bc36-8972c94b9c02)
+![afbeelding](https://github.com/Seda145/MeloNade/assets/30213433/9347fb66-df84-402e-9400-0131b662b685)
 
 ---
 
