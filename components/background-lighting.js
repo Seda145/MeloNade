@@ -47,8 +47,7 @@ class BackgroundLighting {
 				spotAngle: 100
 			}
 		];
-		this.audioAlpha = 0;
-		this.normalizedAudioAlpha = 0;
+		this.stageAlpha = 0;
 		this.curAlphaStage = 0;
 		this.interpolatedAlphaStageData = this.alphaStages[0];
 
@@ -76,35 +75,40 @@ class BackgroundLighting {
 		if (!app.audioProcessor || !app.audioProcessor.audio) {
 			return;
 		}
-		{
+		
+		const theAudio = app.audioProcessor.audio;
+		if (theAudio == null
+			|| theAudio.currentTime == null 
+			|| isNaN(theAudio.currentTime)
+			|| theAudio.duration == null
+			|| isNaN(theAudio.duration)
+			|| theAudio.duration == 0
+		) {
 			// Somehow the currentTime and duration properties can be undefined when audio is not.
 			// This happens a few frames when the audio starts playing, so we can't interpolate then.
-			const newAudioAlpha = app.audioProcessor.audio.currentTime / app.audioProcessor.audio.duration;
-			if (isNaN(newAudioAlpha)) {
-				console.error("audio alpha is not a number. This should not happen, is the audio loaded?");
-				return;
-			}
-
-			this.audioAlpha = newAudioAlpha;
+			return;
 		}
+		
+		// Loop all stages every X seconds.
+		const stageTime = 25;
+		// Decided not to ensure that all stages are shown within total audio duration,
+		// Because that gives different stage speeds per audio file.
+		this.stageAlpha = theAudio.currentTime % stageTime / stageTime;
+		const stageLoopAlpha = theAudio.currentTime % (stageTime * this.alphaStages.length) / (stageTime * this.alphaStages.length);
 
-		this.curAlphaStage = Math.max(0, Math.floor(this.alphaStages.length * this.audioAlpha));
-
-		// console.log("current stage: " + this.curAlphaStage);
-
-		// We normalize the alpha of the current position of the audio, to the start of the current stage and the start of the next stage. 
-		// This way we get a 0 to 1 alpha between stages that is controlled by the current audio position, where each stage starts at 0 and ends at 1.
-		this.normalizedAudioAlpha = MathUtils.normalizeToAlpha(this.audioAlpha, this.curAlphaStage / this.alphaStages.length, (this.curAlphaStage + 1) / this.alphaStages.length);
-		// console.log("current stage: " + this.curAlphaStage + ", normalizedAudioAlpha: " + this.normalizedAudioAlpha);
+		this.curAlphaStage = Math.max(0, Math.floor(this.alphaStages.length * stageLoopAlpha));
+		// console.log(stageLoopAlpha);
 
 		// Interpolate the data of the current alpha stage to the data of the next.
 		const curData = this.getAlphaStageData(this.curAlphaStage);
-		const nextData = this.getAlphaStageData(this.curAlphaStage + 1);
+		// Get next but wrap around to 0 if required.
+		const nextData = this.getAlphaStageData(this.curAlphaStage + 1 == this.alphaStages.length ? 0 : this.curAlphaStage + 1);
+
 		let newData = {};
-		newData.color = UIUtils.getRGBObjectAsCss(UIUtils.interpolateRGBAsObjects(curData.color, nextData.color, this.normalizedAudioAlpha));
-		newData.spotIntensityA = MathUtils.lerp(curData.spotIntensityA, nextData.spotIntensityA, this.normalizedAudioAlpha);
-		newData.spotWhiteAddition = MathUtils.lerp(curData.spotWhiteAddition, nextData.spotWhiteAddition, this.normalizedAudioAlpha);
-		newData.spotAngle = MathUtils.lerp(curData.spotAngle, nextData.spotAngle, this.normalizedAudioAlpha);
+		newData.color = UIUtils.getRGBObjectAsCss(UIUtils.interpolateRGBAsObjects(curData.color, nextData.color, this.stageAlpha));
+		newData.spotIntensityA = MathUtils.lerp(curData.spotIntensityA, nextData.spotIntensityA, this.stageAlpha);
+		newData.spotWhiteAddition = MathUtils.lerp(curData.spotWhiteAddition, nextData.spotWhiteAddition, this.stageAlpha);
+		newData.spotAngle = MathUtils.lerp(curData.spotAngle, nextData.spotAngle, this.stageAlpha);
 		this.interpolatedAlphaStageData = newData;
 	}
 
