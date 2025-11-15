@@ -78,7 +78,7 @@ class AudioProcessor {
                 this.micGainNode.connect(this.audioContext.destination);
                 console.log("Connected mic gain to audioContext destination (mic playback).");
             }
-
+			
             setInterval(() => { this.analyseMic() }, this.intervalResolution);
             // Calculate initial buffer values.
             this.analyseMic();
@@ -93,6 +93,13 @@ class AudioProcessor {
     }
 
     analyseMic() {
+		// For unknown reason, audioContext can go into suspended state on Chrome, 
+		// in which case it does absolutely nothing.
+		if (this.audioContext.state == "suspended") {
+			console.log("Resuming audioContext from suspended state.")
+			this.audioContext.resume();
+		}
+		
         this.analyserNode.getFloatTimeDomainData(this.micAudioBuffer);
 
         // Update RMS value (volume).
