@@ -21,6 +21,9 @@ class BassGuitarVisualizer {
 
 	prepareRemoval() {
 		this.acEventListener.abort();
+		
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
+		
         this.element.remove();
 		console.log("Prepared removal of self");
     }
@@ -40,6 +43,7 @@ class BassGuitarVisualizer {
 			inElemX.style.transform = 'translatex(' + Math.round(-noteBarPosition) + 'px)';
 		});
 
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
 		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
 	}
 
@@ -164,7 +168,8 @@ class BassGuitarVisualizer {
 		this.eNotesWrap.style.left = '0px';
 		
 		// Start 'playing' visuals.
-		this.draw();
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
+		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
 	}
 
 	actOnAudioProcessorStopSong(e) {

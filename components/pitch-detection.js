@@ -20,6 +20,9 @@ class PitchDetection {
 
     prepareRemoval() {
         this.acEventListener.abort();
+		
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
+		
         this.element.remove();
         console.log("Prepared removal of self");
     }
@@ -27,7 +30,8 @@ class PitchDetection {
 	draw() {
         if (app.audioProcessor.currentRMS < app.audioProcessor.minRelevantRMS) {
             // If the RMS value is too low, we have nothing new to show.
-            this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
+			window.cancelAnimationFrame(this.requestAnimationDrawFrame);
+			this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
             return;
         }
 
@@ -83,6 +87,7 @@ class PitchDetection {
             this.eInputPitchDetectionTarget.classList.remove("accurate");
         }
 		
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
 		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
     }
 
@@ -111,6 +116,7 @@ class PitchDetection {
 	/* Events */
 
 	actOnAudioProcessorConnectedMic(e) {
-		this.draw();
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
+		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
 	}
 }

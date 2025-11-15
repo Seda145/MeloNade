@@ -18,6 +18,9 @@ class Oscilloscope {
 
 	prepareRemoval() {
 		this.acEventListener.abort();
+		
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
+		
         this.element.remove();
 		console.log("Prepared removal of self");
     }
@@ -60,6 +63,7 @@ class Oscilloscope {
 		this.canvasCtx.lineTo(this.eCanvas.width, this.eCanvas.height / 2);
 		this.canvasCtx.stroke();
 		
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
 		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
 	}
 
@@ -79,6 +83,7 @@ class Oscilloscope {
 	/* Events */
 
 	actOnAudioProcessorConnectedMic(e) {
-		this.draw();
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
+		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
 	}
 }

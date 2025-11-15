@@ -60,6 +60,9 @@ class BackgroundLighting {
 	
 	prepareRemoval() {
 		this.acEventListener.abort();
+		
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
+		
         this.element.remove();
 		console.log("Prepared removal of self");
     }
@@ -68,6 +71,7 @@ class BackgroundLighting {
 		await this.interpolateAlphaData();
 		this.drawStage();
 		
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
 		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
     }
 
@@ -159,7 +163,8 @@ class BackgroundLighting {
 
 	actOnAudioProcessorStartSong(e) {
 		if (app.userdata.data.activeProfile.config.enableLightEffects == "true") {
-			this.draw();
+			window.cancelAnimationFrame(this.requestAnimationDrawFrame);
+			this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
 		}
 	}
 

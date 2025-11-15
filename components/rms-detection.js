@@ -18,6 +18,9 @@ class RMSDetection {
 
 	prepareRemoval() {
 		this.acEventListener.abort();
+		
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
+		
         this.element.remove();
 		console.log("Prepared removal of self");
     }
@@ -36,6 +39,7 @@ class RMSDetection {
 		this.eBar.style.width = Math.round(app.audioProcessor.currentRMS * 100) + "%";
 		this.eMinRMS.style.transform = "translateX(" + Math.round(app.audioProcessor.minRelevantRMS * 100) + "cqw)";
 
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
 		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
     }
 
@@ -58,6 +62,7 @@ class RMSDetection {
 	/* Events */
 
 	actOnAudioProcessorConnectedMic(e) {
-		this.draw();
+		window.cancelAnimationFrame(this.requestAnimationDrawFrame);
+		this.requestAnimationDrawFrame = window.requestAnimationFrame(() => { this.draw(); });
 	}
 }
