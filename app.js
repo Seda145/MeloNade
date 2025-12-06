@@ -4,6 +4,7 @@ class MyApp {
 	constructor() {
         this.userdata = new Userdata();
         this.startedGame = false;
+        this.userdataSetupComplete = false;
 	}
 
 	create(inScopeElement) {
@@ -30,11 +31,16 @@ class MyApp {
 
 		/* Events */
 
+        window.addEventListener("beforeunload", this.actOnPossibleDataLossOnUnload.bind(this));
+        window.addEventListener("onclose", this.actOnPossibleDataLossOnUnload.bind(this));
+
         window.addEventListener("userdata-loaded-data-from-file", this.actOnUserdataLoadedDataFromFile.bind(this), {once : true});
         window.addEventListener("song-list-chose-song", this.actOnSongListChoseSong.bind(this));
         window.addEventListener("audio-processor-start-song", this.actOnAudioProcessorStartSong.bind(this));
         window.addEventListener("audio-processor-stop-song", this.actOnAudioProcessorStopSong.bind(this));
     }
+
+    // TODO prevent page close on possible data loss
 
     startGame(insongTitle, inMidiTrackIndex) {
         // First stop if required.
@@ -132,9 +138,21 @@ class MyApp {
 
     /* Events */
 
+    actOnPossibleDataLossOnUnload(inEvent) {
+        if (!this.userdataSetupComplete) {
+            // No need to bother the user if there is no risk of data loss.
+            return;
+        }
+
+        inEvent.preventDefault();
+        // console.log("A default browser alert should pop up now to instruct users to save before unloading the app.");
+    }
+
     actOnUserdataLoadedDataFromFile(e) {
         // This event is expected to run only once, so we can build the app here without having to clean up.
   
+        this.userdataSetupComplete = true;
+        
         console.log("got valid userdata:");
         console.log(app.userdata);
 
